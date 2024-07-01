@@ -5,7 +5,8 @@ const wwebVersion = '2.2412.54';
 const wwapwebClient = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        headless: true // false to show the browser.
+        headless: true, // false to show the browser.
+        args: ['--no-sandbox']
     },
     webVersionCache: {
         type: 'remote',
