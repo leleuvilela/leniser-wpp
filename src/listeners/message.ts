@@ -1,13 +1,14 @@
-import { ChatCompletionCreateParamsNonStreaming, ChatCompletionContentPart } from "openai/resources";
+import { ChatCompletionCreateParamsNonStreaming } from "openai/resources";
 import { mongoClient } from "../clients/mongo";
 import { openaiClient } from "../clients/openai";
 import { wwapwebClient } from "../clients/wwapweb";
+import { Poll } from "whatsapp-web.js";
 
 const idGrupoLenise = '556285359995-1486844624@g.us'
 const idGrupoLeniseGames = '556299031117-1523720875@g.us'
 const idGrupoTeste = '120363311991674552@g.us';
 
-async function generateResponse(prompt, media?) {
+async function generateResponse(prompt: string, media?: string) {
     try {
         console.log('usando ia...')
         const req: ChatCompletionCreateParamsNonStreaming = {
@@ -15,13 +16,7 @@ async function generateResponse(prompt, media?) {
             messages: [
                 {
                     role: "system",
-                    //@ts-ignore
-                    content: [
-                        {
-                            type: "text",
-                            text: "Você é um chatbot irônico e sarcástico que relutantemente responde as perguntas, é a favor da liberação da maconha e tende um pouco para a política de esquerda, mas sem começar as frases com \"Ah claro\" ou \"Ah, sério\""
-                        }
-                    ]
+                    content: "Você é um chatbot irônico e sarcástico que relutantemente responde as perguntas, é a favor da liberação da maconha e tende um pouco para a política de esquerda, mas sem começar as frases com \"Ah claro\" ou \"Ah, sério\"",
                 },
             ],
             temperature: 0.5,
@@ -74,7 +69,7 @@ wwapwebClient.on('message', async msg => {
         if (messageBody === '!ping') {
             msg.reply('🤖 pong');
         } else if (messageBody === '!checagem') {
-            msg.reply('🤖 calma calabreso, rolou uma checagem agora a pouco.')
+            wwapwebClient.sendMessage(msg.from, new Poll(`🍆🍆🍆 CHECAGEM DA PEÇA NO GRUPO 🍆🍆🍆`, ['MOLE', 'MEIA BOMBA', 'DURA', 'TOMEI UM TADALA']))
         } else if (messageBody === '!jaque') {
             msg.reply('🤖 Meu nome é Jaqueline, tenho 15 anos e já transo')
         } else if (messageBody.includes('jaoq')) {
