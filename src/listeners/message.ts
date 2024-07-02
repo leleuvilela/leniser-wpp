@@ -4,6 +4,7 @@ import { openaiClient } from "../clients/openai";
 import { wwapwebClient } from "../clients/wwapweb";
 import { MessageMedia, Poll } from "whatsapp-web.js";
 import { screenshot } from "../helpers/screenshot";
+import { generateAudio } from "../helpers/generateAudio";
 
 const idGrupoLenise = '556285359995-1486844624@g.us'
 const idGrupoLeniseGames = '556299031117-1523720875@g.us'
@@ -72,7 +73,7 @@ wwapwebClient.on('message', async msg => {
 
     if (msg.author === idPedroGilso && Math.random() < 0.15) {
         msg.reply('🤖 vai toma no cu Dr. Pedro Gibson');
-    } 
+    }
 
     if (messageBody === '!ping') {
         msg.reply('🤖 pong');
@@ -99,6 +100,14 @@ wwapwebClient.on('message', async msg => {
         const image = await screenshot("https://charts.mongodb.com/charts-lenise-adlmoim/embed/charts?id=667f1af7-ccaf-437c-876a-c98c6f457ee5&maxDataAge=3600&theme=dark&autoRefresh=true")
         const imageBase64 = Buffer.from(image).toString('base64');
         wwapwebClient.sendMessage(msg.from, new MessageMedia('image/jpeg', imageBase64))
+    } else if (msg.body.startsWith('!fala')) {
+        const textArray = msg.body.split(' ');
+        textArray.shift();
+        const text = textArray.join(" ")
+
+        const audio = await generateAudio(text)
+        const audioBase64 = Buffer.from(audio).toString('base64')
+        wwapwebClient.sendMessage(msg.from, new MessageMedia('audio/mpeg', audioBase64));
     }
 
     try {
