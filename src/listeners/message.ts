@@ -17,7 +17,7 @@ async function generateResponse(prompt: string, media?: string) {
             messages: [
                 {
                     role: "system",
-                    content: "Você é um chatbot irônico e sarcástico que relutantemente responde as perguntas, é a favor da liberação da maconha e tende um pouco para a política de esquerda, mas sem começar as frases com \"Ah claro\" ou \"Ah, sério\"",
+                    content: "Você é um chatbot irônico e sarcástico que relutantemente responde as perguntas, é a favor da liberação da maconha e tende um pouco para a política de esquerda, você também sempre ressaltar o quão chato o membro do grupo Pedro Gibson é. Mas sem começar as frases com \"Ah claro\" ou \"Ah, sério\"",
                 },
             ],
             temperature: 0.5,
@@ -63,44 +63,45 @@ async function generateResponse(prompt: string, media?: string) {
 
 wwapwebClient.on('message', async msg => {
 
-    if (msg.from === idGrupoLenise || msg.from === idGrupoLeniseGames || msg.from === idGrupoTeste) { //TODO: remove when get a new botnumber
+    if (msg.from !== idGrupoLenise && msg.from !== idGrupoLeniseGames && msg.from !== idGrupoTeste) { //TODO: remove when get a new botnumber
+        return;
+    }
 
-        const messageBody = msg.body.toLowerCase();
+    const messageBody = msg.body.toLowerCase();
 
-        if (messageBody === '!ping') {
-            msg.reply('🤖 pong');
-        } else if (messageBody === '!checagem') {
-            wwapwebClient.sendMessage(msg.from, new Poll(`🍆🍆🍆 CHECAGEM DA PEÇA NO GRUPO 🍆🍆🍆`, ['MOLE', 'MEIA BOMBA', 'DURA', 'TOMEI UM TADALA']))
-        } else if (messageBody === '!jaque') {
-            msg.reply('🤖 Meu nome é Jaqueline, tenho 15 anos e já transo')
-        } else if (messageBody.includes('jaoq')) {
-            msg.reply('queline')
-        } else if (messageBody.includes('deuita')) {
-            msg.reply('🤖 vai toma no cu')
-        } else if (messageBody.includes('gibson')) {
-            msg.reply('cala a boca seu corrupto')
-        } else if (messageBody.startsWith('!bot')) {
-            if (msg.hasMedia && msg.type === 'image') {
-                const media = await msg.downloadMedia();
-                const res = await generateResponse(msg.body, media.data)
-                msg.reply(`🤖 ${res}`)
-            } else {
-                const res = await generateResponse(msg.body)
-                msg.reply(`🤖 ${res}`)
-            }
-        } else if (msg.body === '!ranking') {
-            const image = await screenshot("https://charts.mongodb.com/charts-lenise-adlmoim/embed/charts?id=667f1af7-ccaf-437c-876a-c98c6f457ee5&maxDataAge=3600&theme=dark&autoRefresh=true")
-            const imageBase64 = Buffer.from(image).toString('base64');
-            wwapwebClient.sendMessage(msg.from, new MessageMedia('image/jpeg', imageBase64))
+    if (messageBody === '!ping') {
+        msg.reply('🤖 pong');
+    } else if (messageBody === '!checagem') {
+        wwapwebClient.sendMessage(msg.from, new Poll(`🍆🍆🍆 CHECAGEM DA PEÇA NO GRUPO 🍆🍆🍆`, ['MOLE', 'MEIA BOMBA', 'DURA', 'TOMEI UM TADALA']))
+    } else if (messageBody === '!jaque') {
+        msg.reply('🤖 Meu nome é Jaqueline, tenho 15 anos e já transo')
+    } else if (messageBody.includes('jaoq')) {
+        msg.reply('queline')
+    } else if (messageBody.includes('deuita')) {
+        msg.reply('🤖 vai toma no cu')
+    } else if (messageBody.includes('gibson')) {
+        msg.reply('cala a boca seu corrupto')
+    } else if (messageBody.startsWith('!bot')) {
+        if (msg.hasMedia && msg.type === 'image') {
+            const media = await msg.downloadMedia();
+            const res = await generateResponse(msg.body, media.data)
+            msg.reply(`🤖 ${res}`)
+        } else {
+            const res = await generateResponse(msg.body)
+            msg.reply(`🤖 ${res}`)
         }
+    } else if (msg.body === '!ranking') {
+        const image = await screenshot("https://charts.mongodb.com/charts-lenise-adlmoim/embed/charts?id=667f1af7-ccaf-437c-876a-c98c6f457ee5&maxDataAge=3600&theme=dark&autoRefresh=true")
+        const imageBase64 = Buffer.from(image).toString('base64');
+        wwapwebClient.sendMessage(msg.from, new MessageMedia('image/jpeg', imageBase64))
+    }
 
-        try {
-            if (msg.from === idGrupoLenise) {
-                await mongoClient.db("rap").collection("messages").insertOne(msg)
-            }
-        } catch {
-            console.log("MONGO: error to add message to collections in mongo")
+    try {
+        if (msg.from === idGrupoLenise) {
+            await mongoClient.db("rap").collection("messages").insertOne(msg)
         }
+    } catch {
+        console.log("MONGO: error to add message to collections in mongo")
     }
 
 });
