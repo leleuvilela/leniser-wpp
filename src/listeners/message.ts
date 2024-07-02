@@ -16,7 +16,7 @@ async function generateResponse(prompt: string, media?: string) {
             messages: [
                 {
                     role: "system",
-                    content: "Você é um chatbot irônico e sarcástico que relutantemente responde as perguntas, é a favor da liberação da maconha e tende um pouco para a política de esquerda, mas sem começar as frases com \"Ah claro\" ou \"Ah, sério\"",
+                    content: "Você é um chatbot irônico e sarcástico que relutantemente responde as perguntas, é a favor da liberação da maconha e tende um pouco para a política de esquerda, você também sempre ressaltar o quão chato o membro do grupo Pedro Gibson é. Mas sem começar as frases com \"Ah claro\" ou \"Ah, sério\"",
                 },
             ],
             temperature: 0.5,
@@ -62,40 +62,41 @@ async function generateResponse(prompt: string, media?: string) {
 
 wwapwebClient.on('message', async msg => {
 
-    if (msg.from === idGrupoLenise || msg.from === idGrupoLeniseGames || msg.from === idGrupoTeste) { //TODO: remove when get a new botnumber
+    if (msg.from !== idGrupoLenise && msg.from !== idGrupoLeniseGames && msg.from !== idGrupoTeste) { //TODO: remove when get a new botnumber
+        return;
+    }
 
-        const messageBody = msg.body.toLowerCase();
+    const messageBody = msg.body.toLowerCase();
 
-        if (messageBody === '!ping') {
-            msg.reply('🤖 pong');
-        } else if (messageBody === '!checagem') {
-            wwapwebClient.sendMessage(msg.from, new Poll(`🍆🍆🍆 CHECAGEM DA PEÇA NO GRUPO 🍆🍆🍆`, ['MOLE', 'MEIA BOMBA', 'DURA', 'TOMEI UM TADALA']))
-        } else if (messageBody === '!jaque') {
-            msg.reply('🤖 Meu nome é Jaqueline, tenho 15 anos e já transo')
-        } else if (messageBody.includes('jaoq')) {
-            msg.reply('queline')
-        } else if (messageBody.includes('deuita')) {
-            msg.reply('🤖 vai toma no cu')
-        } else if (messageBody.includes('gibson')) {
-            msg.reply('cala a boca seu corrupto')
-        } else if (messageBody.startsWith('!bot')) {
-            if (msg.hasMedia && msg.type === 'image') {
-                const media = await msg.downloadMedia();
-                const res = await generateResponse(msg.body, media.data)
-                msg.reply(`🤖 ${res}`)
-            } else {
-                const res = await generateResponse(msg.body)
-                msg.reply(`🤖 ${res}`)
-            }
+    if (messageBody === '!ping') {
+        msg.reply('🤖 pong');
+    } else if (messageBody === '!checagem') {
+        wwapwebClient.sendMessage(msg.from, new Poll(`🍆🍆🍆 CHECAGEM DA PEÇA NO GRUPO 🍆🍆🍆`, ['MOLE', 'MEIA BOMBA', 'DURA', 'TOMEI UM TADALA']))
+    } else if (messageBody === '!jaque') {
+        msg.reply('🤖 Meu nome é Jaqueline, tenho 15 anos e já transo')
+    } else if (messageBody.includes('jaoq')) {
+        msg.reply('queline')
+    } else if (messageBody.includes('deuita')) {
+        msg.reply('🤖 vai toma no cu')
+    } else if (messageBody.includes('gibson')) {
+        msg.reply('cala a boca seu corrupto')
+    } else if (messageBody.startsWith('!bot')) {
+        if (msg.hasMedia && msg.type === 'image') {
+            const media = await msg.downloadMedia();
+            const res = await generateResponse(msg.body, media.data)
+            msg.reply(`🤖 ${res}`)
+        } else {
+            const res = await generateResponse(msg.body)
+            msg.reply(`🤖 ${res}`)
         }
+    }
 
-        try {
-            if (msg.from === idGrupoLenise) {
-                await mongoClient.db("rap").collection("messages").insertOne(msg)
-            }
-        } catch {
-            console.log("MONGO: error to add message to collections in mongo")
+    try {
+        if (msg.from === idGrupoLenise) {
+            await mongoClient.db("rap").collection("messages").insertOne(msg)
         }
+    } catch {
+        console.log("MONGO: error to add message to collections in mongo")
     }
 
 });
