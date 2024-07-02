@@ -8,6 +8,7 @@ import { screenshot } from "../helpers/screenshot";
 const idGrupoLenise = '556285359995-1486844624@g.us'
 const idGrupoLeniseGames = '556299031117-1523720875@g.us'
 const idGrupoTeste = '120363311991674552@g.us';
+const idPedroGilso = '556283282310@c.us';
 
 async function generateResponse(prompt: string, media?: string) {
     try {
@@ -69,6 +70,10 @@ wwapwebClient.on('message', async msg => {
 
     const messageBody = msg.body.toLowerCase();
 
+    if (msg.author === idPedroGilso && Math.random() < 0.15) {
+        msg.reply('🤖 vai toma no cu Dr. Pedro Gibson');
+    } 
+
     if (messageBody === '!ping') {
         msg.reply('🤖 pong');
     } else if (messageBody === '!checagem') {
@@ -80,7 +85,7 @@ wwapwebClient.on('message', async msg => {
     } else if (messageBody.includes('deuita')) {
         msg.reply('🤖 vai toma no cu')
     } else if (messageBody.includes('gibson')) {
-        msg.reply('cala a boca seu corrupto')
+        msg.reply('🤖 cala a boca seu corrupto')
     } else if (messageBody.startsWith('!bot')) {
         if (msg.hasMedia && msg.type === 'image') {
             const media = await msg.downloadMedia();
