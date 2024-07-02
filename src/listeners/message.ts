@@ -65,7 +65,7 @@ async function generateResponse(prompt: string, media?: string) {
     }
 }
 
-const generateImageCd = createCooldownFunction(generateImage, 60);
+const generateImageCd = createCooldownFunction(generateImage, 120);
 
 wwapwebClient.on('message', async msg => {
 
