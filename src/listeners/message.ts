@@ -5,6 +5,8 @@ import { wwapwebClient } from "../clients/wwapweb";
 import { MessageMedia, Poll } from "whatsapp-web.js";
 import { screenshot } from "../helpers/screenshot";
 import { generateAudio } from "../helpers/generateAudio";
+import { generateImage } from "../helpers/generateImage";
+import { createCooldownFunction } from "../helpers/createCooldown";
 
 const idGrupoLenise = '556285359995-1486844624@g.us'
 const idGrupoLeniseGames = '556299031117-1523720875@g.us'
@@ -105,9 +107,32 @@ wwapwebClient.on('message', async msg => {
         textArray.shift();
         const text = textArray.join(" ")
 
-        const audio = await generateAudio(text)
-        const audioBase64 = Buffer.from(audio).toString('base64')
-        wwapwebClient.sendMessage(msg.from, new MessageMedia('audio/mpeg', audioBase64));
+        try {
+            const audio = await generateAudio(text)
+            const audioBase64 = Buffer.from(audio).toString('base64')
+            wwapwebClient.sendMessage(msg.from, new MessageMedia('audio/mpeg', audioBase64));
+        } catch {
+            msg.reply('🤖 Calma lá calabreso, isso aí não pode não.')
+        }
+    } else if (msg.body.startsWith('!imagem')) {
+        const textArray = msg.body.split(' ');
+        textArray.shift();
+        const text = textArray.join(" ")
+
+        try {
+            const generateImageCd = createCooldownFunction(generateImage, 60);
+            const imageRes = await generateImageCd(text);
+
+            if (!imageRes) {
+                msg.reply('🤖 Pera aí, tá em cooldown...')
+                return;
+            }
+
+            const imageBase64 = imageRes.data[0]?.b64_json;
+            wwapwebClient.sendMessage(msg.from, new MessageMedia('image/jpeg', imageBase64))
+        } catch {
+            msg.reply('🤖 Calma lá calabreso, isso aí não pode não.')
+        }
     }
 
     try {
