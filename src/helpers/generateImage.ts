@@ -5,7 +5,7 @@ const generateImage = async (prompt: string) => {
         model: 'dall-e-3',
         response_format: 'b64_json',
         quality: 'standard',
-        size: '512x512',
+        size: '1024x1024',
         n: 1,
         prompt,
     })

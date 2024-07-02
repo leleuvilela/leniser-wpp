@@ -65,6 +65,8 @@ async function generateResponse(prompt: string, media?: string) {
     }
 }
 
+const generateImageCd = createCooldownFunction(generateImage, 60);
+
 wwapwebClient.on('message', async msg => {
 
     if (msg.from !== idGrupoLenise && msg.from !== idGrupoLeniseGames && msg.from !== idGrupoTeste) { //TODO: remove when get a new botnumber
@@ -120,7 +122,6 @@ wwapwebClient.on('message', async msg => {
         const text = textArray.join(" ")
 
         try {
-            const generateImageCd = createCooldownFunction(generateImage, 60);
             const imageRes = await generateImageCd(text);
 
             if (!imageRes) {
@@ -130,7 +131,8 @@ wwapwebClient.on('message', async msg => {
 
             const imageBase64 = imageRes.data[0]?.b64_json;
             wwapwebClient.sendMessage(msg.from, new MessageMedia('image/jpeg', imageBase64))
-        } catch {
+        } catch (error) {
+            console.log(error);
             msg.reply('🤖 Calma lá calabreso, isso aí não pode não.')
         }
     }
