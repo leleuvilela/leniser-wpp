@@ -1,6 +1,11 @@
 import 'dotenv/config'
-import { wwapwebClient } from './clients/wwapweb';
+import { wwebClient } from './clients/wweb';
 import "./listeners"
 
-wwapwebClient.initialize();
+function main() {
+    console.log("Initializing wwapweb client");
+    wwebClient.initialize();
+}
+
+main();
 
