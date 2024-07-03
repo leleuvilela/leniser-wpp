@@ -5,6 +5,7 @@ import { generateImage } from "../helpers/generateImage";
 const generateImageCd = createCooldownFunction(generateImage, 120);
 
 async function handleImagem(msg: Message) {
+
     const textArray = msg.body.split(' ');
     textArray.shift();
     const text = textArray.join(' ');
@@ -16,7 +17,6 @@ async function handleImagem(msg: Message) {
             msg.reply('🤖 Pera aí, tá em cooldown...');
             return;
         }
-
         const imageBase64 = imageRes.data[0]?.b64_json;
         msg.reply(new MessageMedia('image/jpeg', imageBase64));
     } catch (error) {
