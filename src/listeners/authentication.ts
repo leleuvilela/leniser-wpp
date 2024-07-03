@@ -1,15 +1,15 @@
 import { mongoClient } from "../clients/mongo";
-import { wwapwebClient } from "../clients/wwapweb";
+import { wwebClient } from "../clients/wweb";
 import * as qrcode from 'qrcode-terminal';
 
-wwapwebClient.on('qr', (qr) => {
+wwebClient.on('qr', (qr) => {
     // NOTE: This event will not be fired if a session is specified.
     console.log('QR RECEIVED', qr);
     qrcode.generate(qr, { small: true });
 });
 
 
-wwapwebClient.on('authenticated', async () => {
+wwebClient.on('authenticated', async () => {
     console.log('AUTHENTICATED ON WHATSAPP');
 
     await mongoClient.connect();
@@ -18,12 +18,12 @@ wwapwebClient.on('authenticated', async () => {
 });
 
 
-wwapwebClient.on('auth_failure', msg => {
+wwebClient.on('auth_failure', msg => {
     // Fired if session restore was unsuccessful
     console.error('AUTHENTICATION FAILURE', msg);
 });
 
-wwapwebClient.on('ready', () => {
+wwebClient.on('ready', () => {
     console.log('READY');
 });
 
