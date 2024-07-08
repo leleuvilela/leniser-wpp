@@ -8,14 +8,22 @@ async function handleTranscrever(msg: Message) {
         return msg.reply('🤖 A mensagem precisa ser um áudio.')
     }
 
-    const audio = await quoted.downloadMedia();
-    const audioBuffer = Buffer.from(audio.data, 'base64');
+    try {
+        const audio = await quoted.downloadMedia();
+        const audioBuffer = Buffer.from(audio.data, 'base64');
 
-    const translate = msg.body.split(' ').length > 1;
+        if (!audio.data) {
+            return msg.reply(`🤖 Parece que esse áudio não tá disponivel.`)
+        }
 
-    const transcription = await generateTranscription(audioBuffer, translate);
+        const translate = msg.body.split(' ').length > 1;
+        const transcription = await generateTranscription(audioBuffer, translate);
 
-    msg.reply(`🤖 ${transcription}`);
+        return msg.reply(`🤖 ${transcription}`);
+    } catch (e) {
+        console.log(e)
+        return msg.reply(`🤖 eita, pera. algo de errado não está certo.`)
+    }
 }
 
 export { handleTranscrever }
