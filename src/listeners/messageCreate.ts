@@ -1,5 +1,5 @@
 import { wwebClient } from "../clients/wweb";
-import { handlePing, handleBot, handleChecagem, handleFala, handleImagem, handleRanking } from "../events";
+import { handlePing, handleBot, handleChecagem, handleFala, handleImagem, handleRanking, handleTranscrever } from "../events";
 import { MessageObserver } from "../observers/message";
 
 const observer = new MessageObserver();
@@ -10,6 +10,7 @@ observer.addListener("!checagem", handleChecagem);
 observer.addListener("!fala", handleFala);
 observer.addListener("!imagem", handleImagem);
 observer.addListener("!ranking", handleRanking);
+observer.addListener("!transcrever", handleTranscrever)
 
 wwebClient.on("message_create", msg => {
 
