@@ -1,12 +1,10 @@
 import { wwebClient } from "../clients/wweb";
 
-const idGrupoLenise = '556285359995-1486844624@g.us'
-const idGrupoLeniseGames = '556299031117-1523720875@g.us'
-const idGrupoTeste = '120363311991674552@g.us';
+import { shouldRevokeMessages } from "../helpers/messageFilter";
 
 wwebClient.on('message_revoke_everyone', async (after, before) => {
 
-    if (after.from !== idGrupoLenise && after.from !== idGrupoLeniseGames && after.from !== idGrupoTeste) { //TODO: remove when get a new botnumber
+    if (!shouldRevokeMessages(after)) {
         return;
     }
 

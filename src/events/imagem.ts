@@ -2,7 +2,16 @@ import { Message, MessageMedia } from "whatsapp-web.js";
 import { createCooldownFunction } from "../helpers/createCooldown";
 import { generateImage } from "../helpers/generateImage";
 
-const generateImageCd = createCooldownFunction(generateImage, 120);
+const disableCooldown = process.env.DISABLE_IMAGE_COOLDOWN === 'true';
+
+if (disableCooldown) {
+    console.log('🤖 Cooldown de imagem desabilitado');
+}
+else {
+    console.log('🤖 Cooldown de imagem habilitado');
+}
+
+const generateImageCd = createCooldownFunction(generateImage, 30);
 
 async function handleImagem(msg: Message) {
     const textArray = msg.body.split(' ');
@@ -10,7 +19,9 @@ async function handleImagem(msg: Message) {
     const text = textArray.join(' ');
 
     try {
-        const imageRes = await generateImageCd(text);
+        const imageRes = disableCooldown
+            ? await generateImage(text)
+            : await generateImageCd(text);
 
         if (!imageRes) {
             msg.reply('🤖 Pera aí, tá em cooldown...');
