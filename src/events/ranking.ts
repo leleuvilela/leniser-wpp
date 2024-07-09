@@ -24,7 +24,7 @@ async function handleRanking(msg: Message) {
 
     var response = await generateMessageCountsText(startDate, endDate);
 
-    msg.reply('🤖 ' + response);
+    msg.reply(`🤖 ${response}`);
 }
 
 function getStartOfDay(): Date {
