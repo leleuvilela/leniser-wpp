@@ -61,18 +61,17 @@ async function generateMessageCountsText(startDate: Date, endDate: Date) {
 
 async function getMessageCountsByUser(startDate: Date, endDate: Date) {
     try {
-        await mongoClient.connect();
         const db = mongoClient.db("rap");
         const collection = db.collection("messages");
 
         const pipeline = [
-            { 
-                $match: { 
-                    timestamp: { 
-                        $gte: Math.floor(startDate.getTime() / 1000), 
-                        $lte: Math.floor(endDate.getTime() / 1000) 
-                    } 
-                } 
+            {
+                $match: {
+                    timestamp: {
+                        $gte: Math.floor(startDate.getTime() / 1000),
+                        $lte: Math.floor(endDate.getTime() / 1000)
+                    }
+                }
             },
             { $group: { _id: "$_data.notifyName", count: { $sum: 1 } } },
             { $sort: { count: -1 } }
@@ -82,8 +81,6 @@ async function getMessageCountsByUser(startDate: Date, endDate: Date) {
         return results;
     } catch (error) {
         console.error("Error fetching message counts by user:", error);
-    } finally {
-        await mongoClient.close();
     }
 }
 

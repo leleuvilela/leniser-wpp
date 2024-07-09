@@ -1,6 +1,7 @@
 import { wwebClient } from "../clients/wweb";
 
-import { handlePing,
+import {
+    handlePing,
     handleBot,
     handleChecagem,
     handleFala,
@@ -13,7 +14,6 @@ import { handlePing,
 } from "../events";
 
 import { MessageObserver } from "../observers/message";
-import { shouldProcessMessage } from "../helpers/messageFilter";
 
 const observer = new MessageObserver();
 
@@ -23,7 +23,7 @@ observer.addListener("!checagem", handleChecagem);
 observer.addListener("!fala", handleFala);
 observer.addListener("!imagem", handleImagem);
 observer.addListener("!ranking-imagem", handleRankingImage);
-observer.addListener("!ranking", handleRanking );
+observer.addListener("!ranking", handleRanking);
 observer.addListener("!transcrever", handleTranscrever);
 observer.addListener("!menu", handleMenu);
 
