@@ -1,16 +1,12 @@
 import { mongoClient } from "../clients/mongo";
 import { wwebClient } from "../clients/wweb";
-
-const idGrupoLenise = '556285359995-1486844624@g.us'
-const idGrupoLeniseGames = '556299031117-1523720875@g.us'
-const idGrupoTeste = '120363311991674552@g.us';
-const idPedroGilso = '556283282310@c.us';
+import { shouldProcessMessage, idPedroGilso, idGrupoLenise } from "../helpers/messageFilter";
 
 wwebClient.on('message', async msg => {
 
     const messageBody = msg.body.toLowerCase();
 
-    if (msg.from !== idGrupoLenise && msg.from !== idGrupoLeniseGames && msg.from !== idGrupoTeste) { //TODO: remove when get a new botnumber
+    if (!shouldProcessMessage(msg)) {
         return;
     }
 
