@@ -5,9 +5,11 @@ import { handlePing,
     handleChecagem,
     handleFala,
     handleImagem,
+    handleRankingImage,
     handleRanking,
     handleTranscrever,
-    handleMenu
+    handleMenu,
+
 } from "../events";
 
 import { MessageObserver } from "../observers/message";
@@ -20,7 +22,8 @@ observer.addListener("!bot", handleBot);
 observer.addListener("!checagem", handleChecagem);
 observer.addListener("!fala", handleFala);
 observer.addListener("!imagem", handleImagem);
-observer.addListener("!ranking", handleRanking);
+observer.addListener("!ranking-imagem", handleRankingImage);
+observer.addListener("!ranking", handleRanking );
 observer.addListener("!transcrever", handleTranscrever);
 observer.addListener("!menu", handleMenu);
 
