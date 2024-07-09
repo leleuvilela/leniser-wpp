@@ -1,17 +1,28 @@
 import { wwebClient } from "../clients/wweb";
-import { handlePing, handleBot, handleChecagem, handleFala, handleImagem, handleRanking, handleTranscrever } from "../events";
+
+import { handlePing,
+    handleBot,
+    handleChecagem,
+    handleFala,
+    handleImagem,
+    handleRanking,
+    handleTranscrever,
+    handleMenu
+} from "../events";
+
 import { MessageObserver } from "../observers/message";
 import { shouldProcessMessage } from "../helpers/messageFilter";
 
 const observer = new MessageObserver();
 
-observer.addListener('!ping', handlePing)
+observer.addListener('!ping', handlePing);
 observer.addListener("!bot", handleBot);
 observer.addListener("!checagem", handleChecagem);
 observer.addListener("!fala", handleFala);
 observer.addListener("!imagem", handleImagem);
 observer.addListener("!ranking", handleRanking);
-observer.addListener("!transcrever", handleTranscrever)
+observer.addListener("!transcrever", handleTranscrever);
+observer.addListener("!menu", handleMenu);
 
 wwebClient.on("message_create", async msg => {
 
