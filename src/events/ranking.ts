@@ -4,25 +4,30 @@ import { mongoClient } from "../clients/mongo";
 async function handleRanking(msg: Message) {
     let startDate: Date;
     let endDate: Date;
+    let title: String;
 
     if (msg.body.toLowerCase() === "!ranking dia") {
         startDate = getStartOfDay();
         endDate = new Date();
+        title = "Ranking do Dia";
     } else if (msg.body.toLowerCase() === "!ranking semana") {
         startDate = getStartOfWeek();
         endDate = new Date();
+        title = "Ranking da Semana";
     } else if (msg.body.toLowerCase() === "!ranking mes") {
         startDate = getStartOfMonth();
         endDate = new Date();
+        title = "Ranking do Mês";
     } else if (msg.body.toLowerCase() === "!ranking") {
         startDate = new Date(0); // Unix epoch start
         endDate = new Date();
+        title = "Ranking Geral";
     } else {
         msg.reply("🤖 Comando inválido. Tente `!menu`.");
         return;
     }
 
-    var response = await generateMessageCountsText(startDate, endDate);
+    var response = await generateMessageCountsText(startDate, endDate, title);
 
     msg.reply(`🤖 ${response}`);
 }
@@ -43,7 +48,7 @@ function getStartOfMonth(): Date {
     return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
-async function generateMessageCountsText(startDate: Date, endDate: Date) {
+async function generateMessageCountsText(startDate: Date, endDate: Date, title: String) {
     const results = await getMessageCountsByUser(startDate, endDate);
 
     if (!results || results.length === 0) {
@@ -51,9 +56,9 @@ async function generateMessageCountsText(startDate: Date, endDate: Date) {
         return "Não encontramos mensagens nesse período.";
     }
 
-    let messageText = "📊 *Ranking* 📊\n\n";
-    results.forEach(result => {
-        messageText += `👤 ${result._id}: ${result.count} messages\n`;
+    let messageText = `📊 *${title}* 📊\n\n`;
+    results.forEach((result, index) => {
+        messageText += `${index+1}º - 👤 ${result._id}: ${result.count}\n`;
     });
 
     return messageText;
