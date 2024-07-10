@@ -57,9 +57,8 @@ async function generateMessageCountsText(startDate: Date, endDate: Date, title: 
     }
 
     let messageText = `📊 *${title}* 📊\n\n`;
-    var ranking = 1;
-    results.forEach(result => {
-        messageText += `${ranking++}º - 👤 ${result._id}: ${result.count}\n`;
+    results.forEach((result, index) => {
+        messageText += `${index}º - 👤 ${result._id}: ${result.count}\n`;
     });
 
     return messageText;
