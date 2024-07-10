@@ -14,6 +14,7 @@ import {
 } from "../events";
 
 import { MessageObserver } from "../observers/message";
+import { shouldProcessMessage } from "../helpers/messageFilter";
 
 const observer = new MessageObserver();
 
