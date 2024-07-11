@@ -2,7 +2,15 @@ import { Message, MessageMedia } from "whatsapp-web.js";
 import { generateAudio } from "../helpers/generateAudio";
 
 async function handleFala(msg: Message) {
-    const textArray = msg.body.split(' ');
+
+    let quoted = await msg.getQuotedMessage()
+    let prompt = msg.body
+
+    if (msg.body === '!fala' && msg.hasQuotedMsg && !quoted.hasMedia) {
+        prompt = quoted.body;
+    }
+
+    const textArray = prompt.split(' ');
     textArray.shift();
     const text = textArray.join(" ")
 
