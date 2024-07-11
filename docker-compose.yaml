@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
     environment:
       DB_URI: "mongodb://mongo:27017/rap"
       API_GPT: ""

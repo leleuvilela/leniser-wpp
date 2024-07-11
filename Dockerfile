@@ -47,10 +47,6 @@ RUN apt-get update && apt-get install -y \
     rm -rf /var/lib/apt/lists/*
 
 
-# Define variáveis de ambiente necessárias para o Puppeteer
-ENV PUPPETEER_SKIP_DOWNLOAD=true
-ENV CHROME_PATH=/usr/bin/chromium-browser
-
 # Define o diretório de trabalho no contêiner
 WORKDIR /app
 
