@@ -4,11 +4,13 @@ const idGrupoLenise = '556285359995-1486844624@g.us'
 const idGrupoLeniseGames = '556299031117-1523720875@g.us'
 const idGrupoTeste = '120363311991674552@g.us';
 const idPedroGilso = '556283282310@c.us';
+const idLeleu = '351932340769@c.us';
 
 const allowedNumbersToProcessMessages = [
     idGrupoLenise,
     idGrupoLeniseGames,
-    idGrupoTeste
+    idGrupoTeste,
+    idLeleu
 ]
 
 const allowedNumbersToRevokeMessages = [

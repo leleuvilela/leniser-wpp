@@ -1,0 +1,48 @@
+name: Deploy to droplet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+
+    - name: Install dependencies
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: install
+
+    - name: Build the project
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: build
+
+    - name: Add SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+    - name: Copy files via SSH
+      run: |
+        scp -r ./package.json ./yarn.lock ./dist/* root@142.93.201.180:~/leniser-wpp
+
+    - name: Restart application
+      run: |
+        ssh root@142.93.201.180 <<EOF
+          cd ~/leniser-wpp
+          rm -rf ./node_modules
+          yarn install
+          pm2 restart all
+        EOF
