@@ -11,8 +11,7 @@ import {
     handleRanking,
     handleTranscrever,
     handleMenu,
-    handleSticker,
-    handleAA
+    handleSticker
 } from "../events";
 
 import { MessageObserver } from "../observers/message";
@@ -30,7 +29,7 @@ observer.addListener("!ranking-imagem", handleRankingImage);
 observer.addListener("!ranking", handleRanking);
 observer.addListener("!transcrever", handleTranscrever);
 observer.addListener("!sticker", handleSticker);
-observer.addListener("!aa", handleAA);
+observer.addListener("!menu", handleMenu);
 
 wwebClient.on(Events.MESSAGE_CREATE, async msg => {
 
