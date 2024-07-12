@@ -1,4 +1,5 @@
 import { wwebClient } from "../clients/wweb";
+import { Events } from "whatsapp-web.js";
 
 import {
     handlePing,
@@ -10,7 +11,8 @@ import {
     handleRanking,
     handleTranscrever,
     handleMenu,
-
+    handleSticker,
+    handleAA
 } from "../events";
 
 import { MessageObserver } from "../observers/message";
@@ -18,6 +20,7 @@ import { shouldProcessMessage } from "../helpers/messageFilter";
 
 const observer = new MessageObserver();
 
+observer.addListener("!menu", handleMenu);
 observer.addListener('!ping', handlePing);
 observer.addListener("!bot", handleBot);
 observer.addListener("!checagem", handleChecagem);
@@ -26,9 +29,10 @@ observer.addListener("!imagem", handleImagem);
 observer.addListener("!ranking-imagem", handleRankingImage);
 observer.addListener("!ranking", handleRanking);
 observer.addListener("!transcrever", handleTranscrever);
-observer.addListener("!menu", handleMenu);
+observer.addListener("!sticker", handleSticker);
+observer.addListener("!aa", handleAA);
 
-wwebClient.on("message_create", async msg => {
+wwebClient.on(Events.MESSAGE_CREATE, async msg => {
 
     if (!shouldProcessMessage(msg)) {
         return;
