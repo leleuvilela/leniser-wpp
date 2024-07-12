@@ -1,4 +1,5 @@
 import { wwebClient } from "../clients/wweb";
+import { Events } from "whatsapp-web.js";
 
 import {
     handlePing,
@@ -31,7 +32,7 @@ observer.addListener("!transcrever", handleTranscrever);
 observer.addListener("!sticker", handleSticker);
 observer.addListener("!aa", handleAA);
 
-wwebClient.on("message_create", async msg => {
+wwebClient.on(Events.MESSAGE_CREATE, async msg => {
 
     if (!shouldProcessMessage(msg)) {
         return;

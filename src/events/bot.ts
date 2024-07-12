@@ -8,6 +8,9 @@ async function handleBot(msg: Message) {
         return msg.reply('🤖 Preciso de uma mensagem para responder.')
     }
 
+    const chat = await msg.getChat()
+    await chat.sendStateTyping();
+
     let prompt: string | null;
     let media: MessageMedia | null;
     let quoted = await msg.getQuotedMessage()
@@ -26,10 +29,13 @@ async function handleBot(msg: Message) {
 
     if (media) {
         const res = await generateResponse(msg.body, media.data)
+        await chat.clearState();
+
         return msg.reply(`🤖 ${res}`)
     }
 
     const res = await generateResponse(prompt)
+    await chat.clearState();
 
     return msg.reply(`🤖 ${res}`)
 }
