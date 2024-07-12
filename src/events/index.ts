@@ -8,3 +8,4 @@ export { handleRanking } from './ranking';
 export { handleTranscrever } from './transcrever'
 export { handleSticker } from './sticker'
 export { handleMenu } from './menu'
+export { handleAA } from './aa'
