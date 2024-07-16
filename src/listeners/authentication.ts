@@ -12,8 +12,16 @@ wwebClient.on('qr', (qr) => {
 wwebClient.on('authenticated', async () => {
     console.log('AUTHENTICATED ON WHATSAPP');
 
+    const uri = process.env.DB_URI;
+
+    if (!uri){
+        console.log('DB URI NOT FOUND');
+        return;
+    }
+
     await mongoClient.connect();
     await mongoClient.db("lenise").command({ ping: 1 });
+
     console.log('DB CONNECTED');
 });
 
