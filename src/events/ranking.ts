@@ -2,6 +2,10 @@ import { Message } from "whatsapp-web.js";
 import { mongoClient } from "../clients/mongo";
 
 async function handleRanking(msg: Message) {
+    if (!mongoClient) {
+        return;
+    }
+
     let startDate: Date;
     let endDate: Date;
     let title: String;

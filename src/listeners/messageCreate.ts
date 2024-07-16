@@ -1,6 +1,8 @@
+import { mongoClient } from "../clients/mongo";
 import { wwebClient } from "../clients/wweb";
-import { Events } from "whatsapp-web.js";
-
+import { Events, Message } from "whatsapp-web.js";
+import { MessageObserver } from "../observers/message";
+import { shouldProcessMessage, idPedroGilso, idGrupoLenise } from "../helpers/messageFilter";
 import {
     handlePing,
     handleBot,
@@ -15,8 +17,6 @@ import {
     handleAA
 } from "../events";
 
-import { MessageObserver } from "../observers/message";
-import { shouldProcessMessage } from "../helpers/messageFilter";
 
 const observer = new MessageObserver();
 
@@ -43,4 +43,26 @@ wwebClient.on(Events.MESSAGE_CREATE, async msg => {
     const event = messageBody.split(' ')[0];
     observer.notify(event, msg)
 
+    if (msg.author === idPedroGilso && Math.random() < 0.15) {
+        msg.reply('🤖 cala a boca seu corrupto')
+    }
+
+    if (messageBody.includes('deuita')) {
+        msg.reply('🤖 vai toma no cu')
+    }
+
+    await saveMessageToMongo(msg);
 });
+
+async function saveMessageToMongo(msg: Message) {
+
+    if (!mongoClient || msg.from !== idGrupoLenise || msg.body.startsWith('🤖')) {
+        return;
+    }
+
+    try {
+        await mongoClient.db("rap").collection("messages").insertOne(msg)
+    } catch {
+        console.log("MONGO: error to add message to collections in mongo")
+    }
+}
