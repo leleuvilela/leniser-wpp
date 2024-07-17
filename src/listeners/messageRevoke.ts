@@ -1,14 +1,42 @@
-import { wwebClient } from "../clients/wweb";
+import { Message } from "whatsapp-web.js";
+import { Listener } from "./listener";
 
-import { shouldRevokeMessages } from "../helpers/messageFilter";
+//TODO: REMOVE THIS SHIT
+const idGrupoLenise = '556285359995-1486844624@g.us'
+const idGrupoLeniseGames = '556299031117-1523720875@g.us'
+const idGrupoTeste = '120363311991674552@g.us';
 
-wwebClient.on('message_revoke_everyone', async (after, before) => {
+const allowedNumbersToProcessMessages = [
+    idGrupoLenise,
+    idGrupoLeniseGames,
+    idGrupoTeste,
+]
 
-    if (!shouldRevokeMessages(after)) {
-        return;
+class MessageRevokeListener extends Listener {
+    public async initialize() {
+        this.wwebClient.on('message_revoke_everyone', async (after, before) => {
+            //TODO: get ids from mongo and check if the message is from a valid group
+            if (!this.shouldProcessMessage(after)) {
+                return;
+            }
+
+            if (before && before.type === 'chat') {
+                this.wwebClient.sendMessage(
+                    after.from,
+                    `🤖 apagou mensagem né safado? @${before.author?.split('@')[0]} \n _${before.body}_`, { mentions: [before.author] }
+                )
+            }
+        });
     }
 
-    if (before && before.type === 'chat') {
-        wwebClient.sendMessage(after.from, `🤖 apagou mensagem né safado? @${before.author?.split('@')[0]} \n _${before.body}_`, { mentions: [before.author] })
+    private shouldProcessMessage(msg: Message): boolean {
+        //TODO: get ids from mongo and check if the message is from a valid group
+        if (allowedNumbersToProcessMessages.includes(msg.from)) {
+            return true;
+        }
+
+        return false;
     }
-});
+}
+
+export { MessageRevokeListener };

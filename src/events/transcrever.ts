@@ -1,5 +1,5 @@
 import { Message, MessageTypes } from "whatsapp-web.js";
-import { generateTranscription } from "../helpers/generateTranscription";
+import { generateTranscription } from "../services/generateTranscription";
 
 async function handleTranscrever(msg: Message) {
     const quoted = await msg.getQuotedMessage();

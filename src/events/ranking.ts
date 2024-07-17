@@ -1,5 +1,5 @@
 import { Message } from "whatsapp-web.js";
-import { mongoClient } from "../clients/mongo";
+import { mongoClient } from "../lib/mongo";
 
 async function handleRanking(msg: Message) {
     if (!mongoClient) {
@@ -121,7 +121,7 @@ const numberName = {
     "556298035749@c.us": "Pepes",
     "556286276360@c.us": "Nattan",
     "351914486098@c.us": "Lucas Marina",
-    "33749797329@c.us" : "JP",
+    "33749797329@c.us": "JP",
     "351932340769@c.us": "Leleu",
     "556292037887@c.us": "Vinição",
     "556285388408@c.us": "Cabeça",

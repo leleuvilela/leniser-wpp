@@ -1,5 +1,5 @@
 import { Message, MessageMedia } from "whatsapp-web.js";
-import { generateAudio } from "../helpers/generateAudio";
+import { generateAudio } from "../services/generateAudio";
 
 async function handleFala(msg: Message) {
 

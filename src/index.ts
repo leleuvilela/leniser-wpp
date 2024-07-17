@@ -1,23 +1,11 @@
-import 'dotenv/config'
-import { wwebClient } from './clients/wweb';
-import "./listeners"
-import express from 'express';
+import { Application } from "./app";
+import { mongoClient } from "./lib/mongo";
+import { openaiClient } from "./lib/openai";
+import { wwebClient } from "./lib/wweb";
+import { Server } from "./server";
 
-const app = express();
-const port = process.env.PORT || 3000;
+const app = new Application(mongoClient, openaiClient, wwebClient);
+const server = new Server(app);
 
-app.get('/healthcheck', (req, res) => {
-    res.send('OK');
-})
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-})
-
-function main() {
-    console.log("Initializing wwapweb client");
-    wwebClient.initialize();
-}
-
-main();
-
+app.initialize();
+server.start();

@@ -1,5 +1,5 @@
 import { toFile } from "openai/uploads"
-import { openaiClient } from "../clients/openai"
+import { openaiClient } from "../lib/openai"
 
 async function generateTranscription(audioBuffer: Buffer, translate?: boolean) {
     try {

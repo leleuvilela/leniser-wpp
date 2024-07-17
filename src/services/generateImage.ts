@@ -1,4 +1,4 @@
-import { openaiClient } from "../clients/openai"
+import { openaiClient } from "../lib/openai"
 
 const generateImage = async (prompt: string) => {
     const image = await openaiClient.images.generate({

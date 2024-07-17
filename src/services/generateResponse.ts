@@ -1,5 +1,5 @@
 import { ChatCompletionCreateParamsNonStreaming, ChatCompletionContentPart } from "openai/resources";
-import { openaiClient } from "../clients/openai";
+import { openaiClient } from "../lib/openai";
 
 async function generateResponse(systemRoleMessage: string, prompts: ChatCompletionContentPart[]) {
     try {
