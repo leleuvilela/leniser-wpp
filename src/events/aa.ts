@@ -1,4 +1,4 @@
-import { Message } from "whatsapp-web.js";
+import { type Message } from "whatsapp-web.js";
 
 const aaMessage = `🤖 Olá! 🍀
 
@@ -16,8 +16,8 @@ Lembre-se de que pedir ajuda é um sinal de força, e há pessoas dispostas a aj
 
 Cuide-se e fique bem! 💚`;
 
-function handleAA(msg: Message) {
-    msg.reply(aaMessage);
+async function handleAA(msg: Message): Promise<Message> {
+    return await msg.reply(aaMessage);
 }
 
-export { handleAA as handleAA };
+export { handleAA };

@@ -1,5 +1,4 @@
-import { Message } from "whatsapp-web.js";
-import { handleMenu, handlePing, handleBot, handleChecagem, handleFala, handleImagem, handleRankingImage, handleRanking, handleTranscrever, handleSticker, handleAA } from "../events";
+import { type Message } from "whatsapp-web.js";
 
 interface Listener {
     event: string;
@@ -13,21 +12,7 @@ export class MessageObserver {
         this.listeners = [];
     }
 
-    public startListeners() {
-        this.addListener("!menu", handleMenu);
-        this.addListener('!ping', handlePing);
-        this.addListener("!bot", handleBot);
-        this.addListener("!checagem", handleChecagem);
-        this.addListener("!fala", handleFala);
-        this.addListener("!imagem", handleImagem);
-        this.addListener("!ranking-imagem", handleRankingImage);
-        this.addListener("!ranking", handleRanking);
-        this.addListener("!transcrever", handleTranscrever);
-        this.addListener("!sticker", handleSticker);
-        this.addListener("!aa", handleAA);
-    }
-
-    public addListener(event: string, listener: (msg: Message) => void) {
+    public addListener(event: string, listener: (msg: Message) => Promise<void> | Promise<Message>) {
         this.listeners.push({ event, listener });
     }
 

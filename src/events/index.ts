@@ -5,7 +5,7 @@ export { handleFala } from './fala';
 export { handleImagem } from './imagem';
 export { handleRankingImage } from './ranking-image';
 export { handleRanking } from './ranking';
-export { handleTranscrever } from './transcrever'
-export { handleSticker } from './sticker'
-export { handleMenu } from './menu'
-export { handleAA } from './aa'
+export { handleTranscrever } from './transcrever';
+export { handleSticker } from './sticker';
+export { handleMenu } from './menu';
+export { handleAA } from './aa';

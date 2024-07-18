@@ -1,4 +1,4 @@
-import { openaiClient } from "../lib/openai"
+import { openaiClient } from "../lib/openai";
 
 const generateImage = async (prompt: string) => {
     const image = await openaiClient.images.generate({
@@ -8,9 +8,9 @@ const generateImage = async (prompt: string) => {
         size: '1024x1024',
         n: 1,
         prompt,
-    })
+    });
 
     return image;
-}
+};
 
 export { generateImage };

@@ -1,6 +1,7 @@
-type CooldownFunction<T extends (...args: any[]) => any> = (...args: Parameters<T>) => ReturnType<T> | void;
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
+type CooldownFunction<T extends (...args: unknown[]) => unknown> = (...args: Parameters<T>) => ReturnType<T> | void;
 
-function createCooldownFunction<T extends (...args: any[]) => any>(fn: T, cooldown: number): CooldownFunction<T> {
+function createCooldownFunction<T extends (...args: unknown[]) => unknown>(fn: T, cooldown: number): CooldownFunction<T> {
     let isCooldown = false;
 
     return function (...args: Parameters<T>): ReturnType<T> | void {

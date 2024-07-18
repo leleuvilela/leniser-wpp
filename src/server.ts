@@ -1,12 +1,12 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import express from 'express';
 import { HealthCheckRoutes } from './routes/healthcheck';
-import { Application } from './app';
+import { type Application } from './app';
 
 class Server {
     application: Application;
-    private app: express.Application;
-    private port: number;
+    private readonly app: express.Application;
+    private readonly port: number;
 
     constructor(application: Application) {
         this.application = application;

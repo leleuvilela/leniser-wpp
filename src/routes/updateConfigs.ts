@@ -3,10 +3,11 @@ import { Application } from "../app";
 
 class updateConfigsRoutes {
     public router: Router;
-    private application: Application;
+    private readonly application: Application;
 
     constructor(application: Application) {
         this.router = Router();
+        this.application = application;
         this.intializeRoutes();
     }
 

@@ -1,4 +1,7 @@
-import { Client, LocalAuth, Poll } from 'whatsapp-web.js';
+import {
+    Client,
+    LocalAuth,
+} from 'whatsapp-web.js';
 
 const wwebVersion = '2.2412.54';
 

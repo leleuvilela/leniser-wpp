@@ -1,4 +1,4 @@
-import { Message, MessageMedia } from "whatsapp-web.js";
+import { type Message, MessageMedia } from "whatsapp-web.js";
 import { createCooldownFunction } from "../utils/createCooldown";
 import { generateImage } from "../services/generateImage";
 
@@ -17,7 +17,7 @@ const cooldownSeconds = process.env.IMAGE_COOLDOWN_SECONDS
 
 const generateImageCd = createCooldownFunction(generateImage, cooldownSeconds);
 
-async function handleImagem(msg: Message) {
+async function handleImagem(msg: Message): Promise<Message> {
     const textArray = msg.body.split(' ');
     textArray.shift();
     const text = textArray.join(' ');
@@ -27,16 +27,15 @@ async function handleImagem(msg: Message) {
             ? await generateImage(text)
             : await generateImageCd(text);
 
-        if (!imageRes) {
-            msg.reply('🤖 Pera aí, tá em cooldown...');
-            return;
+        if (!imageRes || !imageRes.data[0]?.b64_json) {
+            return msg.reply('🤖 Pera aí, tá em cooldown...');
         }
 
         const imageBase64 = imageRes.data[0]?.b64_json;
-        msg.reply(new MessageMedia('image/jpeg', imageBase64));
+        return msg.reply(new MessageMedia('image/jpeg', imageBase64));
     } catch (error) {
         console.log(error);
-        msg.reply('🤖 Calma lá calabreso, isso aí não pode não.');
+        return msg.reply('🤖 Calma lá calabreso, isso aí não pode não.');
     }
 }
 

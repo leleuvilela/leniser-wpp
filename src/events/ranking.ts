@@ -1,14 +1,14 @@
-import { Message } from "whatsapp-web.js";
+import { type Message } from "whatsapp-web.js";
 import { mongoClient } from "../lib/mongo";
 
-async function handleRanking(msg: Message) {
+async function handleRanking(msg: Message): Promise<Message> {
     if (!mongoClient) {
-        return;
+        return msg.reply("🤖 Erro ao conectar com o banco de dados.");
     }
 
     let startDate: Date;
     let endDate: Date;
-    let title: String;
+    let title: string;
 
     if (msg.body.toLowerCase() === "!ranking dia") {
         startDate = getStartOfDay();
@@ -27,13 +27,12 @@ async function handleRanking(msg: Message) {
         endDate = new Date();
         title = "Ranking Geral";
     } else {
-        msg.reply("🤖 Comando inválido. Tente `!menu`.");
-        return;
+        return msg.reply("🤖 Comando inválido. Tente `!menu`.");
     }
 
-    var response = await generateMessageCountsText(startDate, endDate, title);
+    const response = await generateMessageCountsText(startDate, endDate, title);
 
-    msg.reply(`🤖 ${response}`);
+    return msg.reply(`🤖 ${response}`);
 }
 
 function getStartOfDay(): Date {
@@ -52,7 +51,7 @@ function getStartOfMonth(): Date {
     return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
-async function generateMessageCountsText(startDate: Date, endDate: Date, title: String) {
+async function generateMessageCountsText(startDate: Date, endDate: Date, title: string) {
     const results = await getMessageCountsByUser(startDate, endDate);
 
     if (!results || results.length === 0) {
@@ -70,6 +69,10 @@ async function generateMessageCountsText(startDate: Date, endDate: Date, title: 
 
 async function getMessageCountsByUser(startDate: Date, endDate: Date) {
     try {
+        if (!mongoClient) {
+            return;
+        }
+
         const db = mongoClient.db("rap");
         const collection = db.collection("messages");
 
@@ -134,7 +137,7 @@ const numberName = {
     "556283282310@c.us": "Gilso",
     "556282378429@c.us": "Mycael",
     "556284845169@c.us": "Danillo Sena",
-}
+};
 
 export { handleRanking };
 

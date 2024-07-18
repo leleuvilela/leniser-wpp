@@ -1,7 +1,7 @@
-import { Message } from "whatsapp-web.js";
+import { type Message } from "whatsapp-web.js";
 
-function handlePing(msg: Message) {
-    msg.reply('🤖 pong');
+function handlePing(msg: Message): Promise<Message> {
+    return msg.reply('🤖 pong');
 }
 
 export { handlePing };

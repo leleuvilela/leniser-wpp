@@ -1,11 +1,11 @@
-import { Message, MessageTypes } from "whatsapp-web.js";
+import { type Message, MessageTypes } from "whatsapp-web.js";
 import { generateTranscription } from "../services/generateTranscription";
 
-async function handleTranscrever(msg: Message) {
+async function handleTranscrever(msg: Message): Promise<Message> {
     const quoted = await msg.getQuotedMessage();
 
     if (!quoted || (quoted.type !== MessageTypes.AUDIO && quoted.type !== MessageTypes.VOICE)) {
-        return msg.reply('🤖 A mensagem precisa ser um áudio.')
+        return await msg.reply('🤖 A mensagem precisa ser um áudio.')
     }
 
     const chat = await msg.getChat();
@@ -27,7 +27,7 @@ async function handleTranscrever(msg: Message) {
         return msg.reply(`🤖 ${transcription}`);
     } catch (e) {
         console.log(e)
-        return msg.reply(`🤖 eita, pera. algo de errado não está certo.`)
+        return await msg.reply(`🤖 eita, pera. algo de errado não está certo.`)
     }
 }
 

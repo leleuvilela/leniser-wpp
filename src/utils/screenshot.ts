@@ -10,12 +10,12 @@ const screenshot = async (url: string) => {
         args: ['--no-sandbox']
     });
     const page = await browser.newPage();
-    await page.goto(url)
+    await page.goto(url);
     await page.waitForNetworkIdle({ idleTime: 2000 });
-    const screenshot = await page.screenshot({ type: "jpeg" })
+    const screenshot = await page.screenshot({ type: "jpeg" });
     await browser.close();
     return screenshot;
-}
+};
 
 export { screenshot };
 

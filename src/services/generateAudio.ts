@@ -9,6 +9,6 @@ const generateAudio = async (text: string) => {
 
     const buffer = Buffer.from(await mp3.arrayBuffer());
     return buffer;
-}
+};
 
 export { generateAudio };
