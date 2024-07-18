@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { HealthCheckRoutes } from './routes/healthcheck';
+import { HealthCheckRoutes } from './api/healthcheck';
 import { type Application } from './app';
 
 class Server {

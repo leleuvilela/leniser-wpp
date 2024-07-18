@@ -1,6 +1,6 @@
 import { type ChatCompletionContentPart } from "openai/resources";
 import { type Message } from "whatsapp-web.js";
-import { generateResponse } from "../services/generateResponse";
+import { generateResponse } from "../../infrastructure/openAi/responseService";
 
 const systemRoleMessage = `Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas.
     Caso eu forneça apenas um prompt, você deve responde-lo.

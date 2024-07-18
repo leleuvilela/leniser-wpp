@@ -1,13 +1,13 @@
 import { type MongoClient } from "mongodb";
-import type OpenAI from "openai";
+import { type OpenAI } from "openai";
 import { type Client as WwebClient } from "whatsapp-web.js";
-import { MessageObserver } from "./observers/message";
-import { AuthenticationListener } from "./listeners/authentication";
-import { MessageCreateListener } from "./listeners/messageCreate";
-import { MessageRevokeListener } from "./listeners/messageRevoke";
+import { MessageObserver } from "./application/observers/messageObserver";
+import { AuthenticationListener } from "./application/listeners/authentication";
+import { MessageCreateListener } from "./application/listeners/messageCreate";
+import { MessageRevokeListener } from "./application/listeners/messageRevoke";
 
 class Application {
-    mongo: MongoClient;
+    mongo: MongoClient | null;
     openai: OpenAI;
     wweb: WwebClient;
     messageObserver: MessageObserver;
@@ -16,7 +16,7 @@ class Application {
     messageCreateListener: MessageCreateListener;
     messageRevokeListener: MessageRevokeListener;
 
-    constructor(mongoClient: MongoClient, openaiClient: OpenAI, wwebClient: WwebClient) {
+    constructor(mongoClient: MongoClient | null, openaiClient: OpenAI, wwebClient: WwebClient) {
         this.mongo = mongoClient;
         this.openai = openaiClient;
         this.wweb = wwebClient;
@@ -27,9 +27,6 @@ class Application {
     }
 
     public initialize(): void {
-        console.log("Starting message listeners");
-        this.messageCreateListener.startListeners();
-
         console.log("Starting wweb listeners");
         this.authenticationListener.initialize();
         this.messageCreateListener.initialize();

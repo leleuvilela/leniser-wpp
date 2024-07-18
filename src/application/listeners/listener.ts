@@ -1,16 +1,13 @@
 import { type MongoClient } from "mongodb";
 import { type Client as WwebClient } from "whatsapp-web.js";
-import { MessageObserver } from "../observers/message";
 
 class Listener {
     wwebClient: WwebClient;
-    mongoClient: MongoClient;
-    messageObserver: MessageObserver;
+    mongoClient: MongoClient | null;
 
-    constructor(wwebClient: WwebClient, mongoClient: MongoClient) {
+    constructor(wwebClient: WwebClient, mongoClient: MongoClient | null) {
         this.wwebClient = wwebClient;
         this.mongoClient = mongoClient;
-        this.messageObserver = new MessageObserver();
     }
 }
 

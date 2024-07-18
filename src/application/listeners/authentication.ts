@@ -16,7 +16,7 @@ class AuthenticationListener extends Listener {
             //TODO: Remove this connection in DB to separate the responsability ----
             const uri = process.env.DB_URI;
 
-            if (!uri) {
+            if (!uri || !this.mongoClient) {
                 console.log('DB URI NOT FOUND');
                 return;
             }

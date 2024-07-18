@@ -1,6 +1,6 @@
 import { type Message, MessageMedia } from "whatsapp-web.js";
-import { createCooldownFunction } from "../utils/createCooldown";
-import { generateImage } from "../services/generateImage";
+import { createCooldownFunction } from "../../utils/createCooldown";
+import { generateImage } from "../../infrastructure/openAi/imageService";
 
 const disableCooldown = process.env.IMAGE_COOLDOWN_DISABLED === 'true';
 

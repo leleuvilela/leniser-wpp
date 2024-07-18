@@ -1,5 +1,6 @@
 import { Events, type Message } from "whatsapp-web.js";
 import { Listener } from "./listener";
+
 import {
     handleMenu,
     handlePing,
@@ -13,6 +14,7 @@ import {
     handleSticker,
     handleAA
 } from "../events";
+import { MessageObserver } from "../observers/messageObserver";
 
 //TODO: REMOVE THIS SHIT
 const idGrupoLenise = "556285359995-1486844624@g.us";
@@ -26,7 +28,15 @@ const allowedNumbersToProcessMessages = [
 ];
 
 class MessageCreateListener extends Listener {
+
+    messageObserver: MessageObserver;
+
     public async initialize() {
+
+        this.messageObserver = new MessageObserver();
+
+        this.startListeners();
+
         this.wwebClient.on(Events.MESSAGE_CREATE, async msg => {
 
             if (!this.shouldProcessMessage(msg)) {
@@ -46,7 +56,7 @@ class MessageCreateListener extends Listener {
         });
     }
 
-    public startListeners(): void {
+    private startListeners(): void {
         this.messageObserver.addListener("!menu", handleMenu);
         this.messageObserver.addListener('!ping', handlePing);
         this.messageObserver.addListener("!bot", handleBot);
