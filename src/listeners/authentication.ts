@@ -1,37 +1,44 @@
-import { mongoClient } from "../clients/mongo";
-import { wwebClient } from "../clients/wweb";
 import * as qrcode from 'qrcode-terminal';
+import { Listener } from './listener';
 
-wwebClient.on('qr', (qr) => {
-    // NOTE: This event will not be fired if a session is specified.
-    console.log('QR RECEIVED', qr);
-    qrcode.generate(qr, { small: true });
-});
+class AuthenticationListener extends Listener {
+
+    public async initialize() {
+        this.wwebClient.on('qr', (qr) => {
+            console.log('QR RECEIVED', qr);
+            qrcode.generate(qr, { small: true });
+        });
 
 
-wwebClient.on('authenticated', async () => {
-    console.log('AUTHENTICATED ON WHATSAPP');
+        this.wwebClient.on('authenticated', async () => {
+            console.log('AUTHENTICATED ON WHATSAPP');
 
-    const uri = process.env.DB_URI;
+            //TODO: Remove this connection in DB to separate the responsability ----
+            const uri = process.env.DB_URI;
 
-    if (!uri){
-        console.log('DB URI NOT FOUND');
-        return;
+            if (!uri) {
+                console.log('DB URI NOT FOUND');
+                return;
+            }
+
+            await this.mongoClient.connect();
+            await this.mongoClient.db("lenise").command({ ping: 1 });
+
+            console.log('DB CONNECTED');
+            // ------------------------------------------------------------------
+        });
+
+
+        this.wwebClient.on('auth_failure', msg => {
+            // Fired if session restore was unsuccessful
+            console.error('AUTHENTICATION FAILURE', msg);
+        });
+
+        this.wwebClient.on('ready', () => {
+            console.log('READY');
+        });
+
     }
+}
 
-    await mongoClient.connect();
-    await mongoClient.db("lenise").command({ ping: 1 });
-
-    console.log('DB CONNECTED');
-});
-
-
-wwebClient.on('auth_failure', msg => {
-    // Fired if session restore was unsuccessful
-    console.error('AUTHENTICATION FAILURE', msg);
-});
-
-wwebClient.on('ready', () => {
-    console.log('READY');
-});
-
+export { AuthenticationListener };

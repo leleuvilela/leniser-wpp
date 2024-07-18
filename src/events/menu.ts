@@ -1,4 +1,4 @@
-import { Message } from "whatsapp-web.js";
+import { type Message } from "whatsapp-web.js";
 
 const menuMessage = `Menu
 
@@ -17,8 +17,8 @@ Exemplo:
 !fala o deuita roubou pão na casa do joão
 \`\`\``;
 
-function handleMenu(msg: Message) {
-    msg.reply('🤖 ' + menuMessage);
+function handleMenu(msg: Message): Promise<Message> {
+    return msg.reply('🤖 ' + menuMessage);
 }
 
 export { handleMenu };

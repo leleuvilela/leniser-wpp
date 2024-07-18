@@ -1,4 +1,4 @@
-import { Message } from "whatsapp-web.js";
+import { type Message } from "whatsapp-web.js";
 
 interface Listener {
     event: string;
@@ -12,11 +12,11 @@ export class MessageObserver {
         this.listeners = [];
     }
 
-    addListener(event: string, listener: (msg: Message) => void) {
+    public addListener(event: string, listener: (msg: Message) => Promise<void> | Promise<Message>) {
         this.listeners.push({ event, listener });
     }
 
-    notify(event: string, msg: Message) {
+    public notify(event: string, msg: Message) {
         this.listeners.forEach(listener => {
             if (listener.event === event) {
                 listener.listener(msg);

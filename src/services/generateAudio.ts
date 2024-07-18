@@ -1,4 +1,4 @@
-import { openaiClient } from "../clients/openai";
+import { openaiClient } from "../lib/openai";
 
 const generateAudio = async (text: string) => {
     const mp3 = await openaiClient.audio.speech.create({
@@ -9,6 +9,6 @@ const generateAudio = async (text: string) => {
 
     const buffer = Buffer.from(await mp3.arrayBuffer());
     return buffer;
-}
+};
 
 export { generateAudio };

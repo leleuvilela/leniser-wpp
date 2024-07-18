@@ -1,9 +1,9 @@
-import 'dotenv/config'
+import 'dotenv/config';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
 const uri = process.env.DB_URI;
 
-let mongoClient: MongoClient | null
+let mongoClient: MongoClient | null;
 
 if (uri) {
 
@@ -13,7 +13,7 @@ if (uri) {
             strict: true,
             deprecationErrors: true,
         }
-    })
+    });
 }
 
-export { mongoClient }
+export { mongoClient };

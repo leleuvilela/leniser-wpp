@@ -1,9 +1,7 @@
-import { mongoClient } from "../clients/mongo";
-import { wwebClient } from "../clients/wweb";
-import { Events, Message } from "whatsapp-web.js";
-import { MessageObserver } from "../observers/message";
-import { shouldProcessMessage, idPedroGilso, idGrupoLenise } from "../helpers/messageFilter";
+import { Events, type Message } from "whatsapp-web.js";
+import { Listener } from "./listener";
 import {
+    handleMenu,
     handlePing,
     handleBot,
     handleChecagem,
@@ -12,57 +10,81 @@ import {
     handleRankingImage,
     handleRanking,
     handleTranscrever,
-    handleMenu,
     handleSticker,
     handleAA
 } from "../events";
 
+//TODO: REMOVE THIS SHIT
+const idGrupoLenise = "556285359995-1486844624@g.us";
+const idGrupoLeniseGames = '556299031117-1523720875@g.us';
+const idGrupoTeste = '120363311991674552@g.us';
 
-const observer = new MessageObserver();
+const allowedNumbersToProcessMessages = [
+    idGrupoLenise,
+    idGrupoLeniseGames,
+    idGrupoTeste,
+];
 
-observer.addListener("!menu", handleMenu);
-observer.addListener('!ping', handlePing);
-observer.addListener("!bot", handleBot);
-observer.addListener("!checagem", handleChecagem);
-observer.addListener("!fala", handleFala);
-observer.addListener("!imagem", handleImagem);
-observer.addListener("!ranking-imagem", handleRankingImage);
-observer.addListener("!ranking", handleRanking);
-observer.addListener("!transcrever", handleTranscrever);
-observer.addListener("!sticker", handleSticker);
-observer.addListener("!aa", handleAA);
+class MessageCreateListener extends Listener {
+    public async initialize() {
+        this.wwebClient.on(Events.MESSAGE_CREATE, async msg => {
 
-wwebClient.on(Events.MESSAGE_CREATE, async msg => {
+            if (!this.shouldProcessMessage(msg)) {
+                return;
+            }
 
-    if (!shouldProcessMessage(msg)) {
-        return;
+            const messageBody = msg.body.toLowerCase();
+
+            const event = messageBody.split(' ')[0];
+            this.messageObserver.notify(event, msg);
+
+            if (messageBody.includes('deuita')) {
+                msg.reply('🤖 vai toma no cu');
+            }
+
+            await this.saveMessageToMongo(msg);
+        });
     }
 
-    const messageBody = msg.body.toLowerCase();
-
-    const event = messageBody.split(' ')[0];
-    observer.notify(event, msg)
-
-    if (msg.author === idPedroGilso && Math.random() < 0.15) {
-        msg.reply('🤖 cala a boca seu corrupto')
+    public startListeners(): void {
+        this.messageObserver.addListener("!menu", handleMenu);
+        this.messageObserver.addListener('!ping', handlePing);
+        this.messageObserver.addListener("!bot", handleBot);
+        this.messageObserver.addListener("!checagem", handleChecagem);
+        this.messageObserver.addListener("!fala", handleFala);
+        this.messageObserver.addListener("!imagem", handleImagem);
+        this.messageObserver.addListener("!ranking-imagem", handleRankingImage);
+        this.messageObserver.addListener("!ranking", handleRanking);
+        this.messageObserver.addListener("!transcrever", handleTranscrever);
+        this.messageObserver.addListener("!sticker", handleSticker);
+        this.messageObserver.addListener("!aa", handleAA);
     }
 
-    if (messageBody.includes('deuita')) {
-        msg.reply('🤖 vai toma no cu')
+    private async saveMessageToMongo(msg: Message): Promise<void> {
+        //TODO: get ids from mongo and check if the message is from a valid group
+        if (
+            !this.mongoClient ||
+            msg.from !== idGrupoLenise ||
+            msg.body.startsWith('🤖')
+        ) {
+            return;
+        }
+
+        try {
+            await this.mongoClient.db("rap").collection("messages").insertOne(msg);
+        } catch {
+            console.log("MONGO: error to add message to collections in mongo");
+        }
     }
 
-    await saveMessageToMongo(msg);
-});
+    private shouldProcessMessage(msg: Message): boolean {
+        //TODO: get ids from mongo and check if the message is from a valid group
+        if (allowedNumbersToProcessMessages.includes(msg.from) || allowedNumbersToProcessMessages.includes(msg.to)) {
+            return true;
+        }
 
-async function saveMessageToMongo(msg: Message) {
-
-    if (!mongoClient || msg.from !== idGrupoLenise || msg.body.startsWith('🤖')) {
-        return;
-    }
-
-    try {
-        await mongoClient.db("rap").collection("messages").insertOne(msg)
-    } catch {
-        console.log("MONGO: error to add message to collections in mongo")
+        return false;
     }
 }
+
+export { MessageCreateListener };

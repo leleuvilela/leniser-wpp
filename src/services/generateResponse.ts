@@ -1,5 +1,8 @@
-import { ChatCompletionCreateParamsNonStreaming, ChatCompletionContentPart } from "openai/resources";
-import { openaiClient } from "../clients/openai";
+import {
+type ChatCompletionCreateParamsNonStreaming,
+type ChatCompletionContentPart
+} from "openai/resources";
+import { openaiClient } from "../lib/openai";
 
 async function generateResponse(systemRoleMessage: string, prompts: ChatCompletionContentPart[]) {
     try {
@@ -14,12 +17,12 @@ async function generateResponse(systemRoleMessage: string, prompts: ChatCompleti
             temperature: 0.5,
             max_tokens: 264,
             top_p: 1,
-        }
+        };
 
         req.messages.push({
             role: "user",
             content: prompts
-        })
+        });
 
         const completion = await openaiClient.chat.completions.create(req);
         return completion.choices[0].message.content?.trim();
