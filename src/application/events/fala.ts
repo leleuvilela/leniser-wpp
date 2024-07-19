@@ -1,5 +1,5 @@
 import { type Message, MessageMedia } from "whatsapp-web.js";
-import { generateAudio } from "../services/generateAudio";
+import { generateAudio } from "../../infrastructure/openAi/audioService";
 
 async function handleFala(msg: Message): Promise<Message> {
 

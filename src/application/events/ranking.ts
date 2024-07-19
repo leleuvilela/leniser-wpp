@@ -1,5 +1,5 @@
 import { type Message } from "whatsapp-web.js";
-import { mongoClient } from "../lib/mongo";
+import { mongoClient } from "../../infrastructure/mongo";
 
 async function handleRanking(msg: Message): Promise<Message> {
     if (!mongoClient) {

@@ -1,5 +1,7 @@
-import { Events, type Message } from "whatsapp-web.js";
+import { type MongoClient } from "mongodb";
+import { Message, Client } from "whatsapp-web.js";
 import { Listener } from "./listener";
+
 import {
     handleMenu,
     handlePing,
@@ -13,6 +15,7 @@ import {
     handleSticker,
     handleAA
 } from "../events";
+import { MessageObserver } from "../observers/messageObserver";
 
 //TODO: REMOVE THIS SHIT
 const idGrupoLenise = "556285359995-1486844624@g.us";
@@ -26,27 +29,36 @@ const allowedNumbersToProcessMessages = [
 ];
 
 class MessageCreateListener extends Listener {
-    public async initialize() {
-        this.wwebClient.on(Events.MESSAGE_CREATE, async msg => {
 
-            if (!this.shouldProcessMessage(msg)) {
-                return;
-            }
+    messageObserver: MessageObserver;
+    mongoClient: MongoClient | null;
 
-            const messageBody = msg.body.toLowerCase();
+    constructor(wwebClient: Client, mongoClient: MongoClient | null) {
+        super(wwebClient)
 
-            const event = messageBody.split(' ')[0];
-            this.messageObserver.notify(event, msg);
-
-            if (messageBody.includes('deuita')) {
-                msg.reply('🤖 vai toma no cu');
-            }
-
-            await this.saveMessageToMongo(msg);
-        });
+        this.mongoClient = mongoClient;
+        this.messageObserver = new MessageObserver();
+        this.startListeners();
     }
 
-    public startListeners(): void {
+    async handleMessage(msg: Message){
+        if (!this.shouldProcessMessage(msg)) {
+            return;
+        }
+
+        const messageBody = msg.body.toLowerCase();
+
+        const event = messageBody.split(' ')[0];
+        this.messageObserver.notify(event, msg);
+
+        if (messageBody.includes('deuita')) {
+            msg.reply('🤖 vai toma no cu');
+        }
+
+        await this.saveMessageToMongo(msg);
+    }
+
+    private startListeners(): void {
         this.messageObserver.addListener("!menu", handleMenu);
         this.messageObserver.addListener('!ping', handlePing);
         this.messageObserver.addListener("!bot", handleBot);

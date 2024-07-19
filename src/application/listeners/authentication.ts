@@ -1,7 +1,15 @@
 import * as qrcode from 'qrcode-terminal';
+import { type MongoClient } from "mongodb";
 import { Listener } from './listener';
+import { Client } from 'whatsapp-web.js';
 
 class AuthenticationListener extends Listener {
+    mongoClient: MongoClient | null;
+
+    constructor(wwebClient: Client, mongoClient: MongoClient | null) {
+        super(wwebClient);
+        this.mongoClient = mongoClient;
+    }
 
     public async initialize() {
         this.wwebClient.on('qr', (qr) => {
@@ -16,7 +24,7 @@ class AuthenticationListener extends Listener {
             //TODO: Remove this connection in DB to separate the responsability ----
             const uri = process.env.DB_URI;
 
-            if (!uri) {
+            if (!uri || !this.mongoClient) {
                 console.log('DB URI NOT FOUND');
                 return;
             }
