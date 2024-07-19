@@ -1,4 +1,5 @@
-import { Events, type Message } from "whatsapp-web.js";
+import { type MongoClient } from "mongodb";
+import { Message, Client } from "whatsapp-web.js";
 import { Listener } from "./listener";
 
 import {
@@ -30,30 +31,31 @@ const allowedNumbersToProcessMessages = [
 class MessageCreateListener extends Listener {
 
     messageObserver: MessageObserver;
+    mongoClient: MongoClient | null;
 
-    public async initialize() {
+    constructor(wwebClient: Client, mongoClient: MongoClient | null) {
+        super(wwebClient)
 
+        this.mongoClient = mongoClient;
         this.messageObserver = new MessageObserver();
-
         this.startListeners();
+    }
 
-        this.wwebClient.on(Events.MESSAGE_CREATE, async msg => {
+    async handleMessage(msg: Message){
+        if (!this.shouldProcessMessage(msg)) {
+            return;
+        }
 
-            if (!this.shouldProcessMessage(msg)) {
-                return;
-            }
+        const messageBody = msg.body.toLowerCase();
 
-            const messageBody = msg.body.toLowerCase();
+        const event = messageBody.split(' ')[0];
+        this.messageObserver.notify(event, msg);
 
-            const event = messageBody.split(' ')[0];
-            this.messageObserver.notify(event, msg);
+        if (messageBody.includes('deuita')) {
+            msg.reply('🤖 vai toma no cu');
+        }
 
-            if (messageBody.includes('deuita')) {
-                msg.reply('🤖 vai toma no cu');
-            }
-
-            await this.saveMessageToMongo(msg);
-        });
+        await this.saveMessageToMongo(msg);
     }
 
     private startListeners(): void {

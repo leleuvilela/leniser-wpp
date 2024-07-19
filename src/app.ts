@@ -23,7 +23,7 @@ class Application {
 
         this.authenticationListener = new AuthenticationListener(wwebClient, mongoClient);
         this.messageCreateListener = new MessageCreateListener(wwebClient, mongoClient);
-        this.messageRevokeListener = new MessageRevokeListener(wwebClient, mongoClient);
+        this.messageRevokeListener = new MessageRevokeListener(wwebClient);
     }
 
     public initialize(): void {
