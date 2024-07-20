@@ -1,14 +1,22 @@
-import { openaiClient } from "../openai";
+import OpenAI from "openai";
+import { IAudioService } from "../../application/contracts/IAudioService";
 
-const generateAudio = async (text: string) => {
-    const mp3 = await openaiClient.audio.speech.create({
-        model: "tts-1",
-        voice: "onyx",
-        input: text
-    });
+export class AudioService implements IAudioService {
+    openAIClient: OpenAI
 
-    const buffer = Buffer.from(await mp3.arrayBuffer());
-    return buffer;
-};
+    public static inject = ['openAIClient'] as const;
+    constructor(openAIClient: OpenAI) {
+        this.openAIClient = openAIClient;
+    }
 
-export { generateAudio };
+    async generateAudio(text: string): Promise<Buffer> {
+        const mp3 = await this.openAIClient.audio.speech.create({
+            model: "tts-1",
+            voice: "onyx",
+            input: text
+        });
+
+        const buffer = Buffer.from(await mp3.arrayBuffer());
+        return buffer;
+    }
+}

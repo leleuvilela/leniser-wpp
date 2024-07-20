@@ -1,36 +1,48 @@
-import { openaiClient } from "../openai";
+import { OpenAI } from "openai";
+import { IResponseService } from "../../application/contracts/IResponseService";
 import {
     type ChatCompletionCreateParamsNonStreaming,
     type ChatCompletionContentPart
 } from "openai/resources";
 
-async function generateResponse(systemRoleMessage: string, prompts: ChatCompletionContentPart[]) {
-    try {
-        const req: ChatCompletionCreateParamsNonStreaming = {
-            model: "gpt-4o",
-            messages: [
-                {
-                    role: "system",
-                    content: systemRoleMessage
-                },
-            ],
-            temperature: 0.5,
-            max_tokens: 264,
-            top_p: 1,
-        };
+export class ResponseService implements IResponseService {
 
-        req.messages.push({
-            role: "user",
-            content: prompts
-        });
+    private openAIClient: OpenAI
 
-        const completion = await openaiClient.chat.completions.create(req);
-        return completion.choices[0].message.content?.trim();
+    public static inject = ['openAIClient'] as const;
 
-    } catch (error) {
-        console.error("Erro ao gerar resposta:", error);
-        return "🤖 ih carai, deu erro aqui, foi mal.";
+    constructor(openAIClient: OpenAI) {
+        this.openAIClient = openAIClient;
     }
-}
 
-export { generateResponse };
+    async generateResponse(systemRoleMessage: string, prompts: ChatCompletionContentPart[]): Promise<string> {
+
+        try {
+            const req: ChatCompletionCreateParamsNonStreaming = {
+                model: "gpt-4o",
+                messages: [
+                    {
+                        role: "system",
+                        content: systemRoleMessage
+                    },
+                ],
+                temperature: 0.5,
+                max_tokens: 264,
+                top_p: 1,
+            };
+
+            req.messages.push({
+                role: "user",
+                content: prompts
+            });
+
+            const completion = await this.openAIClient.chat.completions.create(req);
+            return completion.choices[0].message.content?.trim() ?? "ih carai, deu erro aqui, foi mal.";
+
+        } catch (error) {
+            console.error("Erro ao gerar resposta:", error);
+            return "ih carai, deu erro aqui, foi mal.";
+        }
+    }
+
+}

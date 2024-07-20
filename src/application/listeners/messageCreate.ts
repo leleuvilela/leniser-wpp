@@ -1,21 +1,18 @@
-import { type MongoClient } from "mongodb";
 import { Message, Client } from "whatsapp-web.js";
 import { Listener } from "./listener";
 
 import {
     handleMenu,
     handlePing,
-    handleBot,
     handleChecagem,
-    handleFala,
-    handleImagem,
-    handleRankingImage,
-    handleRanking,
-    handleTranscrever,
     handleSticker,
-    handleAA
 } from "../events";
+
 import { MessageObserver } from "../observers/messageObserver";
+import { MessageRepository } from "../../infrastructure/repositories/messagesRepository";
+import { FalaHandler } from "../events/fala";
+import { RankingHandler } from "../events/ranking";
+import { BotHandler } from "../events/bot";
 
 //TODO: REMOVE THIS SHIT
 const idGrupoLenise = "556285359995-1486844624@g.us";
@@ -28,29 +25,50 @@ const allowedNumbersToProcessMessages = [
     idGrupoTeste,
 ];
 
-class MessageCreateListener extends Listener {
-
+export class MessageCreateListener extends Listener {
     messageObserver: MessageObserver;
-    mongoClient: MongoClient | null;
+    messageRepository: MessageRepository;
 
-    constructor(wwebClient: Client, mongoClient: MongoClient | null) {
+    botHandler: BotHandler;
+    falaHandler: FalaHandler;
+    rankingHandler: RankingHandler;
+
+    public static inject = [
+        'wwebClient',
+        'messageRepository',
+        'botHandler',
+        'falaHandler',
+        'rankingHandler',
+    ] as const;
+
+    constructor(
+        wwebClient: Client,
+        messageRepository: MessageRepository,
+        botHandler: BotHandler,
+        falaHandler: FalaHandler,
+        rankingHandler: RankingHandler,
+    ) {
         super(wwebClient)
 
-        this.mongoClient = mongoClient;
         this.messageObserver = new MessageObserver();
+
+        this.botHandler = botHandler;
+        this.falaHandler = falaHandler;
+        this.rankingHandler = rankingHandler;
+
+        this.messageRepository = messageRepository;
+
         this.startListeners();
     }
 
-    async handleMessage(msg: Message){
+    async handleMessage(msg: Message) {
         if (!this.shouldProcessMessage(msg)) {
             return;
         }
 
+        this.messageObserver.notify(msg);
+
         const messageBody = msg.body.toLowerCase();
-
-        const event = messageBody.split(' ')[0];
-        this.messageObserver.notify(event, msg);
-
         if (messageBody.includes('deuita')) {
             msg.reply('🤖 vai toma no cu');
         }
@@ -59,31 +77,28 @@ class MessageCreateListener extends Listener {
     }
 
     private startListeners(): void {
-        this.messageObserver.addListener("!menu", handleMenu);
-        this.messageObserver.addListener('!ping', handlePing);
-        this.messageObserver.addListener("!bot", handleBot);
-        this.messageObserver.addListener("!checagem", handleChecagem);
-        this.messageObserver.addListener("!fala", handleFala);
-        this.messageObserver.addListener("!imagem", handleImagem);
-        this.messageObserver.addListener("!ranking-imagem", handleRankingImage);
-        this.messageObserver.addListener("!ranking", handleRanking);
-        this.messageObserver.addListener("!transcrever", handleTranscrever);
-        this.messageObserver.addListener("!sticker", handleSticker);
-        this.messageObserver.addListener("!aa", handleAA);
+        this.messageObserver.addStartWithMessageHandler("!menu", handleMenu);
+        this.messageObserver.addStartWithMessageHandler("!aa", handleMenu);
+        this.messageObserver.addStartWithMessageHandler("!checagem", handleChecagem);
+        this.messageObserver.addStartWithMessageHandler("!ping", handlePing);
+        this.messageObserver.addStartWithMessageHandler("!sticker", handleSticker);
+
+        this.messageObserver.addStartWithHandler(this.botHandler);
+        this.messageObserver.addStartWithHandler(this.falaHandler);
+        this.messageObserver.addStartWithHandler(this.rankingHandler);
     }
 
     private async saveMessageToMongo(msg: Message): Promise<void> {
         //TODO: get ids from mongo and check if the message is from a valid group
-        if (
-            !this.mongoClient ||
-            msg.from !== idGrupoLenise ||
+
+        if (msg.from !== idGrupoLenise ||
             msg.body.startsWith('🤖')
         ) {
             return;
         }
 
         try {
-            await this.mongoClient.db("rap").collection("messages").insertOne(msg);
+            await this.messageRepository.addMessage(msg);
         } catch {
             console.log("MONGO: error to add message to collections in mongo");
         }
@@ -98,5 +113,3 @@ class MessageCreateListener extends Listener {
         return false;
     }
 }
-
-export { MessageCreateListener };

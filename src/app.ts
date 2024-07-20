@@ -16,14 +16,16 @@ class Application {
     messageCreateListener: MessageCreateListener;
     messageRevokeListener: MessageRevokeListener;
 
-    constructor(mongoClient: MongoClient | null, openaiClient: OpenAI, wwebClient: WwebClient) {
-        this.mongo = mongoClient;
-        this.openai = openaiClient;
-        this.wweb = wwebClient;
+    public static inject = ['authenticationListener', 'messageCreateListener', 'messageRevokeListener'] as const;
 
-        this.authenticationListener = new AuthenticationListener(wwebClient, mongoClient);
-        this.messageCreateListener = new MessageCreateListener(wwebClient, mongoClient);
-        this.messageRevokeListener = new MessageRevokeListener(wwebClient);
+    constructor(
+        authenticationListener: AuthenticationListener,
+        messageCreateListener: MessageCreateListener,
+        messageRevokeListener: MessageRevokeListener
+        ) {
+        this.authenticationListener = authenticationListener;
+        this.messageCreateListener = messageCreateListener;
+        this.messageRevokeListener = messageRevokeListener;
     }
 
     public initialize(): void {
