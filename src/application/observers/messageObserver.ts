@@ -1,25 +1,40 @@
 import { type Message } from "whatsapp-web.js";
-
-interface Listener {
-    event: string;
-    listener: (msg: Message) => void;
-}
+import { IHandler, IStartWithHandler, MessageHandler } from "../contracts/IHandler";
 
 export class MessageObserver {
-    listeners: Listener[];
+    handlers: IHandler[];
+    startsWithHandlers: IStartWithHandler[];
 
     constructor() {
-        this.listeners = [];
+        this.handlers = [];
     }
 
-    public addListener(event: string, listener: (msg: Message) => Promise<void> | Promise<Message>) {
-        this.listeners.push({ event, listener });
+    public addHandler(listener: IHandler) {
+        this.handlers.push(listener);
     }
 
-    public notify(event: string, msg: Message) {
-        this.listeners.forEach(listener => {
-            if (listener.event === event) {
-                listener.listener(msg);
+    public addStartWithHandler(handler: IHandler | IStartWithHandler) {
+        if ((<IHandler>handler).handle) {
+            this.handlers.push((<IHandler>handler));
+            return;
+        }
+        this.startsWithHandlers.push(<IStartWithHandler>handler);
+    }
+
+    public addStartWithMessageHandler(command: string, handle: MessageHandler) {
+        this.startsWithHandlers.push({ command, handle });
+    }
+
+    public notify(msg: Message) {
+        this.handlers.forEach(handler => {
+            if (handler.canHandle(msg)) {
+                handler.handle(msg);
+            }
+        });
+
+        this.startsWithHandlers.forEach(handler => {
+            if (msg.body.startsWith(handler.command)) {
+                handler.handle(msg);
             }
         });
     }

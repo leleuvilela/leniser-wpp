@@ -13,6 +13,8 @@ const allowedNumbersToProcessMessages = [
 ];
 
 class MessageRevokeListener extends Listener {
+    public static inject = ['wwebClient'] as const;
+
     public async initialize() {
         this.wwebClient.on('message_revoke_everyone', async (after, before) => {
             //TODO: get ids from mongo and check if the message is from a valid group
