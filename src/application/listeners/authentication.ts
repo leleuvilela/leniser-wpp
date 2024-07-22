@@ -1,13 +1,12 @@
 import * as qrcode from 'qrcode-terminal';
-import { Listener } from './listener';
-import { Client } from 'whatsapp-web.js';
+import { IListener } from '../contracts/IListener';
+import { inject, injectable } from 'inversify';
+import { type Client as WwebClient } from "whatsapp-web.js";
+import { TYPES } from '../../ioc/types';
 
-class AuthenticationListener extends Listener {
-
-    public static inject = ['wwebClient'] as const;
-    constructor(wwebClient: Client) {
-        super(wwebClient);
-    }
+@injectable()
+class AuthenticationListener implements IListener {
+    @inject(TYPES.WwebClient) wwebClient: WwebClient
 
     public async initialize() {
         this.wwebClient.on('qr', (qr) => {

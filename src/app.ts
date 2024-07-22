@@ -1,34 +1,32 @@
-import { type MongoClient } from "mongodb";
-import { type OpenAI } from "openai";
 import { type Client as WwebClient } from "whatsapp-web.js";
-import { MessageObserver } from "./application/observers/messageObserver";
 import { AuthenticationListener } from "./application/listeners/authentication";
 import { MessageCreateListener } from "./application/listeners/messageCreate";
 import { MessageRevokeListener } from "./application/listeners/messageRevoke";
+import { IApplication } from "./application/contracts/IApplication";
+import { inject, injectable } from "inversify";
+import { TYPES } from "./ioc/types";
 
-class Application {
-    mongo: MongoClient | null;
-    openai: OpenAI;
+@injectable()
+class Application implements IApplication {
     wweb: WwebClient;
-    messageObserver: MessageObserver;
 
     authenticationListener: AuthenticationListener;
     messageCreateListener: MessageCreateListener;
     messageRevokeListener: MessageRevokeListener;
 
-    public static inject = ['authenticationListener', 'messageCreateListener', 'messageRevokeListener'] as const;
-
     constructor(
-        authenticationListener: AuthenticationListener,
-        messageCreateListener: MessageCreateListener,
-        messageRevokeListener: MessageRevokeListener
-        ) {
+        @inject(TYPES.AuthenticationListener) authenticationListener: AuthenticationListener,
+        @inject(TYPES.MessageCreateListener) messageCreateListener: MessageCreateListener,
+        @inject(TYPES.MessageRevokeListener) messageRevokeListener: MessageRevokeListener,
+        @inject(TYPES.WwebClient) wweb: WwebClient
+    ) {
         this.authenticationListener = authenticationListener;
         this.messageCreateListener = messageCreateListener;
         this.messageRevokeListener = messageRevokeListener;
+        this.wweb = wweb;
     }
 
-    public initialize(): void {
+    public start(): void {
         console.log("Starting wweb listeners");
         this.authenticationListener.initialize();
         this.messageCreateListener.initialize();

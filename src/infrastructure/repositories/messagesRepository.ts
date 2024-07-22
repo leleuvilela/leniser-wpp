@@ -2,13 +2,16 @@ import { MongoClient } from "mongodb";
 import { Message } from "whatsapp-web.js";
 import { IMessageRepository } from "../../application/contracts/IMessagesRepository";
 import { MessageCountDto } from "../../application/dtos/messageCountDto";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../ioc/types";
 
+@injectable()
 export class MessageRepository implements IMessageRepository {
-    client: MongoClient | null
+    client: MongoClient;
 
-    public static inject = ['mongoClient'] as const;
-
-    constructor(mongoClient: MongoClient | null) {
+    constructor(
+        @inject(TYPES.MongoClient) mongoClient: MongoClient
+    ) {
         this.client = mongoClient;
     }
 
@@ -25,7 +28,7 @@ export class MessageRepository implements IMessageRepository {
     async getMessageCountsByUser(startDate: Date, endDate: Date): Promise<MessageCountDto[]> {
         try {
             if (!this.client) {
-                return[];
+                return [];
             }
 
             const db = this.client.db("rap");

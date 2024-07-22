@@ -1,13 +1,16 @@
 import { type Message, MessageMedia } from "whatsapp-web.js";
 import { IAudioService } from "../contracts/IAudioService";
 import { IStartWithHandler } from "../contracts/IHandler";
+import { inject, injectable } from "inversify";
+import { TYPES } from '../../ioc/types';
 
+@injectable()
 export class FalaHandler implements IStartWithHandler {
     audioService: IAudioService
 
-    public static inject = ['audioService'] as const;
-
-    constructor(audioService: IAudioService) {
+    constructor(
+        @inject(TYPES.AudioService) audioService: IAudioService
+    ) {
         this.audioService = audioService;
     }
 

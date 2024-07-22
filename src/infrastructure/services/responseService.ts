@@ -4,14 +4,17 @@ import {
     type ChatCompletionCreateParamsNonStreaming,
     type ChatCompletionContentPart
 } from "openai/resources";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../ioc/types";
 
+@injectable()
 export class ResponseService implements IResponseService {
 
     private openAIClient: OpenAI
 
-    public static inject = ['openAIClient'] as const;
-
-    constructor(openAIClient: OpenAI) {
+    constructor(
+        @inject(TYPES.OpenAIClient) openAIClient: OpenAI
+    ) {
         this.openAIClient = openAIClient;
     }
 

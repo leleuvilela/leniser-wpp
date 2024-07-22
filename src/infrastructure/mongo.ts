@@ -1,18 +1,11 @@
 import 'dotenv/config';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
-export class Mongo {
-    client: MongoClient | null;
-
-    constructor(uri: string | undefined) {
-        if (uri) {
-            this.client = new MongoClient(uri, {
-                serverApi: {
-                    version: ServerApiVersion.v1,
-                    strict: true,
-                    deprecationErrors: true,
-                }
-            });
-        }
+//TODO: create a class and mock
+export const mongoClient = new MongoClient(process.env.DB_URI || '', {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
     }
-}
+});

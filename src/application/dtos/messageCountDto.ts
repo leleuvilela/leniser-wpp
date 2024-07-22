@@ -1,1 +1,1 @@
-export type MessageCountDto = { name: string, count: number };
+export interface MessageCountDto { name: string, count: number };

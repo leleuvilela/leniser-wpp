@@ -1,11 +1,14 @@
 import { Message, Client } from "whatsapp-web.js";
-import { Listener } from "./listener";
+import { IListener } from "../contracts/IListener";
+import { type Client as WwebClient } from "whatsapp-web.js";
 
 import {
     handleMenu,
     handlePing,
     handleChecagem,
     handleSticker,
+    handleAA,
+    handleImagem,
 } from "../events";
 
 import { MessageObserver } from "../observers/messageObserver";
@@ -13,56 +16,50 @@ import { MessageRepository } from "../../infrastructure/repositories/messagesRep
 import { FalaHandler } from "../events/fala";
 import { RankingHandler } from "../events/ranking";
 import { BotHandler } from "../events/bot";
+import { inject, injectable } from "inversify";
+import { TYPES } from '../../ioc/types';
+import { AllowedNumbersRepository } from "../../infrastructure/repositories/allowedNumbersRepository";
 
 //TODO: REMOVE THIS SHIT
 const idGrupoLenise = "556285359995-1486844624@g.us";
-const idGrupoLeniseGames = '556299031117-1523720875@g.us';
-const idGrupoTeste = '120363311991674552@g.us';
 
-const allowedNumbersToProcessMessages = [
-    idGrupoLenise,
-    idGrupoLeniseGames,
-    idGrupoTeste,
-];
-
-export class MessageCreateListener extends Listener {
+@injectable()
+export class MessageCreateListener implements IListener {
     messageObserver: MessageObserver;
+    wwebClient: WwebClient;
     messageRepository: MessageRepository;
-
+    allowedNumbersRepository: AllowedNumbersRepository;
     botHandler: BotHandler;
     falaHandler: FalaHandler;
     rankingHandler: RankingHandler;
 
-    public static inject = [
-        'wwebClient',
-        'messageRepository',
-        'botHandler',
-        'falaHandler',
-        'rankingHandler',
-    ] as const;
-
     constructor(
-        wwebClient: Client,
-        messageRepository: MessageRepository,
-        botHandler: BotHandler,
-        falaHandler: FalaHandler,
-        rankingHandler: RankingHandler,
+        @inject(TYPES.WwebClient) wwebClient: Client,
+        @inject(TYPES.MessageRepository) messageRepository: MessageRepository,
+        @inject(TYPES.AllowedNumbersRepository) allowedNumbersRepository: AllowedNumbersRepository,
+        @inject(TYPES.BotHandler) botHandler: BotHandler,
+        @inject(TYPES.FalaHandler) falaHandler: FalaHandler,
+        @inject(TYPES.RankingHandler) rankingHandler: RankingHandler,
     ) {
-        super(wwebClient)
-
         this.messageObserver = new MessageObserver();
 
+        this.wwebClient = wwebClient;
         this.botHandler = botHandler;
         this.falaHandler = falaHandler;
         this.rankingHandler = rankingHandler;
-
         this.messageRepository = messageRepository;
+        this.allowedNumbersRepository = allowedNumbersRepository;
 
+        this.allowedNumbersRepository.getAllowedNumbers();
         this.startListeners();
     }
 
+    public async initialize() {
+        this.wwebClient.on('message_create', this.handleMessage.bind(this));
+    }
+
     async handleMessage(msg: Message) {
-        if (!this.shouldProcessMessage(msg)) {
+        if (!this.allowedNumbersRepository.isAllowed(msg.from)) {
             return;
         }
 
@@ -78,10 +75,11 @@ export class MessageCreateListener extends Listener {
 
     private startListeners(): void {
         this.messageObserver.addStartWithMessageHandler("!menu", handleMenu);
-        this.messageObserver.addStartWithMessageHandler("!aa", handleMenu);
+        this.messageObserver.addStartWithMessageHandler("!aa", handleAA);
         this.messageObserver.addStartWithMessageHandler("!checagem", handleChecagem);
         this.messageObserver.addStartWithMessageHandler("!ping", handlePing);
         this.messageObserver.addStartWithMessageHandler("!sticker", handleSticker);
+        this.messageObserver.addStartWithMessageHandler("!imagem", handleImagem);
 
         this.messageObserver.addStartWithHandler(this.botHandler);
         this.messageObserver.addStartWithHandler(this.falaHandler);
@@ -102,14 +100,5 @@ export class MessageCreateListener extends Listener {
         } catch {
             console.log("MONGO: error to add message to collections in mongo");
         }
-    }
-
-    private shouldProcessMessage(msg: Message): boolean {
-        //TODO: get ids from mongo and check if the message is from a valid group
-        if (allowedNumbersToProcessMessages.includes(msg.from) || allowedNumbersToProcessMessages.includes(msg.to)) {
-            return true;
-        }
-
-        return false;
     }
 }

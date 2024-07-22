@@ -1,11 +1,15 @@
 import OpenAI from "openai";
 import { IAudioService } from "../../application/contracts/IAudioService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../ioc/types";
 
+@injectable()
 export class AudioService implements IAudioService {
     openAIClient: OpenAI
 
-    public static inject = ['openAIClient'] as const;
-    constructor(openAIClient: OpenAI) {
+    constructor(
+        @inject(TYPES.OpenAIClient) openAIClient: OpenAI
+    ) {
         this.openAIClient = openAIClient;
     }
 

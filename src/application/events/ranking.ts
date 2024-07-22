@@ -1,20 +1,23 @@
 import { type Message } from "whatsapp-web.js";
 import { IStartWithHandler } from "../contracts/IHandler";
 import { IMessageRepository } from "../contracts/IMessagesRepository";
+import { inject, injectable } from "inversify";
+import { TYPES } from '../../ioc/types';
 
+@injectable()
 export class RankingHandler implements IStartWithHandler {
+    public command = '!ranking';
+
     messageRepository: IMessageRepository;
 
-    public static inject = ['messageRepository'] as const;
-
-    constructor(messageRepository: IMessageRepository) {
+    constructor(
+        @inject(TYPES.MessageRepository) messageRepository: IMessageRepository
+    ) {
         this.messageRepository = messageRepository;
     }
 
-    command: '!ranking';
 
     async handle(msg: Message): Promise<Message> {
-
         let startDate: Date;
         let endDate: Date;
         let title: string;

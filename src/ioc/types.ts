@@ -1,0 +1,17 @@
+export const TYPES = {
+    Application: Symbol.for("Application"),
+    OpenAIClient: Symbol.for("OpenAI"),
+    MongoClient: Symbol.for("MongoClient"),
+    WwebClient: Symbol.for("WwebClient"),
+    AuthenticationListener: Symbol.for("AuthenticationListener"),
+    MessageObserver: Symbol.for("MessageObserver"),
+    MessageCreateListener: Symbol.for("MessageCreateListener"),
+    MessageRevokeListener: Symbol.for("MessageRevokeListener"),
+    MessageRepository: Symbol.for("MessageRepository"),
+    AllowedNumbersRepository: Symbol.for("AllowedNumbersRepository"),
+    ResponseService: Symbol.for("ResponseService"),
+    AudioService: Symbol.for("AudioService"),
+    BotHandler: Symbol.for("BotHandler"),
+    FalaHandler: Symbol.for("FalaHandler"),
+    RankingHandler: Symbol.for("RankingHandler"),
+};
