@@ -1,35 +1,32 @@
-import { type MongoClient } from "mongodb";
-import type OpenAI from "openai";
 import { type Client as WwebClient } from "whatsapp-web.js";
-import { MessageObserver } from "./observers/message";
-import { AuthenticationListener } from "./listeners/authentication";
-import { MessageCreateListener } from "./listeners/messageCreate";
-import { MessageRevokeListener } from "./listeners/messageRevoke";
+import { AuthenticationListener } from "./application/listeners/authentication";
+import { MessageCreateListener } from "./application/listeners/messageCreate";
+import { MessageRevokeListener } from "./application/listeners/messageRevoke";
+import { IApplication } from "./application/contracts/IApplication";
+import { inject, injectable } from "inversify";
+import { TYPES } from "./ioc/types";
 
-class Application {
-    mongo: MongoClient;
-    openai: OpenAI;
+@injectable()
+class Application implements IApplication {
     wweb: WwebClient;
-    messageObserver: MessageObserver;
 
     authenticationListener: AuthenticationListener;
     messageCreateListener: MessageCreateListener;
     messageRevokeListener: MessageRevokeListener;
 
-    constructor(mongoClient: MongoClient, openaiClient: OpenAI, wwebClient: WwebClient) {
-        this.mongo = mongoClient;
-        this.openai = openaiClient;
-        this.wweb = wwebClient;
-
-        this.authenticationListener = new AuthenticationListener(wwebClient, mongoClient);
-        this.messageCreateListener = new MessageCreateListener(wwebClient, mongoClient);
-        this.messageRevokeListener = new MessageRevokeListener(wwebClient, mongoClient);
+    constructor(
+        @inject(TYPES.AuthenticationListener) authenticationListener: AuthenticationListener,
+        @inject(TYPES.MessageCreateListener) messageCreateListener: MessageCreateListener,
+        @inject(TYPES.MessageRevokeListener) messageRevokeListener: MessageRevokeListener,
+        @inject(TYPES.WwebClient) wweb: WwebClient
+    ) {
+        this.authenticationListener = authenticationListener;
+        this.messageCreateListener = messageCreateListener;
+        this.messageRevokeListener = messageRevokeListener;
+        this.wweb = wweb;
     }
 
-    public initialize(): void {
-        console.log("Starting message listeners");
-        this.messageCreateListener.startListeners();
-
+    public start(): void {
         console.log("Starting wweb listeners");
         this.authenticationListener.initialize();
         this.messageCreateListener.initialize();

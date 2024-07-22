@@ -30,9 +30,11 @@
     "dependencies": {
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
+        "inversify": "^6.0.2",
         "mongodb": "^6.8.0",
         "openai": "^4.52.2",
         "qrcode-terminal": "^0.12.0",
+        "reflect-metadata": "^0.2.2",
         "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus"
     }
 }

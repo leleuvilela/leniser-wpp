@@ -1,11 +1,13 @@
-import { Application } from "./app";
-import { mongoClient } from "./lib/mongo";
-import { openaiClient } from "./lib/openai";
-import { wwebClient } from "./lib/wweb";
-import { Server } from "./server";
+import "reflect-metadata";
 
-const app = new Application(mongoClient, openaiClient, wwebClient);
+import { Application } from "./app";
+import { Server } from "./server";
+import { container } from "./ioc/inversify.config";
+import { TYPES } from "./ioc/types";
+
+const app = container.get<Application>(TYPES.Application);
+
 const server = new Server(app);
 
-app.initialize();
+app.start();
 server.start();
