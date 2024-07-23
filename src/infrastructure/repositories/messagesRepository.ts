@@ -27,9 +27,6 @@ export class MessageRepository implements IMessageRepository {
 
     async getMessageCountsByUser(startDate: Date, endDate: Date): Promise<MessageCountDto[]> {
         try {
-            if (!this.client) {
-                return [];
-            }
 
             const db = this.client.db("rap");
             const collection = db.collection("messages");

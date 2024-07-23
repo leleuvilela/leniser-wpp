@@ -61,8 +61,7 @@ export class MessageCreateListener implements IListener {
 
         await this.saveMessageToMongo(msg, numberPermissions);
 
-        //TODO: maybe also create permissions for individual commands (!bot, !image...)
-        if (msg.author === this.botNumber || !numberPermissions?.permissions.includes(NumberPermission.MESSAGE_CREATE)) {
+        if (!this.shouldProcessMessage(msg, numberPermissions)) {
             return;
         }
 
@@ -90,7 +89,7 @@ export class MessageCreateListener implements IListener {
     private async saveMessageToMongo(msg: Message, numberPermissions: NumberPermissions | null): Promise<void> {
 
         if (msg.author === this.botNumber) {
-            return 
+            return
         }
 
         if (!numberPermissions?.permissions.includes(NumberPermission.SAVE_MESSAGE)) {
@@ -103,4 +102,22 @@ export class MessageCreateListener implements IListener {
             console.log("MONGO: error to add message to collections in mongo");
         }
     }
+
+    private shouldProcessMessage(msg: Message, numberPermissions: NumberPermissions | null): boolean {
+
+        if (!numberPermissions){
+            return false;
+        }
+
+        // UTC timestamp in seconds
+        const now = Math.floor(new Date().getTime() / 1000);
+        const messageTime = new Date(msg.timestamp).getTime();
+
+        if (now - messageTime > 20) {
+            return false;
+        }
+
+        return msg.author !== this.botNumber && numberPermissions.permissions.includes(NumberPermission.MESSAGE_CREATE)
+    }
+
 }
