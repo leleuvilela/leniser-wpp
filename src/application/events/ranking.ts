@@ -39,7 +39,7 @@ export class RankingHandler implements IStartWithHandler {
             startDate = this.getStartOfMonth();
             endDate = new Date();
             title = "Ranking do Mês";
-        } else if (msg.body.toLowerCase() === `${this.command} dia`) {
+        } else if (msg.body.toLowerCase() === `${this.command}`) {
             startDate = new Date(0); // Unix epoch start
             endDate = new Date();
             title = "Ranking Geral";
@@ -47,7 +47,9 @@ export class RankingHandler implements IStartWithHandler {
             return msg.reply("🤖 Comando inválido. Tente `!menu`.");
         }
 
-        const messageCounts = await this.messageRepository.getMessageCountsByUser(startDate, endDate);
+        const groupId = msg.from;
+
+        const messageCounts = await this.messageRepository.getMessageCountsByUser(startDate, endDate, groupId);
 
         if (!messageCounts) {
             return msg.reply("🤖 Nenhuma mensagem encontrada.");
