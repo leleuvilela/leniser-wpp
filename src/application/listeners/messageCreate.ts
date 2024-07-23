@@ -1,7 +1,8 @@
 import { Message, Client } from "whatsapp-web.js";
+import { inject, injectable } from "inversify";
+import { TYPES } from '../../ioc/types';
 import { IListener } from "../contracts/IListener";
 import { type Client as WwebClient } from "whatsapp-web.js";
-
 import {
     handleMenu,
     handlePing,
@@ -10,33 +11,30 @@ import {
     handleAA,
     handleImagem,
 } from "../events";
-
 import { MessageObserver } from "../observers/messageObserver";
-import { MessageRepository } from "../../infrastructure/repositories/messagesRepository";
 import { FalaHandler } from "../events/fala";
 import { RankingHandler } from "../events/ranking";
 import { BotHandler } from "../events/bot";
-import { inject, injectable } from "inversify";
-import { TYPES } from '../../ioc/types';
-import { AllowedNumbersRepository } from "../../infrastructure/repositories/allowedNumbersRepository";
-
-//TODO: REMOVE THIS SHIT
-const idGrupoLenise = "556285359995-1486844624@g.us";
+import { IMessageRepository } from "../contracts/IMessagesRepository";
+import { INumberPermissionRepository } from "../contracts/INumberPermissionsRepository";
+import { NumberPermission, NumberPermissions } from "../dtos/numberPermission";
 
 @injectable()
 export class MessageCreateListener implements IListener {
     messageObserver: MessageObserver;
     wwebClient: WwebClient;
-    messageRepository: MessageRepository;
-    allowedNumbersRepository: AllowedNumbersRepository;
+    messageRepository: IMessageRepository;
+    numberPermissionRepository: INumberPermissionRepository;
     botHandler: BotHandler;
     falaHandler: FalaHandler;
     rankingHandler: RankingHandler;
 
+    botNumber = '351931426775@g.us'
+
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
-        @inject(TYPES.MessageRepository) messageRepository: MessageRepository,
-        @inject(TYPES.AllowedNumbersRepository) allowedNumbersRepository: AllowedNumbersRepository,
+        @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
+        @inject(TYPES.NumberPermissionRepository) numberPermissionsRepository: INumberPermissionRepository,
         @inject(TYPES.BotHandler) botHandler: BotHandler,
         @inject(TYPES.FalaHandler) falaHandler: FalaHandler,
         @inject(TYPES.RankingHandler) rankingHandler: RankingHandler,
@@ -48,9 +46,8 @@ export class MessageCreateListener implements IListener {
         this.falaHandler = falaHandler;
         this.rankingHandler = rankingHandler;
         this.messageRepository = messageRepository;
-        this.allowedNumbersRepository = allowedNumbersRepository;
+        this.numberPermissionRepository = numberPermissionsRepository;
 
-        this.allowedNumbersRepository.getAllowedNumbers();
         this.startListeners();
     }
 
@@ -59,7 +56,13 @@ export class MessageCreateListener implements IListener {
     }
 
     async handleMessage(msg: Message) {
-        if (!this.allowedNumbersRepository.isAllowed(msg.from)) {
+        var numberPermissions = await this.numberPermissionRepository.find(msg.from)
+            ?? await this.numberPermissionRepository.find(msg.to);
+
+        await this.saveMessageToMongo(msg, numberPermissions);
+
+        //TODO: maybe also create permissions for individual commands (!bot, !image...)
+        if (msg.author === this.botNumber || !numberPermissions?.permissions.includes(NumberPermission.MESSAGE_CREATE)) {
             return;
         }
 
@@ -69,8 +72,6 @@ export class MessageCreateListener implements IListener {
         if (messageBody.includes('deuita')) {
             msg.reply('🤖 vai toma no cu');
         }
-
-        await this.saveMessageToMongo(msg);
     }
 
     private startListeners(): void {
@@ -86,12 +87,13 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addStartWithHandler(this.rankingHandler);
     }
 
-    private async saveMessageToMongo(msg: Message): Promise<void> {
-        //TODO: get ids from mongo and check if the message is from a valid group
+    private async saveMessageToMongo(msg: Message, numberPermissions: NumberPermissions | null): Promise<void> {
 
-        if (msg.from !== idGrupoLenise ||
-            msg.body.startsWith('🤖')
-        ) {
+        if (msg.author === this.botNumber) {
+            return 
+        }
+
+        if (!numberPermissions?.permissions.includes(NumberPermission.SAVE_MESSAGE)) {
             return;
         }
 
