@@ -23,8 +23,10 @@ import { AudioService } from "../infrastructure/services/audioService";
 import { ResponseService } from "../infrastructure/services/responseService";
 import { TYPES } from "./types";
 import { MessageObserver } from "../application/observers/messageObserver";
-import { IAllowedNumbersRepository } from "../application/contracts/IAllowedNumbersRepository";
-import { AllowedNumbersRepository } from "../infrastructure/repositories/allowedNumbersRepository";
+import { INumberPermissionRepository } from "../application/contracts/INumberPermissionsRepository";
+import { NumberPermissionRepository } from "../infrastructure/repositories/numberPermissionsRepository";
+import { IGroupMembersRepository } from "../application/contracts/IGroupMembersRepository";
+import { GroupMembersRepository } from "../infrastructure/repositories/groupMembersRepository";
 
 const container = new Container();
 
@@ -43,7 +45,8 @@ container.bind<IStartWithHandler>(TYPES.FalaHandler).to(FalaHandler);
 container.bind<IStartWithHandler>(TYPES.RankingHandler).to(RankingHandler);
 
 container.bind<IMessageRepository>(TYPES.MessageRepository).to(MessageRepository).inSingletonScope();
-container.bind<IAllowedNumbersRepository>(TYPES.AllowedNumbersRepository).to(AllowedNumbersRepository).inSingletonScope();
+container.bind<INumberPermissionRepository>(TYPES.NumberPermissionRepository).to(NumberPermissionRepository).inSingletonScope();
+container.bind<IGroupMembersRepository>(TYPES.GroupMembersRepository).to(GroupMembersRepository).inSingletonScope();
 
 container.bind<IResponseService>(TYPES.ResponseService).to(ResponseService);
 container.bind<IAudioService>(TYPES.AudioService).to(AudioService);

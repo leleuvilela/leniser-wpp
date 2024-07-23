@@ -2,25 +2,28 @@ import { IListener } from "../contracts/IListener";
 import { inject, injectable } from "inversify";
 import { type Client as WwebClient } from "whatsapp-web.js";
 import { TYPES } from '../../ioc/types';
-import { AllowedNumbersRepository } from "../../infrastructure/repositories/allowedNumbersRepository";
+import { INumberPermissionRepository } from "../contracts/INumberPermissionsRepository";
+import { NumberPermission } from "../dtos/numberPermission";
 
 @injectable()
 class MessageRevokeListener implements IListener {
     wwebClient: WwebClient;
-    allowedNumbersRepository: AllowedNumbersRepository;
+    numberPermissionRepository: INumberPermissionRepository;
 
     constructor(
         @inject(TYPES.WwebClient) wwebClient: WwebClient,
-        @inject(TYPES.AllowedNumbersRepository) allowedNumbersRepository: AllowedNumbersRepository,
+        @inject(TYPES.NumberPermissionRepository) numberPermissionRepository: INumberPermissionRepository,
     ) {
         this.wwebClient = wwebClient;
-        this.allowedNumbersRepository = allowedNumbersRepository;
+        this.numberPermissionRepository = numberPermissionRepository;
     }
 
     public async initialize() {
         this.wwebClient.on('message_revoke_everyone', async (after, before) => {
-            //TODO: get ids from mongo and check if the message is from a valid group
-            if (!this.allowedNumbersRepository.isAllowed(after.from)) {
+
+            var numberPermission = await this.numberPermissionRepository.find(after.from);
+
+            if (!numberPermission?.permissions.includes(NumberPermission.MESSAGE_REVOKE)) {
                 return;
             }
 
