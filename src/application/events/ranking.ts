@@ -47,7 +47,7 @@ export class RankingHandler implements IStartWithHandler {
             return msg.reply("🤖 Comando inválido. Tente `!menu`.");
         }
 
-        const groupId = msg.from;
+        const groupId = this.getGroupId(msg);
 
         const messageCounts = await this.messageRepository.getMessageCountsByUser(startDate, endDate, groupId);
 
@@ -55,8 +55,7 @@ export class RankingHandler implements IStartWithHandler {
             return msg.reply("🤖 Nenhuma mensagem encontrada.");
         }
 
-        const members = await this.groupMembersRepository.getMembers(msg.from)
-            ?? await this.groupMembersRepository.getMembers(msg.to);
+        const members = await this.groupMembersRepository.getMembers(groupId)
 
         const response = await this.generateMessageCountsText(title, messageCounts, members);
 
@@ -77,6 +76,14 @@ export class RankingHandler implements IStartWithHandler {
     getStartOfMonth(): Date {
         const now = new Date();
         return new Date(now.getFullYear(), now.getMonth(), 1);
+    }
+
+    getGroupId(msg: Message): string {
+        const env = process.env.ENVIRONMENT || 'prod'
+
+        // if local, msg.to === groupId and msg.from === user
+        // as I'm logged in with my personal number, sending message to the group
+        return env === 'local' ? msg.to : msg.from;
     }
 
     async generateMessageCountsText(
