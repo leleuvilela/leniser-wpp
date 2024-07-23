@@ -3,4 +3,5 @@ export interface Configs {
     imageCooldownTime: number;
     systemPrompt: string;
     botPrefix: string;
+    botNumber: string;
 }
