@@ -88,7 +88,7 @@ export class MessageCreateListener implements IListener {
 
     private async saveMessageToMongo(msg: Message, numberPermissions: NumberPermissions | null): Promise<void> {
 
-        if (msg.author === this.botNumber) {
+        if (msg.from === this.botNumber) {
             return
         }
 
