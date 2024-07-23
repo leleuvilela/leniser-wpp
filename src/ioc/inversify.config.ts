@@ -5,7 +5,7 @@ import { Client } from "whatsapp-web.js";
 import { Application } from "../app";
 import { IApplication } from "../application/contracts/IApplication";
 import { IAudioService } from "../application/contracts/IAudioService";
-import { IStartWithHandler } from "../application/contracts/IHandler";
+import { IHandler, IStartWithHandler } from "../application/contracts/IHandler";
 import { IMessageRepository } from "../application/contracts/IMessagesRepository";
 import { IResponseService } from "../application/contracts/IResponseService";
 import { BotHandler } from "../application/events/bot";
@@ -30,6 +30,7 @@ import { GroupMembersRepository } from "../infrastructure/repositories/groupMemb
 import { IConfigsRepository } from "../application/contracts/IConfigsRepository";
 import { ConfigsRepository } from "../infrastructure/repositories/configsRepository";
 import { TranscreverHandler } from "../application/events/transcrever";
+import { DeuitaHandler } from "../application/events/deuita";
 import { ITranscriptionService } from "../application/contracts/ITranscriptionService";
 import { TranscriptionService } from "../infrastructure/services/transcriptionService";
 
@@ -44,6 +45,12 @@ container.bind(TYPES.MessageObserver).to(MessageObserver);
 container.bind<IListener>(TYPES.AuthenticationListener).to(AuthenticationListener);
 container.bind<IListener>(TYPES.MessageCreateListener).to(MessageCreateListener);
 container.bind<IListener>(TYPES.MessageRevokeListener).to(MessageRevokeListener);
+
+container.bind<IStartWithHandler>(TYPES.BotHandler).to(BotHandler);
+container.bind<IStartWithHandler>(TYPES.FalaHandler).to(FalaHandler);
+container.bind<IStartWithHandler>(TYPES.RankingHandler).to(RankingHandler);
+container.bind<IStartWithHandler>(TYPES.TranscreverHandler).to(TranscreverHandler);
+container.bind<IHandler>(TYPES.DeuitaHandler).to(DeuitaHandler);
 
 container.bind<IConfigsRepository>(TYPES.ConfigsRepository).to(ConfigsRepository).inSingletonScope();
 container.bind<IMessageRepository>(TYPES.MessageRepository).to(MessageRepository).inSingletonScope();

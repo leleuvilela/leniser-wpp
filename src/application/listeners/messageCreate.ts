@@ -41,6 +41,7 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.RankingHandler) rankingHandler: IStartWithHandler,
         @inject(TYPES.TranscreverHandler) transcreverHandler: IStartWithHandler,
         @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository,
+        @inject(TYPES.DeuitaHandler) deuitaHandler: IHandler,
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -52,6 +53,7 @@ export class MessageCreateListener implements IListener {
         this.numberPermissionRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
         this.configsRepository = configsRepository;
+        this.deuitaHandler = deuitaHandler
 
         this.startListeners();
     }
@@ -67,6 +69,7 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addStartWithHandler(this.botHandler);
         this.messageObserver.addStartWithHandler(this.falaHandler);
         this.messageObserver.addStartWithHandler(this.rankingHandler);
+        this.messageObserver.addHandler(this.deuitaHandler)
     }
 
     public async initialize() {
@@ -84,11 +87,6 @@ export class MessageCreateListener implements IListener {
         }
 
         this.messageObserver.notify(msg);
-
-        const messageBody = msg.body.toLowerCase();
-        if (messageBody.includes('deuita')) {
-            msg.reply('🤖 vai toma no cu');
-        }
     }
 
     private async saveMessageToMongo(msg: Message, numberPermissions: NumberPermissions | null): Promise<void> {
