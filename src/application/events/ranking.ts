@@ -12,14 +12,14 @@ export class RankingHandler implements IStartWithHandler {
     public command = '!ranking';
 
     messageRepository: IMessageRepository;
-    membersRepository: IGroupMembersRepository;
+    groupMembersRepository: IGroupMembersRepository;
 
     constructor(
         @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
-        @inject(TYPES.GroupMembersRepository) membersRepository: IGroupMembersRepository,
+        @inject(TYPES.GroupMembersRepository) groupMembersRepository: IGroupMembersRepository,
     ) {
         this.messageRepository = messageRepository;
-        this.membersRepository = membersRepository;
+        this.groupMembersRepository = groupMembersRepository;
     }
 
     async handle(msg: Message): Promise<Message> {
@@ -55,16 +55,12 @@ export class RankingHandler implements IStartWithHandler {
             return msg.reply("🤖 Nenhuma mensagem encontrada.");
         }
 
-        const members = await this.membersRepository.getMembers(msg.from)
-            ?? await this.membersRepository.getMembers(msg.to);
-
-        if (!members) {
-            return msg.reply("🤖 Grupo não possui membros cadastrados");
-        }
+        const members = await this.groupMembersRepository.getMembers(msg.from)
+            ?? await this.groupMembersRepository.getMembers(msg.to);
 
         const response = await this.generateMessageCountsText(title, messageCounts, members);
 
-        return msg.reply(`🤖 ${response}`);
+        return msg.reply(`🤖 ${response}`, undefined, { linkPreview: false });
     }
 
     getStartOfDay(): Date {
@@ -86,10 +82,10 @@ export class RankingHandler implements IStartWithHandler {
     async generateMessageCountsText(
         title: string,
         messageCounts: MessageCountDto[],
-        members: GroupMembers
+        members: GroupMembers | null
     ) {
         messageCounts.forEach((result) => {
-            result.name = members.members[result.name] || result.name;
+            result.name = members?.members[result.name] || result.name;
         });
 
         let messageText = `📊 *${title}* 📊\n\n`;

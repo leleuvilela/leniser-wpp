@@ -70,5 +70,16 @@ db.group_members.insertMany([
             "556284845169@c.us": "Danillo Sena",
             "556298545121@c.us": "Kaio Rola"
         }
+    },
+    {
+        _id: '120363311991674552@g.us',
+        members: {
+            "556282742299@c.us": "Lucas Black",
+            "33749797329@c.us": "JP",
+            "351932340769@c.us": "Leleu",
+            "556285388408@c.us": "Cabeça",
+            "556286000458@c.us": "Ppzim",
+            "556296608151@c.us": "Paim",
+        }
     }
 ])
