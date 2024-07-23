@@ -9,6 +9,16 @@ db.number_permissions.insertMany([
         desc: 'Grupo de Rap',
         permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE']
     },
+    {
+        _id: '556299031117-1523720875@g.us',
+        desc: 'Grupo de Games',
+        permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE']
+    },
+    {
+        _id: '120363311991674552@g.us',
+        desc: 'Grupo de Teste',
+        permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE']
+    }
 ])
 
 db.group_members.insertMany([

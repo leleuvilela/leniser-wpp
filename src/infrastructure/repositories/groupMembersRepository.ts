@@ -6,7 +6,7 @@ import { IGroupMembersRepository } from "../../application/contracts/IGroupMembe
 
 export interface MembersDocument {
     _id: string;
-    members: { [key: string]: string; };
+    members: Record<string, string>;
 }
 
 @injectable()

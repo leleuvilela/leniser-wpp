@@ -53,7 +53,7 @@ export class RankingHandler implements IStartWithHandler {
             return msg.reply("🤖 Nenhuma mensagem encontrada.");
         }
 
-        let members = await this.membersRepository.getMembers(msg.from)
+        const members = await this.membersRepository.getMembers(msg.from)
             ?? await this.membersRepository.getMembers(msg.to);
 
         if (!members) {

@@ -27,6 +27,11 @@ import { INumberPermissionRepository } from "../application/contracts/INumberPer
 import { NumberPermissionRepository } from "../infrastructure/repositories/numberPermissionsRepository";
 import { IGroupMembersRepository } from "../application/contracts/IGroupMembersRepository";
 import { GroupMembersRepository } from "../infrastructure/repositories/groupMembersRepository";
+import { IConfigsRepository } from "../application/contracts/IConfigsRepository";
+import { ConfigsRepository } from "../infrastructure/repositories/configsRepository";
+import { TranscreverHandler } from "../application/events/transcrever";
+import { ITranscriptionService } from "../application/contracts/ITranscriptionService";
+import { TranscriptionService } from "../infrastructure/services/transcriptionService";
 
 const container = new Container();
 
@@ -43,11 +48,14 @@ container.bind<IListener>(TYPES.MessageRevokeListener).to(MessageRevokeListener)
 container.bind<IStartWithHandler>(TYPES.BotHandler).to(BotHandler);
 container.bind<IStartWithHandler>(TYPES.FalaHandler).to(FalaHandler);
 container.bind<IStartWithHandler>(TYPES.RankingHandler).to(RankingHandler);
+container.bind<IStartWithHandler>(TYPES.TranscreverHandler).to(TranscreverHandler);
 
+container.bind<IConfigsRepository>(TYPES.ConfigsRepository).to(ConfigsRepository).inSingletonScope();
 container.bind<IMessageRepository>(TYPES.MessageRepository).to(MessageRepository).inSingletonScope();
 container.bind<INumberPermissionRepository>(TYPES.NumberPermissionRepository).to(NumberPermissionRepository).inSingletonScope();
 container.bind<IGroupMembersRepository>(TYPES.GroupMembersRepository).to(GroupMembersRepository).inSingletonScope();
 
+container.bind<ITranscriptionService>(TYPES.TranscriptionService).to(TranscriptionService);
 container.bind<IResponseService>(TYPES.ResponseService).to(ResponseService);
 container.bind<IAudioService>(TYPES.AudioService).to(AudioService);
 container.bind<IApplication>(TYPES.Application).to(Application);

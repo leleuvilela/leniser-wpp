@@ -10,7 +10,7 @@
         "start": "node ./dist/index.js",
         "local": "ts-node src",
         "local:watch": "nodemon src -e ts,json --exec 'npm run local'",
-        "lint": "eslint . --fix --ignore-pattern 'dist/*'"
+        "lint": "eslint . --fix --ignore-pattern 'dist/*' --ignore-pattern 'src/init-mongo.js'"
     },
     "devDependencies": {
         "@eslint/js": "^9.7.0",

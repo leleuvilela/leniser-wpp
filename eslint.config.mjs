@@ -6,7 +6,7 @@ import eslintConfigPrettier from "eslint-config-prettier";
 export default [
     {
         files: ["**/*.ts"],
-        ignores: ["dist/"],
+        ignores: ["dist/", "src/init-mongo.js"],
         rules: {
             "semi": ["error", "always"],
             "max-len": ["error", { code: 80, ignoreUrls: true }],

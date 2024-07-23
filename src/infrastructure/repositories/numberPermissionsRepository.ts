@@ -39,7 +39,7 @@ export class NumberPermissionRepository implements INumberPermissionRepository {
             .db("rap")
             .collection<NumberPermissionsDocument>("number_permissions");
 
-        var result = await collection.findOne({ _id: id });
+        const result = await collection.findOne({ _id: id });
 
         if (!result) {
             return null;

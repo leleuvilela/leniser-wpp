@@ -21,7 +21,7 @@ class MessageRevokeListener implements IListener {
     public async initialize() {
         this.wwebClient.on('message_revoke_everyone', async (after, before) => {
 
-            var numberPermission = await this.numberPermissionRepository.find(after.from);
+            const numberPermission = await this.numberPermissionRepository.find(after.from);
 
             if (!numberPermission?.permissions.includes(NumberPermission.MESSAGE_REVOKE)) {
                 return;
