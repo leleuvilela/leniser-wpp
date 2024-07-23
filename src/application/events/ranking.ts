@@ -27,19 +27,19 @@ export class RankingHandler implements IStartWithHandler {
         let endDate: Date;
         let title: string;
 
-        if (msg.body.toLowerCase() === "!ranking dia") {
+        if (msg.body.toLowerCase() === `${this.command} dia`) {
             startDate = this.getStartOfDay();
             endDate = new Date();
             title = "Ranking do Dia";
-        } else if (msg.body.toLowerCase() === "!ranking semana") {
+        } else if (msg.body.toLowerCase() === `${this.command} semana`) {
             startDate = this.getStartOfWeek();
             endDate = new Date();
             title = "Ranking da Semana";
-        } else if (msg.body.toLowerCase() === "!ranking mes") {
+        } else if (msg.body.toLowerCase() === `${this.command} mes`) {
             startDate = this.getStartOfMonth();
             endDate = new Date();
             title = "Ranking do Mês";
-        } else if (msg.body.toLowerCase() === "!ranking") {
+        } else if (msg.body.toLowerCase() === `${this.command} dia`) {
             startDate = new Date(0); // Unix epoch start
             endDate = new Date();
             title = "Ranking Geral";

@@ -54,7 +54,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Instala as dependências da aplicação
-RUN yarn install
+RUN yarn
 
 # Copia todo o conteúdo do diretório atual para o diretório de trabalho no contêiner
 COPY . .
