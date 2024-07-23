@@ -25,6 +25,8 @@ import { TYPES } from "./types";
 import { MessageObserver } from "../application/observers/messageObserver";
 import { INumberPermissionRepository } from "../application/contracts/INumberPermissionsRepository";
 import { NumberPermissionRepository } from "../infrastructure/repositories/numberPermissionsRepository";
+import { IGroupMembersRepository } from "../application/contracts/IGroupMembersRepository";
+import { GroupMembersRepository } from "../infrastructure/repositories/groupMembersRepository";
 
 const container = new Container();
 
