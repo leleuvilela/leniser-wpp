@@ -42,6 +42,7 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.TranscreverHandler) transcreverHandler: IStartWithHandler,
         @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository,
         @inject(TYPES.DeuitaHandler) deuitaHandler: IHandler,
+        @inject(TYPES.GilsoHandler) gilsoHandler: IHandler,
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -54,6 +55,8 @@ export class MessageCreateListener implements IListener {
         this.transcreverHandler = transcreverHandler;
         this.configsRepository = configsRepository;
         this.deuitaHandler = deuitaHandler
+        this.deuitaHandler = deuitaHandler;
+        this.gilsoHandler = gilsoHandler;
 
         this.startListeners();
     }
@@ -70,6 +73,7 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addStartWithHandler(this.falaHandler);
         this.messageObserver.addStartWithHandler(this.rankingHandler);
         this.messageObserver.addHandler(this.deuitaHandler)
+        this.messageObserver.addHandler(this.gilsoHandler)
     }
 
     public async initialize() {
