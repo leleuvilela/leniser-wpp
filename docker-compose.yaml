@@ -27,6 +27,7 @@ services:
 
 volumes:
   app_data:
+  mongo_data:
 
 networks:
   leniser-wpp:
