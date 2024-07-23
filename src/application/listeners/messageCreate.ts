@@ -12,12 +12,10 @@ import {
     handleImagem,
 } from "../events";
 import { MessageObserver } from "../observers/messageObserver";
-import { FalaHandler } from "../events/fala";
-import { RankingHandler } from "../events/ranking";
-import { BotHandler } from "../events/bot";
 import { IMessageRepository } from "../contracts/IMessagesRepository";
 import { INumberPermissionRepository } from "../contracts/INumberPermissionsRepository";
 import { NumberPermission, NumberPermissions } from "../dtos/numberPermission";
+import { IStartWithHandler } from "../contracts/IHandler";
 
 @injectable()
 export class MessageCreateListener implements IListener {
@@ -25,9 +23,10 @@ export class MessageCreateListener implements IListener {
     wwebClient: WwebClient;
     messageRepository: IMessageRepository;
     numberPermissionRepository: INumberPermissionRepository;
-    botHandler: BotHandler;
-    falaHandler: FalaHandler;
-    rankingHandler: RankingHandler;
+    botHandler: IStartWithHandler;
+    falaHandler: IStartWithHandler;
+    rankingHandler: IStartWithHandler;
+    transcreverHandler: IStartWithHandler;
 
     botNumber = '351931426775@g.us'
 
@@ -35,9 +34,10 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.WwebClient) wwebClient: Client,
         @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
         @inject(TYPES.NumberPermissionRepository) numberPermissionsRepository: INumberPermissionRepository,
-        @inject(TYPES.BotHandler) botHandler: BotHandler,
-        @inject(TYPES.FalaHandler) falaHandler: FalaHandler,
-        @inject(TYPES.RankingHandler) rankingHandler: RankingHandler,
+        @inject(TYPES.BotHandler) botHandler: IStartWithHandler,
+        @inject(TYPES.FalaHandler) falaHandler: IStartWithHandler,
+        @inject(TYPES.RankingHandler) rankingHandler: IStartWithHandler,
+        @inject(TYPES.TranscreverHandler) transcreverHandler: IStartWithHandler,
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -47,6 +47,7 @@ export class MessageCreateListener implements IListener {
         this.rankingHandler = rankingHandler;
         this.messageRepository = messageRepository;
         this.numberPermissionRepository = numberPermissionsRepository;
+        this.transcreverHandler = transcreverHandler;
 
         this.startListeners();
     }
@@ -56,7 +57,7 @@ export class MessageCreateListener implements IListener {
     }
 
     async handleMessage(msg: Message) {
-        var numberPermissions = await this.numberPermissionRepository.find(msg.from)
+        const numberPermissions = await this.numberPermissionRepository.find(msg.from)
             ?? await this.numberPermissionRepository.find(msg.to);
 
         await this.saveMessageToMongo(msg, numberPermissions);
@@ -81,6 +82,7 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addStartWithMessageHandler("!sticker", handleSticker);
         this.messageObserver.addStartWithMessageHandler("!imagem", handleImagem);
 
+        this.messageObserver.addStartWithHandler(this.transcreverHandler);
         this.messageObserver.addStartWithHandler(this.botHandler);
         this.messageObserver.addStartWithHandler(this.falaHandler);
         this.messageObserver.addStartWithHandler(this.rankingHandler);
@@ -88,7 +90,7 @@ export class MessageCreateListener implements IListener {
 
     private async saveMessageToMongo(msg: Message, numberPermissions: NumberPermissions | null): Promise<void> {
 
-        if (msg.from === this.botNumber) {
+        if (msg.author === this.botNumber) {
             return
         }
 
@@ -105,13 +107,15 @@ export class MessageCreateListener implements IListener {
 
     private shouldProcessMessage(msg: Message, numberPermissions: NumberPermissions | null): boolean {
 
-        if (!numberPermissions){
+        if (!numberPermissions) {
             return false;
         }
 
         // UTC timestamp in seconds
         const now = Math.floor(new Date().getTime() / 1000);
         const messageTime = new Date(msg.timestamp).getTime();
+
+        console.log(now - messageTime)
 
         if (now - messageTime > 20) {
             return false;

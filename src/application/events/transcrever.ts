@@ -1,34 +1,44 @@
 import { type Message, MessageTypes } from "whatsapp-web.js";
-import { generateTranscription } from "../../infrastructure/services/transcriptionService";
+import { TranscriptionService } from "../../infrastructure/services/transcriptionService";
+import { IStartWithHandler } from "../contracts/IHandler";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../ioc/types";
 
-async function handleTranscrever(msg: Message): Promise<Message> {
-    const quoted = await msg.getQuotedMessage();
+@injectable()
+class TranscreverHandler implements IStartWithHandler {
+    public command = '!transcrever';
 
-    if (!quoted || (quoted.type !== MessageTypes.AUDIO && quoted.type !== MessageTypes.VOICE)) {
-        return await msg.reply('🤖 A mensagem precisa ser um áudio.')
-    }
+    @inject(TYPES.TranscriptionService) transcriptionService: TranscriptionService;
 
-    const chat = await msg.getChat();
-    try {
-        await chat.sendStateTyping();
-        const audio = await quoted.downloadMedia();
-        const audioBuffer = Buffer.from(audio.data, 'base64');
+    public async handle(msg: Message): Promise<Message> {
+        const quoted = await msg.getQuotedMessage();
 
-        if (!audio.data) {
-            await chat.clearState();
-            return msg.reply(`🤖 Parece que esse áudio não tá disponivel.`)
+        if (!quoted || (quoted.type !== MessageTypes.AUDIO && quoted.type !== MessageTypes.VOICE)) {
+            return await msg.reply('🤖 A mensagem precisa ser um áudio.')
         }
 
-        const translate = msg.body.split(' ').length > 1;
-        const transcription = await generateTranscription(audioBuffer, translate);
+        const chat = await msg.getChat();
+        try {
+            await chat.sendStateTyping();
+            const audio = await quoted.downloadMedia();
+            const audioBuffer = Buffer.from(audio.data, 'base64');
 
-        await chat.clearState();
+            if (!audio.data) {
+                await chat.clearState();
+                return msg.reply(`🤖 Parece que esse áudio não tá disponivel.`)
+            }
 
-        return msg.reply(`🤖 ${transcription}`);
-    } catch (e) {
-        console.log(e)
-        return await msg.reply(`🤖 eita, pera. algo de errado não está certo.`)
+            const translate = msg.body.split(' ').length > 1;
+            const transcription = await this.transcriptionService.generateTranscription(audioBuffer, translate);
+
+            await chat.clearState();
+
+            return msg.reply(`🤖 ${transcription}`);
+        } catch (e) {
+            console.log(e)
+            return await msg.reply(`🤖 eita, pera. algo de errado não está certo.`)
+        }
     }
 }
 
-export { handleTranscrever }
+export { TranscreverHandler }

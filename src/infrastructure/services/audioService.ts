@@ -5,13 +5,7 @@ import { TYPES } from "../../ioc/types";
 
 @injectable()
 export class AudioService implements IAudioService {
-    openAIClient: OpenAI
-
-    constructor(
-        @inject(TYPES.OpenAIClient) openAIClient: OpenAI
-    ) {
-        this.openAIClient = openAIClient;
-    }
+    @inject(TYPES.OpenAIClient) openAIClient: OpenAI
 
     async generateAudio(text: string): Promise<Buffer> {
         const mp3 = await this.openAIClient.audio.speech.create({

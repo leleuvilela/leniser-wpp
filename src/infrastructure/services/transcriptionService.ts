@@ -1,31 +1,37 @@
 import { toFile } from "openai/uploads";
-import { openaiClient } from "../openai";
+import { ITranscriptionService } from "../../application/contracts/ITranscriptionService";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../ioc/types";
+import OpenAI from "openai";
 
-async function generateTranscription(audioBuffer: Buffer, translate?: boolean) {
-    try {
-        const audioFile = await toFile(audioBuffer, 'audio.ogg', {
-            type: 'audio/ogg'
-        });
+@injectable()
+export class TranscriptionService implements ITranscriptionService {
+    @inject(TYPES.OpenAIClient) openAIClient: OpenAI
 
-        if (translate) {
-            const transcription = await openaiClient.audio.translations.create({
+    public async generateTranscription(audioBuffer: Buffer, translate?: boolean) {
+        try {
+            const audioFile = await toFile(audioBuffer, 'audio.ogg', {
+                type: 'audio/ogg'
+            });
+
+            if (translate) {
+                const transcription = await this.openAIClient.audio.translations.create({
+                    model: 'whisper-1',
+                    file: audioFile,
+                });
+
+                return transcription.text;
+            }
+
+            const transcription = await this.openAIClient.audio.transcriptions.create({
                 model: 'whisper-1',
                 file: audioFile,
             });
 
             return transcription.text;
+        } catch (e) {
+            console.log(e);
+            return "Algo de errado não está certo.";
         }
-
-        const transcription = await openaiClient.audio.transcriptions.create({
-            model: 'whisper-1',
-            file: audioFile,
-        });
-
-        return transcription.text;
-    } catch (e) {
-        console.log(e);
-        return "Algo de errado não está certo.";
     }
-}
-
-export { generateTranscription };
+};
