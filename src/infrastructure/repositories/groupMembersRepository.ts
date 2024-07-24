@@ -11,13 +11,7 @@ export interface MembersDocument {
 
 @injectable()
 export class GroupMembersRepository implements IGroupMembersRepository {
-    mongoClient: MongoClient;
-
-    constructor(
-        @inject(TYPES.MongoClient) mongoClient: MongoClient
-    ) {
-        this.mongoClient = mongoClient;
-    }
+    @inject(TYPES.MongoClient) mongoClient: MongoClient
 
     public async getMembers(groupId: string): Promise<GroupMembers | null> {
         const collection = this.mongoClient

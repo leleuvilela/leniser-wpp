@@ -7,20 +7,10 @@ import { TYPES } from "../../ioc/types";
 
 @injectable()
 export class MessageRepository implements IMessageRepository {
-    client: MongoClient;
-
-    constructor(
-        @inject(TYPES.MongoClient) mongoClient: MongoClient
-    ) {
-        this.client = mongoClient;
-    }
+    @inject(TYPES.MongoClient) mongoClient: MongoClient
 
     async addMessage(msg: Message): Promise<boolean> {
-        if (!this.client) {
-            return true;
-        }
-
-        const result = await this.client.db("rap").collection("messages").insertOne(msg);
+        const result = await this.mongoClient.db("rap").collection("messages").insertOne(msg);
 
         return result.acknowledged
     }
@@ -28,7 +18,7 @@ export class MessageRepository implements IMessageRepository {
     async getMessageCountsByUser(startDate: Date, endDate: Date): Promise<MessageCountDto[]> {
         try {
 
-            const db = this.client.db("rap");
+            const db = this.mongoClient.db("rap");
             const collection = db.collection("messages");
 
             const pipeline = [

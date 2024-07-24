@@ -9,7 +9,6 @@ import { TYPES } from "../../ioc/types";
 
 @injectable()
 export class ResponseService implements IResponseService {
-
     @inject(TYPES.OpenAIClient) openAIClient: OpenAI
 
     async generateResponse(systemRoleMessage: string, prompts: ChatCompletionContentPart[]): Promise<string> {

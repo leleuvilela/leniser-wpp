@@ -16,6 +16,7 @@ import { IMessageRepository } from "../contracts/IMessagesRepository";
 import { INumberPermissionRepository } from "../contracts/INumberPermissionsRepository";
 import { NumberPermission, NumberPermissions } from "../dtos/numberPermission";
 import { IStartWithHandler } from "../contracts/IHandler";
+import { IConfigsRepository } from "../contracts/IConfigsRepository";
 
 @injectable()
 export class MessageCreateListener implements IListener {
@@ -27,8 +28,7 @@ export class MessageCreateListener implements IListener {
     falaHandler: IStartWithHandler;
     rankingHandler: IStartWithHandler;
     transcreverHandler: IStartWithHandler;
-
-    botNumber = '351931426775@g.us'
+    configsRepository: IConfigsRepository;
 
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
@@ -38,6 +38,7 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.FalaHandler) falaHandler: IStartWithHandler,
         @inject(TYPES.RankingHandler) rankingHandler: IStartWithHandler,
         @inject(TYPES.TranscreverHandler) transcreverHandler: IStartWithHandler,
+        @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository,
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -48,6 +49,7 @@ export class MessageCreateListener implements IListener {
         this.messageRepository = messageRepository;
         this.numberPermissionRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
+        this.configsRepository = configsRepository;
 
         this.startListeners();
     }
@@ -62,7 +64,7 @@ export class MessageCreateListener implements IListener {
 
         await this.saveMessageToMongo(msg, numberPermissions);
 
-        if (!this.shouldProcessMessage(msg, numberPermissions)) {
+        if (!(await this.shouldProcessMessage(msg, numberPermissions))) {
             return;
         }
 
@@ -89,8 +91,9 @@ export class MessageCreateListener implements IListener {
     }
 
     private async saveMessageToMongo(msg: Message, numberPermissions: NumberPermissions | null): Promise<void> {
+        const { botNumber } = await this.configsRepository.getConfigs();
 
-        if (msg.author === this.botNumber) {
+        if (msg.from === botNumber) {
             return
         }
 
@@ -105,7 +108,8 @@ export class MessageCreateListener implements IListener {
         }
     }
 
-    private shouldProcessMessage(msg: Message, numberPermissions: NumberPermissions | null): boolean {
+    private async shouldProcessMessage(msg: Message, numberPermissions: NumberPermissions | null): Promise<boolean> {
+        const { botNumber } = await this.configsRepository.getConfigs();
 
         if (!numberPermissions) {
             return false;
@@ -115,13 +119,11 @@ export class MessageCreateListener implements IListener {
         const now = Math.floor(new Date().getTime() / 1000);
         const messageTime = new Date(msg.timestamp).getTime();
 
-        console.log(now - messageTime)
-
         if (now - messageTime > 20) {
             return false;
         }
 
-        return msg.author !== this.botNumber && numberPermissions.permissions.includes(NumberPermission.MESSAGE_CREATE)
+        return msg.from !== botNumber && numberPermissions.permissions.includes(NumberPermission.MESSAGE_CREATE)
     }
 
 }

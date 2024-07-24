@@ -12,13 +12,7 @@ interface NumberPermissionsDocument {
 
 @injectable()
 export class NumberPermissionRepository implements INumberPermissionRepository {
-    mongoClient: MongoClient;
-
-    constructor(
-        @inject(TYPES.MongoClient) mongoClient: MongoClient
-    ) {
-        this.mongoClient = mongoClient;
-    }
+    @inject(TYPES.MongoClient) mongoClient: MongoClient
 
     public async getAll(): Promise<NumberPermissions[]> {
         const collection = this.mongoClient

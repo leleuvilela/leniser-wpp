@@ -4,25 +4,17 @@ import { IStartWithHandler } from "../contracts/IHandler";
 import { IResponseService } from "../contracts/IResponseService";
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from "inversify";
+import { IConfigsRepository } from "../contracts/IConfigsRepository";
 
 @injectable()
 export class BotHandler implements IStartWithHandler {
     public command = '!bot';
 
-    private responseService: IResponseService
-    private systemRoleMessage = `Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas.
-        Caso eu forneça apenas um prompt, você deve responde-lo.
-        Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica.
-        Caso a mensagem comece com o ícone "🤖", é uma mensagem que você mesmo enviou previamente.`;
-
-    constructor(
-        @inject(TYPES.ResponseService) responseService: IResponseService
-    ) {
-        this.responseService = responseService;
-    }
-
+    @inject(TYPES.ResponseService) responseService: IResponseService;
+    @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
 
     public async handle(msg: Message): Promise<Message> {
+        const { botPrefix, systemPrompt } = this.configsRepository.configs;
 
         // only !bot, needs to be a media or a quoted message (reply)
         if (msg.body === '!bot' && this.hasValidMedia(msg) && !msg.hasQuotedMsg) {
@@ -34,11 +26,11 @@ export class BotHandler implements IStartWithHandler {
 
         const promptHistory = await this.getHistory(msg);
 
-        const res = await this.responseService.generateResponse(this.systemRoleMessage, promptHistory);
+        const res = await this.responseService.generateResponse(systemPrompt, promptHistory);
 
         await chat.clearState();
 
-        return await msg.reply(`🤖 ${res}`);
+        return await msg.reply(`${botPrefix} ${res}`);
     }
 
     private hasValidMedia(msg: Message | null): boolean {
