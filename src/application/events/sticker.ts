@@ -9,8 +9,7 @@ async function handleSticker(msg: Message): Promise<Message> {
         MessageTypes.VIDEO
     ]
 
-    if (allowedTypes.find(type => type === msg.type) ||
-        allowedTypes.find(type => type === quoted?.type)){
+    if (!allowedTypes.includes(msg.type) && !allowedTypes.includes(quoted?.type)) {
         return await msg.reply('🤖 Preciso de uma imagem ou vídeo para gerar um sticker!');
     }
 
