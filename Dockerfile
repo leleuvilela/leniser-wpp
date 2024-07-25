@@ -42,6 +42,7 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     xdg-utils \
     wget \
+    ffmpeg \
     --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
