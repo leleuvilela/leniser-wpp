@@ -15,7 +15,7 @@ export class MessageRepository implements IMessageRepository {
         return result.acknowledged
     }
 
-    async getMessageCountsByUser(startDate: Date, endDate: Date): Promise<MessageCountDto[]> {
+    async getMessageCountsByUser(startDate: Date, endDate: Date, groupId: string): Promise<MessageCountDto[]> {
         try {
 
             const db = this.mongoClient.db("rap");
@@ -27,7 +27,8 @@ export class MessageRepository implements IMessageRepository {
                         timestamp: {
                             $gte: Math.floor(startDate.getTime() / 1000),
                             $lte: Math.floor(endDate.getTime() / 1000)
-                        }
+                        },
+                        from: groupId
                     }
                 },
                 { $group: { _id: "$author", count: { $sum: 1 } } },

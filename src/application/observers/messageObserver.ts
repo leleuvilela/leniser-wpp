@@ -32,7 +32,7 @@ export class MessageObserver {
         });
 
         this.startsWithHandlers.forEach(handler => {
-            if (msg.body.startsWith(handler.command)) {
+            if (msg.body.toLowerCase().startsWith(handler.command)) {
                 handler.handle(msg);
             }
         });

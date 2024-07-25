@@ -10,13 +10,14 @@ import {
     handleSticker,
     handleAA,
     handleImagem,
+    handleMp3
 } from "../events";
 import { MessageObserver } from "../observers/messageObserver";
 import { IMessageRepository } from "../contracts/IMessagesRepository";
 import { INumberPermissionRepository } from "../contracts/INumberPermissionsRepository";
 import { NumberPermission, NumberPermissions } from "../dtos/numberPermission";
-import { IStartWithHandler } from "../contracts/IHandler";
 import { IConfigsRepository } from "../contracts/IConfigsRepository";
+import { IHandler, IStartWithHandler } from "../contracts/IHandler";
 
 @injectable()
 export class MessageCreateListener implements IListener {
@@ -29,6 +30,8 @@ export class MessageCreateListener implements IListener {
     rankingHandler: IStartWithHandler;
     transcreverHandler: IStartWithHandler;
     configsRepository: IConfigsRepository;
+    deuitaHandler: IHandler;
+    gilsoHandler: IHandler;
 
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
@@ -39,6 +42,8 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.RankingHandler) rankingHandler: IStartWithHandler,
         @inject(TYPES.TranscreverHandler) transcreverHandler: IStartWithHandler,
         @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository,
+        @inject(TYPES.DeuitaHandler) deuitaHandler: IHandler,
+        @inject(TYPES.GilsoHandler) gilsoHandler: IHandler,
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -50,8 +55,27 @@ export class MessageCreateListener implements IListener {
         this.numberPermissionRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
         this.configsRepository = configsRepository;
+        this.deuitaHandler = deuitaHandler
+        this.deuitaHandler = deuitaHandler;
+        this.gilsoHandler = gilsoHandler;
 
         this.startListeners();
+    }
+
+    private startListeners(): void {
+        this.messageObserver.addStartWithMessageHandler("!menu", handleMenu);
+        this.messageObserver.addStartWithMessageHandler("!aa", handleAA);
+        this.messageObserver.addStartWithMessageHandler("!checagem", handleChecagem);
+        this.messageObserver.addStartWithMessageHandler("!ping", handlePing);
+        this.messageObserver.addStartWithMessageHandler("!sticker", handleSticker);
+        this.messageObserver.addStartWithMessageHandler("!imagem", handleImagem);
+        this.messageObserver.addStartWithMessageHandler("!mp3", handleMp3);
+        this.messageObserver.addStartWithHandler(this.transcreverHandler);
+        this.messageObserver.addStartWithHandler(this.botHandler);
+        this.messageObserver.addStartWithHandler(this.falaHandler);
+        this.messageObserver.addStartWithHandler(this.rankingHandler);
+        this.messageObserver.addHandler(this.deuitaHandler)
+        this.messageObserver.addHandler(this.gilsoHandler)
     }
 
     public async initialize() {
@@ -69,25 +93,6 @@ export class MessageCreateListener implements IListener {
         }
 
         this.messageObserver.notify(msg);
-
-        const messageBody = msg.body.toLowerCase();
-        if (messageBody.includes('deuita')) {
-            msg.reply('🤖 vai toma no cu');
-        }
-    }
-
-    private startListeners(): void {
-        this.messageObserver.addStartWithMessageHandler("!menu", handleMenu);
-        this.messageObserver.addStartWithMessageHandler("!aa", handleAA);
-        this.messageObserver.addStartWithMessageHandler("!checagem", handleChecagem);
-        this.messageObserver.addStartWithMessageHandler("!ping", handlePing);
-        this.messageObserver.addStartWithMessageHandler("!sticker", handleSticker);
-        this.messageObserver.addStartWithMessageHandler("!imagem", handleImagem);
-
-        this.messageObserver.addStartWithHandler(this.transcreverHandler);
-        this.messageObserver.addStartWithHandler(this.botHandler);
-        this.messageObserver.addStartWithHandler(this.falaHandler);
-        this.messageObserver.addStartWithHandler(this.rankingHandler);
     }
 
     private async saveMessageToMongo(msg: Message, numberPermissions: NumberPermissions | null): Promise<void> {
@@ -125,5 +130,4 @@ export class MessageCreateListener implements IListener {
 
         return msg.from !== botNumber && numberPermissions.permissions.includes(NumberPermission.MESSAGE_CREATE)
     }
-
 }
