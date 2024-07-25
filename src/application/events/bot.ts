@@ -14,7 +14,7 @@ export class BotHandler implements IStartWithHandler {
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
 
     public async handle(msg: Message): Promise<Message> {
-        const { botPrefix, systemPrompt } = this.configsRepository.configs;
+        const { botPrefix, systemPrompt } = await this.configsRepository.getConfigs();
 
         // only !bot, needs to be a media or a quoted message (reply)
         if (msg.body === '!bot' && this.hasValidMedia(msg) && !msg.hasQuotedMsg) {
