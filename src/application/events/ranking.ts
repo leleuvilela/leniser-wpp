@@ -92,14 +92,26 @@ export class RankingHandler implements IStartWithHandler {
         members: GroupMembers | null
     ) {
         messageCounts.forEach((result) => {
-            result.name = members?.members[result.name] || result.name;
+            result.id = this.findName(result.id, members);
         });
 
         let messageText = `📊 *${title}* 📊\n\n`;
         messageCounts.forEach((result, index) => {
-            messageText += `${index + 1}º - 👤 ${result.name}: ${result.count}\n`;
+            messageText += `${index + 1}º - 👤 ${result.id}: ${result.count}\n`;
         });
 
         return messageText;
+    }
+
+    findName(id: string, members: GroupMembers | null): string {
+        if(!members) return id;
+
+        const memberKeys = Object.keys(members.members);
+
+        const memberKey = memberKeys.find((key) => key.startsWith(id));
+
+        if (!memberKey) return id;
+
+        return members.members[memberKey] || id;
     }
 }
