@@ -40,7 +40,7 @@ export class MessageRepository implements IMessageRepository {
                 .toArray();
 
             return results.map((result) => ({
-                name: result._id as string,
+                id: result._id as string,
                 count: result.count as number,
             } as MessageCountDto));
 

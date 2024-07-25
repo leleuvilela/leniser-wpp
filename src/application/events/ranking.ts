@@ -92,12 +92,12 @@ export class RankingHandler implements IStartWithHandler {
         members: GroupMembers | null
     ) {
         messageCounts.forEach((result) => {
-            result.name = this.findName(result.name, members);
+            result.id = this.findName(result.id, members);
         });
 
         let messageText = `📊 *${title}* 📊\n\n`;
         messageCounts.forEach((result, index) => {
-            messageText += `${index + 1}º - 👤 ${result.name}: ${result.count}\n`;
+            messageText += `${index + 1}º - 👤 ${result.id}: ${result.count}\n`;
         });
 
         return messageText;
