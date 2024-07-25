@@ -10,6 +10,7 @@ import {
     handleSticker,
     handleAA,
     handleImagem,
+    handleMp3
 } from "../events";
 import { MessageObserver } from "../observers/messageObserver";
 import { IMessageRepository } from "../contracts/IMessagesRepository";
@@ -68,6 +69,7 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addStartWithMessageHandler("!ping", handlePing);
         this.messageObserver.addStartWithMessageHandler("!sticker", handleSticker);
         this.messageObserver.addStartWithMessageHandler("!imagem", handleImagem);
+        this.messageObserver.addStartWithMessageHandler("!mp3", handleMp3);
         this.messageObserver.addStartWithHandler(this.transcreverHandler);
         this.messageObserver.addStartWithHandler(this.botHandler);
         this.messageObserver.addStartWithHandler(this.falaHandler);
