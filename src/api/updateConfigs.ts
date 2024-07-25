@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { Application } from "../app";
+import { IApplication } from "../application/contracts/IApplication";
 
-class updateConfigsRoutes {
+class UpdateConfigsRoutes {
     public router: Router;
-    private readonly application: Application;
+    private readonly application: IApplication;
 
-    constructor(application: Application) {
+    constructor(application: IApplication) {
         this.router = Router();
         this.application = application;
         this.intializeRoutes();
@@ -19,4 +19,4 @@ class updateConfigsRoutes {
     }
 }
 
-export { updateConfigsRoutes };
+export { UpdateConfigsRoutes };
