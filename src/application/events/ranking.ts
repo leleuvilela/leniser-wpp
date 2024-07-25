@@ -92,7 +92,7 @@ export class RankingHandler implements IStartWithHandler {
         members: GroupMembers | null
     ) {
         messageCounts.forEach((result) => {
-            result.name = members?.members[result.name] || result.name;
+            result.name = this.findName(result.name, members);
         });
 
         let messageText = `📊 *${title}* 📊\n\n`;
@@ -101,5 +101,17 @@ export class RankingHandler implements IStartWithHandler {
         });
 
         return messageText;
+    }
+
+    findName(id: string, members: GroupMembers | null): string {
+        if(!members) return id;
+
+        const memberKeys = Object.keys(members.members);
+
+        const memberKey = memberKeys.find((key) => key.startsWith(id));
+
+        if (!memberKey) return id;
+
+        return members.members[memberKey] || id;
     }
 }
