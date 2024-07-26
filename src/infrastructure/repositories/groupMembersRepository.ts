@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../ioc/types";
 import { MongoClient } from "mongodb";
-import { GroupMembers } from "../../application/dtos/members";
+import { GroupMembers } from "../../application/dtos/groupMembers";
 import { IGroupMembersRepository } from "../../application/contracts/IGroupMembersRepository";
 
 export interface MembersDocument {

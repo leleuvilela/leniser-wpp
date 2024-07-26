@@ -6,10 +6,6 @@ import { Configs } from "../../application/dtos/configs";
 
 interface ConfigsDocument {
     _id: string;
-    imageCooldownEnabled: boolean;
-    imageCooldownTime: number;
-    systemPrompt: string;
-    botPrefix: string;
     botNumber: string;
     type: string;
 }
@@ -40,10 +36,6 @@ export class ConfigsRepository implements IConfigsRepository {
         }
 
         const configs: Configs = {
-            imageCooldownEnabled: result.imageCooldownEnabled,
-            imageCooldownTime: result.imageCooldownTime,
-            systemPrompt: result.systemPrompt,
-            botPrefix: result.botPrefix,
             botNumber: result.botNumber,
         }
 

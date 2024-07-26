@@ -9,7 +9,7 @@ export const TYPES = {
     MessageRevokeListener: Symbol.for("MessageRevokeListener"),
     ConfigsRepository: Symbol.for("ConfigsRepository"),
     MessageRepository: Symbol.for("MessageRepository"),
-    NumberPermissionRepository: Symbol.for("NumberPermissionRepository"),
+    MembersRepository: Symbol.for("NumberPermissionRepository"),
     GroupMembersRepository: Symbol.for("GroupMembersRepository"),
     ResponseService: Symbol.for("ResponseService"),
     AudioService: Symbol.for("AudioService"),

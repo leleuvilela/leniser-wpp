@@ -1,11 +1,11 @@
+import { inject, injectable } from "inversify";
 import { type Message } from "whatsapp-web.js";
+import { TYPES } from '../../ioc/types';
+import { IGroupMembersRepository } from "../contracts/IGroupMembersRepository";
 import { IStartWithHandler } from "../contracts/IHandler";
 import { IMessageRepository } from "../contracts/IMessagesRepository";
-import { inject, injectable } from "inversify";
-import { TYPES } from '../../ioc/types';
+import { GroupMembers } from "../dtos/groupMembers";
 import { MessageCountDto } from "../dtos/messageCountDto";
-import { IGroupMembersRepository } from "../contracts/IGroupMembersRepository";
-import { GroupMembers } from "../dtos/members";
 
 @injectable()
 export class RankingHandler implements IStartWithHandler {
@@ -104,7 +104,7 @@ export class RankingHandler implements IStartWithHandler {
     }
 
     findName(id: string, members: GroupMembers | null): string {
-        if(!members) return id;
+        if (!members) return id;
 
         const memberKeys = Object.keys(members.members);
 
