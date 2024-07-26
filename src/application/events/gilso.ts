@@ -7,7 +7,7 @@ export class GilsoHandler implements IHandler {
     gilsoId = '556283282310@c.us';
 
     canHandle(msg: Message): boolean {
-        return msg.from === this.gilsoId && Math.random() < 0.15
+        return msg.author === this.gilsoId && Math.random() < 0.15
     }
 
     handle(msg: Message): Promise<Message> {
