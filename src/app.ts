@@ -4,6 +4,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "./ioc/types";
 import { IConfigsRepository } from "./application/contracts/IConfigsRepository";
 import { IListener } from "./application/contracts/IListener";
+import { IMembersRepository } from "./application/contracts/INumberPermissionsRepository";
 
 @injectable()
 class Application implements IApplication {
@@ -12,7 +13,7 @@ class Application implements IApplication {
     @inject(TYPES.MessageCreateListener) messageCreateListener: IListener;
     @inject(TYPES.MessageRevokeListener) messageRevokeListener: IListener;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
-
+    @inject(TYPES.MembersRepository) membersRepository: IMembersRepository;
 
     public async start() {
         console.log("Getting configs");
@@ -31,6 +32,7 @@ class Application implements IApplication {
         //TODO: implements a method to update configs to be called in a route
         console.log("Updating configs");
         this.configsRepository.fetchConfigs();
+        this.membersRepository.fetchAll();
     }
 }
 

@@ -1,34 +1,48 @@
 db = db.getSiblingDB('rap');
 db.createCollection('messages');
-db.createCollection('number_permissions');
+db.createCollection('members');
 db.createCollection('group_members');
 db.createCollection('configs');
 
 db.configs.insertMany([{
     "_id": { "$oid": "669689b40a3d139b439f6ef9" },
-    "imageCooldownEnabled": true,
-    "imageCooldownTime": { "$numberInt": "120" },
-    "systemPrompt": "Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
-    "botPrefix": "🤖 ",
     "botNumber": "351931426775@g.us",
     "type": "general"
 }])
 
-db.number_permissions.insertMany([
+db.members.insertMany([
     {
         _id: '556285359995-1486844624@g.us',
         desc: 'Grupo de Rap',
-        permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE']
+        permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
+        configs: {
+            "imageCooldownEnabled": true,
+            "imageCooldownTime": { "$numberInt": "120" },
+            "systemPrompt": "Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
+            "botPrefix": "🤖 ",
+        }
     },
     {
         _id: '556299031117-1523720875@g.us',
         desc: 'Grupo de Games',
-        permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE']
+        permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
+        configs: {
+            "imageCooldownEnabled": true,
+            "imageCooldownTime": { "$numberInt": "120" },
+            "systemPrompt": "Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
+            "botPrefix": "🤖 ",
+        }
     },
     {
         _id: '120363311991674552@g.us',
         desc: 'Grupo de Teste',
-        permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE']
+        permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
+        configs: {
+            "imageCooldownEnabled": true,
+            "imageCooldownTime": { "$numberInt": "120" },
+            "systemPrompt": "Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
+            "botPrefix": "🤖 ",
+        }
     }
 ])
 

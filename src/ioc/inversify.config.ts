@@ -23,8 +23,8 @@ import { AudioService } from "../infrastructure/services/audioService";
 import { ResponseService } from "../infrastructure/services/responseService";
 import { TYPES } from "./types";
 import { MessageObserver } from "../application/observers/messageObserver";
-import { INumberPermissionRepository } from "../application/contracts/INumberPermissionsRepository";
-import { NumberPermissionRepository } from "../infrastructure/repositories/numberPermissionsRepository";
+import { IMembersRepository } from "../application/contracts/INumberPermissionsRepository";
+import { MembersRepository } from "../infrastructure/repositories/membersRepository";
 import { IGroupMembersRepository } from "../application/contracts/IGroupMembersRepository";
 import { GroupMembersRepository } from "../infrastructure/repositories/groupMembersRepository";
 import { IConfigsRepository } from "../application/contracts/IConfigsRepository";
@@ -56,7 +56,7 @@ container.bind<IHandler>(TYPES.GilsoHandler).to(GilsoHandler);
 
 container.bind<IConfigsRepository>(TYPES.ConfigsRepository).to(ConfigsRepository).inSingletonScope();
 container.bind<IMessageRepository>(TYPES.MessageRepository).to(MessageRepository).inSingletonScope();
-container.bind<INumberPermissionRepository>(TYPES.NumberPermissionRepository).to(NumberPermissionRepository).inSingletonScope();
+container.bind<IMembersRepository>(TYPES.MembersRepository).to(MembersRepository).inSingletonScope();
 container.bind<IGroupMembersRepository>(TYPES.GroupMembersRepository).to(GroupMembersRepository).inSingletonScope();
 
 container.bind<ITranscriptionService>(TYPES.TranscriptionService).to(TranscriptionService);

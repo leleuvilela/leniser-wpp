@@ -1,6 +1,7 @@
-import { NumberPermissions } from "../dtos/numberPermission";
+import { Member } from "../dtos/members";
 
-export interface INumberPermissionRepository {
-    getAll: () => Promise<NumberPermissions[]>;
-    find(id: string): Promise<NumberPermissions | null>;
+export interface IMembersRepository {
+    getAll: () => Promise<Map<string, Member>>;
+    find(id: string): Promise<Member | null>;
+    fetchAll(): Promise<Map<string, Member>>;
 }

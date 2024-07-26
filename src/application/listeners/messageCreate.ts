@@ -14,8 +14,8 @@ import {
 } from "../events";
 import { MessageObserver } from "../observers/messageObserver";
 import { IMessageRepository } from "../contracts/IMessagesRepository";
-import { INumberPermissionRepository } from "../contracts/INumberPermissionsRepository";
-import { NumberPermission, NumberPermissions } from "../dtos/numberPermission";
+import { IMembersRepository } from "../contracts/INumberPermissionsRepository";
+import { MemberPermission, Member } from "../dtos/members";
 import { IConfigsRepository } from "../contracts/IConfigsRepository";
 import { IHandler, IStartWithHandler } from "../contracts/IHandler";
 
@@ -24,7 +24,7 @@ export class MessageCreateListener implements IListener {
     messageObserver: MessageObserver;
     wwebClient: WwebClient;
     messageRepository: IMessageRepository;
-    numberPermissionRepository: INumberPermissionRepository;
+    membersRepository: IMembersRepository;
     botHandler: IStartWithHandler;
     falaHandler: IStartWithHandler;
     rankingHandler: IStartWithHandler;
@@ -36,7 +36,7 @@ export class MessageCreateListener implements IListener {
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
         @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
-        @inject(TYPES.NumberPermissionRepository) numberPermissionsRepository: INumberPermissionRepository,
+        @inject(TYPES.MembersRepository) numberPermissionsRepository: IMembersRepository,
         @inject(TYPES.BotHandler) botHandler: IStartWithHandler,
         @inject(TYPES.FalaHandler) falaHandler: IStartWithHandler,
         @inject(TYPES.RankingHandler) rankingHandler: IStartWithHandler,
@@ -52,11 +52,10 @@ export class MessageCreateListener implements IListener {
         this.falaHandler = falaHandler;
         this.rankingHandler = rankingHandler;
         this.messageRepository = messageRepository;
-        this.numberPermissionRepository = numberPermissionsRepository;
+        this.membersRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
         this.configsRepository = configsRepository;
         this.deuitaHandler = deuitaHandler
-        this.deuitaHandler = deuitaHandler;
         this.gilsoHandler = gilsoHandler;
 
         this.startListeners();
@@ -83,26 +82,26 @@ export class MessageCreateListener implements IListener {
     }
 
     async handleMessage(msg: Message) {
-        const numberPermissions = await this.numberPermissionRepository.find(msg.from)
-            ?? await this.numberPermissionRepository.find(msg.to);
+        const member = await this.membersRepository.find(msg.from)
+            ?? await this.membersRepository.find(msg.to);
 
-        await this.saveMessageToMongo(msg, numberPermissions);
+        await this.saveMessageToMongo(msg, member);
 
-        if (!(await this.shouldProcessMessage(msg, numberPermissions))) {
+        if (!(await this.shouldProcessMessage(msg, member))) {
             return;
         }
 
         this.messageObserver.notify(msg);
     }
 
-    private async saveMessageToMongo(msg: Message, numberPermissions: NumberPermissions | null): Promise<void> {
+    private async saveMessageToMongo(msg: Message, numberPermissions: Member | null): Promise<void> {
         const { botNumber } = await this.configsRepository.getConfigs();
 
         if (msg.from === botNumber) {
             return
         }
 
-        if (!numberPermissions?.permissions.includes(NumberPermission.SAVE_MESSAGE)) {
+        if (!numberPermissions?.permissions.includes(MemberPermission.SAVE_MESSAGE)) {
             return;
         }
 
@@ -113,7 +112,7 @@ export class MessageCreateListener implements IListener {
         }
     }
 
-    private async shouldProcessMessage(msg: Message, numberPermissions: NumberPermissions | null): Promise<boolean> {
+    private async shouldProcessMessage(msg: Message, numberPermissions: Member | null): Promise<boolean> {
         const { botNumber } = await this.configsRepository.getConfigs();
 
         if (!numberPermissions) {
@@ -128,6 +127,6 @@ export class MessageCreateListener implements IListener {
             return false;
         }
 
-        return msg.from !== botNumber && numberPermissions.permissions.includes(NumberPermission.MESSAGE_CREATE)
+        return msg.from !== botNumber && numberPermissions.permissions.includes(MemberPermission.MESSAGE_CREATE)
     }
 }
