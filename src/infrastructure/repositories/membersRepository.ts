@@ -5,7 +5,7 @@ import { IMembersRepository } from "../../application/contracts/INumberPermissio
 import { MemberPermission, Member } from "../../application/dtos/members";
 
 interface MembersDocument {
-    _id: string;
+    id: string;
     desc: string;
     permissions: MemberPermission[];
     configs: MemberConfigs;
@@ -50,7 +50,7 @@ export class MembersRepository implements IMembersRepository {
         }
 
         const memberResult = {
-            id: result._id,
+            id: result.id,
             desc: result.desc,
             permissions: result.permissions,
             configs: result.configs
@@ -69,8 +69,8 @@ export class MembersRepository implements IMembersRepository {
         const results = await collection.find().toArray();
 
         results.forEach((result) => {
-            this.members.set(result._id, {
-                id: result._id,
+            this.members.set(result.id, {
+                id: result.id,
                 desc: result.desc,
                 permissions: result.permissions,
                 configs: result.configs,
