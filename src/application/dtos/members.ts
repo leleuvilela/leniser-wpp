@@ -1,10 +1,15 @@
-import { MemberConfigs } from "../../infrastructure/repositories/membersRepository";
-
 export interface Member {
     id: string;
     desc: string;
     permissions: MemberPermission[];
     configs: MemberConfigs;
+}
+
+export interface MemberConfigs {
+    imageCooldownEnabled?: boolean;
+    imageCooldownTime: number;
+    systemPrompt: string;
+    botPrefix: string;
 }
 
 export enum MemberPermission {
