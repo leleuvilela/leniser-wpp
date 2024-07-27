@@ -5,7 +5,7 @@ import { GroupMembers } from "../../application/dtos/groupMembers";
 import { IGroupMembersRepository } from "../../application/contracts/IGroupMembersRepository";
 
 export interface MembersDocument {
-    _id: string;
+    id: string;
     members: Record<string, string>;
 }
 
@@ -18,14 +18,14 @@ export class GroupMembersRepository implements IGroupMembersRepository {
             .db("rap")
             .collection<MembersDocument>("group_members");
 
-        const result = await collection.findOne({ _id: groupId });
+        const result = await collection.findOne({ id: groupId });
 
         if (!result) {
             return null;
         }
 
         return {
-            group_id: result._id,
+            group_id: result.id,
             members: result.members,
         }
     }
