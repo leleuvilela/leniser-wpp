@@ -31,7 +31,7 @@ export class MessageRepository implements IMessageRepository {
                         from: groupId
                     }
                 },
-                { $group: { id: "$author", count: { $sum: 1 } } },
+                { $group: { _id: "$author", count: { $sum: 1 } } },
                 { $sort: { count: -1 } }
             ];
 
@@ -40,7 +40,7 @@ export class MessageRepository implements IMessageRepository {
                 .toArray();
 
             return results.map((result) => ({
-                id: result.id as string,
+                id: result._id as string,
                 count: result.count as number,
             } as MessageCountDto));
 
