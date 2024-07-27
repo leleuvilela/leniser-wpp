@@ -2,20 +2,13 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../ioc/types";
 import { MongoClient } from "mongodb";
 import { IMembersRepository } from "../../application/contracts/INumberPermissionsRepository";
-import { MemberPermission, Member } from "../../application/dtos/members";
+import { MemberPermission, Member, MemberConfigs } from "../../application/dtos/members";
 
 interface MembersDocument {
     id: string;
     desc: string;
     permissions: MemberPermission[];
     configs: MemberConfigs;
-}
-
-export interface MemberConfigs {
-    imageCooldownEnabled?: boolean;
-    imageCooldownTime: number;
-    systemPrompt: string;
-    botPrefix: string;
 }
 
 @injectable()
