@@ -2,45 +2,35 @@ import { inject, injectable } from "inversify";
 import { IConfigsRepository } from "../../application/contracts/IConfigsRepository";
 import { MongoClient } from "mongodb";
 import { TYPES } from "../../ioc/types";
-import { Configs } from "../../application/dtos/configs";
-
-interface ConfigsDocument {
-    _id: string;
-    botNumber: string;
-    type: string;
-}
+import { Configs, ConfigType } from "../../application/dtos/configs";
 
 @injectable()
 export class ConfigsRepository implements IConfigsRepository {
     @inject(TYPES.MongoClient) mongoClient: MongoClient
 
-    private configs: Configs;
+    private defaultConfigs: Configs;
 
-    public async getConfigs() {
-        if (!this.configs) {
-            return await this.fetchConfigs();
+    public async getDefaultConfigs() {
+        if (!this.defaultConfigs) {
+            return await this.fetchDefaultConfigs();
         }
 
-        return this.configs
+        return this.defaultConfigs
     }
 
-    public async fetchConfigs() {
+    public async fetchDefaultConfigs() {
         const collection = this.mongoClient
             .db("rap")
-            .collection<ConfigsDocument>("configs");
+            .collection<Configs>("configs");
 
-        const result = await collection.findOne({ type: "general" });
+        const result = await collection.findOne({ type: ConfigType.GENERAL });
 
         if (!result) {
             throw new Error('CONFIGURATIONS IT IS NOT DEFINED ON DATABASE');
         }
 
-        const configs: Configs = {
-            botNumber: result.botNumber,
-        }
+        this.defaultConfigs = result;
 
-        this.configs = configs;
-
-        return configs;
+        return result;
     }
 }
