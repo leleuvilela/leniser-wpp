@@ -84,13 +84,17 @@ export class MessageCreateListener implements IListener {
     async handleMessage(msg: Message) {
         const member = await this.getMember(msg.from, msg.to);
 
+        if (!member) {
+            return;
+        }
+
         await this.saveMessageToMongo(msg, member);
 
         if (!(await this.shouldProcessMessage(msg, member))) {
             return;
         }
 
-        this.messageObserver.notify(msg);
+        this.messageObserver.notify(msg, member);
     }
 
     private async getMember(msgFrom: string, msgTo: string): Promise<Member | null> {
