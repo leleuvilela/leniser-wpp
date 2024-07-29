@@ -1,14 +1,14 @@
 import { type Message, MessageTypes } from "whatsapp-web.js";
-import { TranscriptionService } from "../../infrastructure/services/transcriptionService";
 import { IStartWithHandler } from "../contracts/IHandler";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../ioc/types";
+import { ITranscriptionService } from "../contracts/ITranscriptionService";
 
 @injectable()
 class TranscreverHandler implements IStartWithHandler {
     public command = '!transcrever';
 
-    @inject(TYPES.TranscriptionService) transcriptionService: TranscriptionService;
+    @inject(TYPES.TranscriptionService) transcriptionService: ITranscriptionService;
 
     public async handle(msg: Message): Promise<Message> {
         const quoted = await msg.getQuotedMessage();
