@@ -8,6 +8,7 @@ services:
     environment:
       DB_URI: "mongodb://mongo:27017/rap"
       API_GPT: ""
+      ENVIRONMENT: "local"
     volumes:
       - ./.wwebjs_auth:/app/.wwebjs_auth
     networks:

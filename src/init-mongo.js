@@ -87,7 +87,9 @@ db.group_members.insertMany([
             "556283282310@c.us": "Gilso",
             "556282378429@c.us": "Mycael",
             "556284845169@c.us": "Danillo Sena",
-            "556298545121@c.us": "Kaio Rola"
+            "556298545121@c.us": "Kaio Rola",
+            "556299096060@c.us": "Quintino",
+            "556285575085@c.us": "Juju"
         }
     },
     {

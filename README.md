@@ -14,16 +14,32 @@ yarn start
 
 - Remember to fill the `API_GPT` variable in the `docker-compose.yml`.
 
-### First time you run
+### Run
+
+- Linux
 
 ```
-docker-compose up --build
+sudo docker-compose up -d --build
 ```
-- Use the QRCode in the docker log to connect to WhatsApp
+- Windows
 
-- The next time you run it will require you to re-do the permissions in the `.wwebjs_auth` folder,
-as the program change it to root:root
-
-``` bash
-sudo chown "${USER}:users" .wwebjs_auth -R && docker-compose up -d --build
 ```
+docker-compose up -d --build
+```
+
+> You only need the `--build` argument if the code has been change and you need to rebuild the application.
+
+Use the QRCode in the docker log to connect to WhatsApp
+
+### Reset DB
+
+In case you change the `init-mongo.js` file and wants to reset the DB, you need 
+to delete the mongo's docker volume.
+
+```
+docker-compose rm --stop --force -v mongo
+docker volume rm leniser-wpp_mongo_data
+```
+
+then run the compose again.
+
