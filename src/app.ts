@@ -17,7 +17,7 @@ class Application implements IApplication {
 
     public async start() {
         console.log("Getting configs");
-        await this.configsRepository.fetchConfigs();
+        await this.configsRepository.fetchDefaultConfigs();
 
         console.log("Starting wweb listeners");
         this.authenticationListener.initialize();
@@ -31,7 +31,7 @@ class Application implements IApplication {
     public async updateConfigs() {
         //TODO: implements a method to update configs to be called in a route
         console.log("Updating configs");
-        this.configsRepository.fetchConfigs();
+        this.configsRepository.fetchDefaultConfigs();
         this.membersRepository.fetchAll();
     }
 }

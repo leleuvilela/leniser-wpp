@@ -82,8 +82,11 @@ export class MessageCreateListener implements IListener {
     }
 
     async handleMessage(msg: Message) {
-        const member = await this.membersRepository.find(msg.from)
-            ?? await this.membersRepository.find(msg.to);
+        const member = await this.getMember(msg.from, msg.to);
+
+        if (!member) {
+            return;
+        }
 
         await this.saveMessageToMongo(msg, member);
 
@@ -91,17 +94,27 @@ export class MessageCreateListener implements IListener {
             return;
         }
 
-        this.messageObserver.notify(msg);
+        this.messageObserver.notify(msg, member);
     }
 
-    private async saveMessageToMongo(msg: Message, numberPermissions: Member | null): Promise<void> {
-        const { botNumber } = await this.configsRepository.getConfigs();
+    private async getMember(msgFrom: string, msgTo: string): Promise<Member | null> {
+        // local should only consider msg.from
+        if (process.env.ENVIRONMENT === 'local') {
+            return await this.membersRepository.find(msgFrom)
+        }
+
+        return await this.membersRepository.find(msgFrom)
+            ?? await this.membersRepository.find(msgTo);
+    }
+
+    private async saveMessageToMongo(msg: Message, member: Member | null): Promise<void> {
+        const { botNumber } = await this.configsRepository.getDefaultConfigs();
 
         if (msg.from === botNumber) {
             return
         }
 
-        if (!numberPermissions?.permissions.includes(MemberPermission.SAVE_MESSAGE)) {
+        if (!member?.permissions.includes(MemberPermission.SAVE_MESSAGE)) {
             return;
         }
 
@@ -112,10 +125,10 @@ export class MessageCreateListener implements IListener {
         }
     }
 
-    private async shouldProcessMessage(msg: Message, numberPermissions: Member | null): Promise<boolean> {
-        const { botNumber } = await this.configsRepository.getConfigs();
+    private async shouldProcessMessage(msg: Message, member: Member | null): Promise<boolean> {
+        const { botNumber } = await this.configsRepository.getDefaultConfigs();
 
-        if (!numberPermissions) {
+        if (!member) {
             return false;
         }
 
@@ -127,6 +140,6 @@ export class MessageCreateListener implements IListener {
             return false;
         }
 
-        return msg.from !== botNumber && numberPermissions.permissions.includes(MemberPermission.MESSAGE_CREATE)
+        return msg.from !== botNumber && member.permissions.includes(MemberPermission.MESSAGE_CREATE)
     }
 }

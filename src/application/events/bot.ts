@@ -5,7 +5,7 @@ import { IResponseService } from "../contracts/IResponseService";
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from "inversify";
 import { IConfigsRepository } from "../contracts/IConfigsRepository";
-import { IMembersRepository } from "../contracts/INumberPermissionsRepository";
+import { Member } from "../dtos/members";
 
 @injectable()
 export class BotHandler implements IStartWithHandler {
@@ -13,16 +13,12 @@ export class BotHandler implements IStartWithHandler {
 
     @inject(TYPES.ResponseService) responseService: IResponseService;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
-    @inject(TYPES.MembersRepository) membersRepository: IMembersRepository;
 
-    public async handle(msg: Message): Promise<Message> {
-        const member = await this.membersRepository.find(msg.from);
+    public async handle(msg: Message, member: Member): Promise<Message> {
 
-        if (!member) {
-            return msg.reply('🤖 Você não está cadastrado no sistema.');
-        }
-
-        const { botPrefix, systemPrompt } = member.configs;
+        const { botPrefix, systemPrompt } = member.configs
+            ? member.configs
+            : (await this.configsRepository.getDefaultConfigs()).defaultMemberConfigs;
 
         // only !bot, needs to be a media or a quoted message (reply)
         if (msg.body === '!bot' && this.hasValidMedia(msg) && !msg.hasQuotedMsg) {

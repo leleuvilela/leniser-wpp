@@ -5,9 +5,14 @@ db.createCollection('group_members');
 db.createCollection('configs');
 
 db.configs.insertMany([{
-    "_id": { "$oid": "669689b40a3d139b439f6ef9" },
     "botNumber": "351931426775@g.us",
-    "type": "general"
+    "type": "general",
+    "defaultMemberConfigs": {
+        "imageCooldownEnabled": true,
+        "imageCooldownTime": 120,
+        "systemPrompt": "Você é um chatbot educado e prestativo. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
+        "botPrefix": "🤖 "
+    }
 }])
 
 db.members.insertMany([
