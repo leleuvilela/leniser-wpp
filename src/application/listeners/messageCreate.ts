@@ -98,13 +98,13 @@ export class MessageCreateListener implements IListener {
     }
 
     private async getMember(msgFrom: string, msgTo: string): Promise<Member | null> {
-        // local should only consider msg.from
+        // local should only consider msg.from and msg.to
         if (process.env.ENVIRONMENT === 'local') {
             return await this.membersRepository.find(msgFrom)
+                ?? await this.membersRepository.find(msgTo);
         }
 
         return await this.membersRepository.find(msgFrom)
-            ?? await this.membersRepository.find(msgTo);
     }
 
     private async saveMessageToMongo(msg: Message, member: Member | null): Promise<void> {
