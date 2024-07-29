@@ -17,7 +17,7 @@ db.configs.insertMany([{
 
 db.members.insertMany([
     {
-        _id: '556285359995-1486844624@g.us',
+        id: '556285359995-1486844624@g.us',
         desc: 'Grupo de Rap',
         permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
         configs: {
@@ -28,7 +28,7 @@ db.members.insertMany([
         }
     },
     {
-        _id: '556299031117-1523720875@g.us',
+        id: '556299031117-1523720875@g.us',
         desc: 'Grupo de Games',
         permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
         configs: {
@@ -39,7 +39,7 @@ db.members.insertMany([
         }
     },
     {
-        _id: '120363311991674552@g.us',
+        id: '120363311991674552@g.us',
         desc: 'Grupo de Teste',
         permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
         configs: {
@@ -53,7 +53,7 @@ db.members.insertMany([
 
 db.group_members.insertMany([
     {
-        _id: '556285359995-1486844624@g.us',
+        id: '556285359995-1486844624@g.us',
         members: {
             "556196097230@c.us": "Rafael Mulher",
             "553484073883@c.us": "Meireles",
@@ -93,7 +93,7 @@ db.group_members.insertMany([
         }
     },
     {
-        _id: '120363311991674552@g.us',
+        id: '120363311991674552@g.us',
         members: {
             "556282742299@c.us": "Lucas Black",
             "33749797329@c.us": "JP",
