@@ -37,14 +37,18 @@ export class RankingHandler implements IStartWithHandler {
             return msg.reply("🤖 Comando inválido. Tente `!menu`.");
         }
 
+        const memberId = process.env.ENVIRONMENT === 'local'
+            ? msg.to
+            : member.id;
+
         const messageCounts = await this.messageRepository
-            .getMessageCountsByUser(cfgs.startDate, cfgs.endDate, member.id);
+            .getMessageCountsByUser(cfgs.startDate, cfgs.endDate, memberId);
 
         if (!messageCounts) {
             return msg.reply("🤖 Nenhuma mensagem encontrada.");
         }
 
-        const members = await this.groupMembersRepository.getMembers(member.id)
+        const members = await this.groupMembersRepository.getMembers(memberId)
 
         messageCounts.forEach((result) => {
             result.id = this.findName(result.id, members);
@@ -130,7 +134,7 @@ export class RankingHandler implements IStartWithHandler {
         title: string,
         messageCounts: MessageCountDto[]
     ) {
-        const bar = '▇';
+        const bar = '#';
 
         const highestCount = messageCounts[0].count;
         const charCount = 30;
@@ -153,7 +157,7 @@ export class RankingHandler implements IStartWithHandler {
 
         const memberKeys = Object.keys(members.members);
 
-        const memberKey = memberKeys.find((key) => key.startsWith(id));
+        const memberKey = memberKeys.find((key) => id.startsWith(key));
 
         if (!memberKey) return id;
 

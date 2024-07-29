@@ -21,12 +21,17 @@ export class MessageRepository implements IMessageRepository {
             const db = this.mongoClient.db("rap");
             const collection = db.collection("messages");
 
+            const threeHours = 60 * 60 * 3;
+
+            const startDateInSeconds = Math.floor(startDate.getTime() / 1000) + threeHours;
+            const endDateInSeconds = Math.floor(endDate.getTime() / 1000) + threeHours;
+
             const pipeline = [
                 {
                     $match: {
                         timestamp: {
-                            $gte: Math.floor(startDate.getTime() / 1000),
-                            $lte: Math.floor(endDate.getTime() / 1000)
+                            $gte: Math.floor(startDateInSeconds),
+                            $lte: Math.floor(endDateInSeconds)
                         },
                         from: groupId
                     }
