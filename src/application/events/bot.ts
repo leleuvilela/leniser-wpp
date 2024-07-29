@@ -1,11 +1,12 @@
 import { type ChatCompletionContentPart } from "openai/resources";
-import { type Message } from "whatsapp-web.js";
+import { MessageTypes, type Message } from "whatsapp-web.js";
 import { IStartWithHandler } from "../contracts/IHandler";
 import { IResponseService } from "../contracts/IResponseService";
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from "inversify";
 import { IConfigsRepository } from "../contracts/IConfigsRepository";
 import { Member } from "../dtos/members";
+import { ITranscriptionService } from "../contracts/ITranscriptionService";
 
 @injectable()
 export class BotHandler implements IStartWithHandler {
@@ -13,6 +14,7 @@ export class BotHandler implements IStartWithHandler {
 
     @inject(TYPES.ResponseService) responseService: IResponseService;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
+    @inject(TYPES.TranscriptionService) transcriptionService: ITranscriptionService;
 
     public async handle(msg: Message, member: Member): Promise<Message> {
 
@@ -47,27 +49,37 @@ export class BotHandler implements IStartWithHandler {
 
         const quoted = await msg.getQuotedMessage();
 
-        if (quoted?.body) {
+        if (quoted) {
             const history = await this.getHistory(quoted);
             contents.push(...history);
         }
 
-        const media = msg.hasMedia ? await msg.downloadMedia() : null;
-        const body = msg.body ? this.cleanMessage(msg.body) : '';
+        const image = msg.type === MessageTypes.IMAGE ? await msg.downloadMedia() : null;
+        const text = msg.body ? this.cleanMessage(msg.body) : '';
+        const audio = msg.type === MessageTypes.AUDIO || msg.type === MessageTypes.VOICE ? await msg.downloadMedia() : null;
 
-        if (body) {
+        if (text) {
             contents.push({
                 type: "text",
-                text: body
+                text: text
             });
         }
 
-        if (media) {
+        if (image) {
             contents.push({
                 type: "image_url",
                 image_url: {
-                    url: `data:image/jpeg;base64,${media.data}`
+                    url: `data:image/jpeg;base64,${image.data}`
                 }
+            });
+        }
+
+        if (audio) {
+            const audioBuffer = Buffer.from(audio.data, 'base64');
+            const transcription = await this.transcriptionService.generateTranscription(audioBuffer);
+            contents.push({
+                type: "text",
+                text: `Isto é a transcrição de um áudio: ${transcription}`
             });
         }
 
