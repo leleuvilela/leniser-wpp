@@ -1,7 +1,7 @@
-import { type Message } from "whatsapp-web.js";
-import { IHandler, IStartWithHandler, MessageHandler } from "../contracts/IHandler";
-import { injectable } from "inversify";
-import { Member } from "../dtos/members";
+import { type Message } from 'whatsapp-web.js';
+import { IHandler, IStartWithHandler, MessageHandler } from '../contracts/IHandler';
+import { injectable } from 'inversify';
+import { Member } from '../dtos/members';
 
 @injectable()
 export class MessageObserver {
@@ -26,13 +26,13 @@ export class MessageObserver {
     }
 
     public notify(msg: Message, member: Member) {
-        this.handlers.forEach(handler => {
+        this.handlers.forEach((handler) => {
             if (handler.canHandle(msg)) {
                 handler.handle(msg, member);
             }
         });
 
-        this.startsWithHandlers.forEach(handler => {
+        this.startsWithHandlers.forEach((handler) => {
             if (msg.body.toLowerCase().startsWith(handler.command)) {
                 handler.handle(msg, member);
             }

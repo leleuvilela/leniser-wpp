@@ -1,10 +1,10 @@
-import { type Client as WwebClient } from "whatsapp-web.js";
-import { IApplication } from "./application/contracts/IApplication";
-import { inject, injectable } from "inversify";
-import { TYPES } from "./ioc/types";
-import { IConfigsRepository } from "./application/contracts/IConfigsRepository";
-import { IListener } from "./application/contracts/IListener";
-import { IMembersRepository } from "./application/contracts/INumberPermissionsRepository";
+import { type Client as WwebClient } from 'whatsapp-web.js';
+import { IApplication } from './application/contracts/IApplication';
+import { inject, injectable } from 'inversify';
+import { TYPES } from './ioc/types';
+import { IConfigsRepository } from './application/contracts/IConfigsRepository';
+import { IListener } from './application/contracts/IListener';
+import { IMembersRepository } from './application/contracts/INumberPermissionsRepository';
 
 @injectable()
 class Application implements IApplication {
@@ -16,21 +16,21 @@ class Application implements IApplication {
     @inject(TYPES.MembersRepository) membersRepository: IMembersRepository;
 
     public async start() {
-        console.log("Getting configs");
+        console.log('Getting configs');
         await this.configsRepository.fetchDefaultConfigs();
 
-        console.log("Starting wweb listeners");
+        console.log('Starting wweb listeners');
         this.authenticationListener.initialize();
         this.messageCreateListener.initialize();
         this.messageRevokeListener.initialize();
 
-        console.log("Initializing wwapweb client");
+        console.log('Initializing wwapweb client');
         this.wweb.initialize();
     }
 
     public async updateConfigs() {
         //TODO: implements a method to update configs to be called in a route
-        console.log("Updating configs");
+        console.log('Updating configs');
         this.configsRepository.fetchDefaultConfigs();
         this.membersRepository.fetchAll();
     }

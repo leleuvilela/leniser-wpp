@@ -1,13 +1,12 @@
-import { type Message, MessageMedia } from "whatsapp-web.js";
-import { createCooldownFunction } from "../../utils/createCooldown";
-import { generateImage } from "../../infrastructure/services/imageService";
+import { type Message, MessageMedia } from 'whatsapp-web.js';
+import { createCooldownFunction } from '../../utils/createCooldown';
+import { generateImage } from '../../infrastructure/services/imageService';
 
 const disableCooldown = process.env.IMAGE_COOLDOWN_DISABLED === 'true';
 
 if (disableCooldown) {
     console.log('🤖 Cooldown de imagem desabilitado');
-}
-else {
+} else {
     console.log('🤖 Cooldown de imagem habilitado');
 }
 

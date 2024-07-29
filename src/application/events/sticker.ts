@@ -1,16 +1,14 @@
-import { MessageTypes, type Message } from "whatsapp-web.js";
+import { MessageTypes, type Message } from 'whatsapp-web.js';
 
 async function handleSticker(msg: Message): Promise<Message> {
-
     const quoted = await msg.getQuotedMessage();
 
-    const allowedTypes = [
-        MessageTypes.IMAGE,
-        MessageTypes.VIDEO
-    ]
+    const allowedTypes = [MessageTypes.IMAGE, MessageTypes.VIDEO];
 
     if (!allowedTypes.includes(msg.type) && !allowedTypes.includes(quoted?.type)) {
-        return await msg.reply('🤖 Preciso de uma imagem ou vídeo para gerar um sticker!');
+        return await msg.reply(
+            '🤖 Preciso de uma imagem ou vídeo para gerar um sticker!'
+        );
     }
 
     const message = msg.hasMedia ? msg : quoted;
@@ -25,7 +23,7 @@ async function handleSticker(msg: Message): Promise<Message> {
         return msg.reply(media, undefined, {
             sendMediaAsSticker: true,
             stickerName: 'Sticker',
-            stickerAuthor: 'Bot da Lenise'
+            stickerAuthor: 'Bot da Lenise',
         });
     } catch (error) {
         console.error('🤖 Error on download media: ', error);

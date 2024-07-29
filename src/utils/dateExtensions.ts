@@ -10,4 +10,3 @@ export function formatTimestamp(timestamp: number) {
 
     return `${year}/${month}/${day} - ${hours}:${minutes}:${seconds}`;
 }
-

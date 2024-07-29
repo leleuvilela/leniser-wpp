@@ -1,9 +1,9 @@
-import { IListener } from "../contracts/IListener";
-import { inject, injectable } from "inversify";
-import { type Client as WwebClient } from "whatsapp-web.js";
+import { IListener } from '../contracts/IListener';
+import { inject, injectable } from 'inversify';
+import { type Client as WwebClient } from 'whatsapp-web.js';
 import { TYPES } from '../../ioc/types';
-import { IMembersRepository } from "../contracts/INumberPermissionsRepository";
-import { MemberPermission } from "../dtos/members";
+import { IMembersRepository } from '../contracts/INumberPermissionsRepository';
+import { MemberPermission } from '../dtos/members';
 
 @injectable()
 class MessageRevokeListener implements IListener {
@@ -12,7 +12,8 @@ class MessageRevokeListener implements IListener {
 
     constructor(
         @inject(TYPES.WwebClient) wwebClient: WwebClient,
-        @inject(TYPES.MembersRepository) numberPermissionRepository: IMembersRepository,
+        @inject(TYPES.MembersRepository)
+        numberPermissionRepository: IMembersRepository
     ) {
         this.wwebClient = wwebClient;
         this.numberPermissionRepository = numberPermissionRepository;
@@ -20,10 +21,13 @@ class MessageRevokeListener implements IListener {
 
     public async initialize() {
         this.wwebClient.on('message_revoke_everyone', async (after, before) => {
+            const numberPermission = await this.numberPermissionRepository.find(
+                after.from
+            );
 
-            const numberPermission = await this.numberPermissionRepository.find(after.from);
-
-            if (!numberPermission?.permissions.includes(MemberPermission.MESSAGE_REVOKE)) {
+            if (
+                !numberPermission?.permissions.includes(MemberPermission.MESSAGE_REVOKE)
+            ) {
                 return;
             }
 

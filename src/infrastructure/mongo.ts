@@ -7,5 +7,5 @@ export const mongoClient = new MongoClient(process.env.DB_URI || '', {
         version: ServerApiVersion.v1,
         strict: true,
         deprecationErrors: true,
-    }
+    },
 });

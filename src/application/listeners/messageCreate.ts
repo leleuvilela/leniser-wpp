@@ -1,8 +1,8 @@
-import { Message, Client } from "whatsapp-web.js";
-import { inject, injectable } from "inversify";
+import { Message, Client } from 'whatsapp-web.js';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
-import { IListener } from "../contracts/IListener";
-import { type Client as WwebClient } from "whatsapp-web.js";
+import { IListener } from '../contracts/IListener';
+import { type Client as WwebClient } from 'whatsapp-web.js';
 import {
     handleMenu,
     handlePing,
@@ -10,14 +10,14 @@ import {
     handleSticker,
     handleAA,
     handleImagem,
-    handleMp3
-} from "../events";
-import { MessageObserver } from "../observers/messageObserver";
-import { IMessageRepository } from "../contracts/IMessagesRepository";
-import { IMembersRepository } from "../contracts/INumberPermissionsRepository";
-import { MemberPermission, Member } from "../dtos/members";
-import { IConfigsRepository } from "../contracts/IConfigsRepository";
-import { IHandler, IStartWithHandler } from "../contracts/IHandler";
+    handleMp3,
+} from '../events';
+import { MessageObserver } from '../observers/messageObserver';
+import { IMessageRepository } from '../contracts/IMessagesRepository';
+import { IMembersRepository } from '../contracts/INumberPermissionsRepository';
+import { MemberPermission, Member } from '../dtos/members';
+import { IConfigsRepository } from '../contracts/IConfigsRepository';
+import { IHandler, IStartWithHandler } from '../contracts/IHandler';
 
 @injectable()
 export class MessageCreateListener implements IListener {
@@ -36,14 +36,15 @@ export class MessageCreateListener implements IListener {
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
         @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
-        @inject(TYPES.MembersRepository) numberPermissionsRepository: IMembersRepository,
+        @inject(TYPES.MembersRepository)
+        numberPermissionsRepository: IMembersRepository,
         @inject(TYPES.BotHandler) botHandler: IStartWithHandler,
         @inject(TYPES.FalaHandler) falaHandler: IStartWithHandler,
         @inject(TYPES.RankingHandler) rankingHandler: IStartWithHandler,
         @inject(TYPES.TranscreverHandler) transcreverHandler: IStartWithHandler,
         @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository,
         @inject(TYPES.DeuitaHandler) deuitaHandler: IHandler,
-        @inject(TYPES.GilsoHandler) gilsoHandler: IHandler,
+        @inject(TYPES.GilsoHandler) gilsoHandler: IHandler
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -55,26 +56,26 @@ export class MessageCreateListener implements IListener {
         this.membersRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
         this.configsRepository = configsRepository;
-        this.deuitaHandler = deuitaHandler
+        this.deuitaHandler = deuitaHandler;
         this.gilsoHandler = gilsoHandler;
 
         this.startListeners();
     }
 
     private startListeners(): void {
-        this.messageObserver.addStartWithMessageHandler("!menu", handleMenu);
-        this.messageObserver.addStartWithMessageHandler("!aa", handleAA);
-        this.messageObserver.addStartWithMessageHandler("!checagem", handleChecagem);
-        this.messageObserver.addStartWithMessageHandler("!ping", handlePing);
-        this.messageObserver.addStartWithMessageHandler("!sticker", handleSticker);
-        this.messageObserver.addStartWithMessageHandler("!imagem", handleImagem);
-        this.messageObserver.addStartWithMessageHandler("!mp3", handleMp3);
+        this.messageObserver.addStartWithMessageHandler('!menu', handleMenu);
+        this.messageObserver.addStartWithMessageHandler('!aa', handleAA);
+        this.messageObserver.addStartWithMessageHandler('!checagem', handleChecagem);
+        this.messageObserver.addStartWithMessageHandler('!ping', handlePing);
+        this.messageObserver.addStartWithMessageHandler('!sticker', handleSticker);
+        this.messageObserver.addStartWithMessageHandler('!imagem', handleImagem);
+        this.messageObserver.addStartWithMessageHandler('!mp3', handleMp3);
         this.messageObserver.addStartWithHandler(this.transcreverHandler);
         this.messageObserver.addStartWithHandler(this.botHandler);
         this.messageObserver.addStartWithHandler(this.falaHandler);
         this.messageObserver.addStartWithHandler(this.rankingHandler);
-        this.messageObserver.addHandler(this.deuitaHandler)
-        this.messageObserver.addHandler(this.gilsoHandler)
+        this.messageObserver.addHandler(this.deuitaHandler);
+        this.messageObserver.addHandler(this.gilsoHandler);
     }
 
     public async initialize() {
@@ -100,18 +101,20 @@ export class MessageCreateListener implements IListener {
     private async getMember(msgFrom: string, msgTo: string): Promise<Member | null> {
         // local should only consider msg.from and msg.to
         if (process.env.ENVIRONMENT === 'local') {
-            return await this.membersRepository.find(msgFrom)
-                ?? await this.membersRepository.find(msgTo);
+            return (
+                (await this.membersRepository.find(msgFrom)) ??
+                (await this.membersRepository.find(msgTo))
+            );
         }
 
-        return await this.membersRepository.find(msgFrom)
+        return await this.membersRepository.find(msgFrom);
     }
 
     private async saveMessageToMongo(msg: Message, member: Member | null): Promise<void> {
         const { botNumber } = await this.configsRepository.getDefaultConfigs();
 
         if (msg.from === botNumber) {
-            return
+            return;
         }
 
         if (!member?.permissions.includes(MemberPermission.SAVE_MESSAGE)) {
@@ -121,11 +124,14 @@ export class MessageCreateListener implements IListener {
         try {
             await this.messageRepository.addMessage(msg);
         } catch {
-            console.log("MONGO: error to add message to collections in mongo");
+            console.log('MONGO: error to add message to collections in mongo');
         }
     }
 
-    private async shouldProcessMessage(msg: Message, member: Member | null): Promise<boolean> {
+    private async shouldProcessMessage(
+        msg: Message,
+        member: Member | null
+    ): Promise<boolean> {
         const { botNumber } = await this.configsRepository.getDefaultConfigs();
 
         if (!member) {
@@ -140,6 +146,9 @@ export class MessageCreateListener implements IListener {
             return false;
         }
 
-        return msg.from !== botNumber && member.permissions.includes(MemberPermission.MESSAGE_CREATE)
+        return (
+            msg.from !== botNumber &&
+            member.permissions.includes(MemberPermission.MESSAGE_CREATE)
+        );
     }
 }

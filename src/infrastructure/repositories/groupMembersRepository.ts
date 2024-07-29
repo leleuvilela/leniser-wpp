@@ -1,8 +1,8 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "../../ioc/types";
-import { MongoClient } from "mongodb";
-import { GroupMembers } from "../../application/dtos/groupMembers";
-import { IGroupMembersRepository } from "../../application/contracts/IGroupMembersRepository";
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../ioc/types';
+import { MongoClient } from 'mongodb';
+import { GroupMembers } from '../../application/dtos/groupMembers';
+import { IGroupMembersRepository } from '../../application/contracts/IGroupMembersRepository';
 
 export interface MembersDocument {
     id: string;
@@ -11,12 +11,12 @@ export interface MembersDocument {
 
 @injectable()
 export class GroupMembersRepository implements IGroupMembersRepository {
-    @inject(TYPES.MongoClient) mongoClient: MongoClient
+    @inject(TYPES.MongoClient) mongoClient: MongoClient;
 
     public async getMembers(groupId: string): Promise<GroupMembers | null> {
         const collection = this.mongoClient
-            .db("rap")
-            .collection<MembersDocument>("group_members");
+            .db('rap')
+            .collection<MembersDocument>('group_members');
 
         const result = await collection.findOne({ id: groupId });
 
@@ -27,6 +27,6 @@ export class GroupMembersRepository implements IGroupMembersRepository {
         return {
             group_id: result.id,
             members: result.members,
-        }
+        };
     }
 }

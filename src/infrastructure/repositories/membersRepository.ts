@@ -1,8 +1,8 @@
-import { inject, injectable } from "inversify";
-import { TYPES } from "../../ioc/types";
-import { MongoClient } from "mongodb";
-import { IMembersRepository } from "../../application/contracts/INumberPermissionsRepository";
-import { MemberPermission, Member, MemberConfigs } from "../../application/dtos/members";
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../ioc/types';
+import { MongoClient } from 'mongodb';
+import { IMembersRepository } from '../../application/contracts/INumberPermissionsRepository';
+import { MemberPermission, Member, MemberConfigs } from '../../application/dtos/members';
 
 interface MembersDocument {
     id: string;
@@ -13,7 +13,7 @@ interface MembersDocument {
 
 @injectable()
 export class MembersRepository implements IMembersRepository {
-    @inject(TYPES.MongoClient) mongoClient: MongoClient
+    @inject(TYPES.MongoClient) mongoClient: MongoClient;
 
     private members = new Map<string, Member>();
 
@@ -23,7 +23,7 @@ export class MembersRepository implements IMembersRepository {
         }
 
         return await this.fetchAll();
-    };
+    }
 
     public async find(id: string): Promise<Member | null> {
         const member = this.members.get(id);
@@ -33,8 +33,8 @@ export class MembersRepository implements IMembersRepository {
         }
 
         const collection = this.mongoClient
-            .db("rap")
-            .collection<MembersDocument>("members");
+            .db('rap')
+            .collection<MembersDocument>('members');
 
         const result = await collection.findOne({ id });
 
@@ -46,18 +46,18 @@ export class MembersRepository implements IMembersRepository {
             id: result.id,
             desc: result.desc,
             permissions: result.permissions,
-            configs: result.configs
-        }
+            configs: result.configs,
+        };
 
         this.members.set(id, memberResult);
 
-        return memberResult
-    };
+        return memberResult;
+    }
 
     public async fetchAll(): Promise<Map<string, Member>> {
         const collection = this.mongoClient
-            .db("rap")
-            .collection<MembersDocument>("members");
+            .db('rap')
+            .collection<MembersDocument>('members');
 
         const results = await collection.find().toArray();
 
@@ -67,10 +67,9 @@ export class MembersRepository implements IMembersRepository {
                 desc: result.desc,
                 permissions: result.permissions,
                 configs: result.configs,
-            })
+            });
         });
 
         return this.members;
     }
 }
-
