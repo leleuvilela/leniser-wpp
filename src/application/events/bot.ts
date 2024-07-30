@@ -67,7 +67,7 @@ export class BotHandler implements IStartWithHandler {
         if (text) {
             contents.push({
                 type: 'text',
-                text: body,
+                text: text,
             });
         }
 
@@ -75,7 +75,7 @@ export class BotHandler implements IStartWithHandler {
             contents.push({
                 type: 'image_url',
                 image_url: {
-                    url: `data:image/jpeg;base64,${media.data}`,
+                    url: `data:image/jpeg;base64,${image.data}`,
                 },
             });
         }
