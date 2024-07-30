@@ -83,7 +83,7 @@ export class MessageCreateListener implements IListener {
     }
 
     async handleMessage(msg: Message) {
-        const member = await this.getMember(msg.from, msg.to);
+        const member = await this.membersRepository.find(msg.from)
 
         if (!member) {
             return;
@@ -96,18 +96,6 @@ export class MessageCreateListener implements IListener {
         }
 
         this.messageObserver.notify(msg, member);
-    }
-
-    private async getMember(msgFrom: string, msgTo: string): Promise<Member | null> {
-        // local should only consider msg.from and msg.to
-        if (process.env.ENVIRONMENT === 'local') {
-            return (
-                (await this.membersRepository.find(msgFrom)) ??
-                (await this.membersRepository.find(msgTo))
-            );
-        }
-
-        return await this.membersRepository.find(msgFrom);
     }
 
     private async saveMessageToMongo(msg: Message, member: Member | null): Promise<void> {
@@ -146,9 +134,10 @@ export class MessageCreateListener implements IListener {
             return false;
         }
 
-        return (
-            msg.from !== botNumber &&
-            member.permissions.includes(MemberPermission.MESSAGE_CREATE)
-        );
+        if (process.env.ENVIRONMENT === 'local' && msg.fromMe) {
+            return true;
+        }
+
+        return msg.from !== botNumber && member.permissions.includes(MemberPermission.MESSAGE_CREATE)
     }
 }
