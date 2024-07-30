@@ -1,15 +1,23 @@
 import { type Message, MessageTypes } from 'whatsapp-web.js';
 import { TranscriptionService } from '../../infrastructure/services/transcriptionService';
-import { IStartWithHandler } from '../contracts/IHandler';
+import { IHandler } from '../contracts/IHandler';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
+import { Member, MemberPermission } from '../dtos/members';
 
 @injectable()
-class TranscreverHandler implements IStartWithHandler {
+class TranscreverHandler implements IHandler {
     public command = '!transcrever';
 
     @inject(TYPES.TranscriptionService)
     transcriptionService: TranscriptionService;
+
+    canHandle(msg: Message, member: Member | null): boolean {
+        const isAuthorized =
+            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+
+        return isAuthorized && msg.body.startsWith(this.command);
+    }
 
     public async handle(msg: Message): Promise<Message> {
         const quoted = await msg.getQuotedMessage();

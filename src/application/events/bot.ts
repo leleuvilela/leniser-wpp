@@ -1,20 +1,27 @@
 import { type ChatCompletionContentPart } from 'openai/resources';
 import { MessageTypes, type Message } from 'whatsapp-web.js';
-import { IStartWithHandler } from '../contracts/IHandler';
+import { IHandler } from '../contracts/IHandler';
 import { IResponseService } from '../contracts/IResponseService';
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from 'inversify';
 import { IConfigsRepository } from '../contracts/IConfigsRepository';
-import { Member } from '../dtos/members';
+import { Member, MemberPermission } from '../dtos/members';
 import { ITranscriptionService } from '../contracts/ITranscriptionService';
 
 @injectable()
-export class BotHandler implements IStartWithHandler {
+export class BotHandler implements IHandler {
     public command = '!bot';
 
     @inject(TYPES.ResponseService) responseService: IResponseService;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     @inject(TYPES.TranscriptionService) transcriptionService: ITranscriptionService;
+
+    canHandle(msg: Message, member: Member | null): boolean {
+        const isAuthorized =
+            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+
+        return isAuthorized && msg.body.startsWith(this.command);
+    }
 
     public async handle(msg: Message, member: Member): Promise<Message> {
         const { botPrefix, systemPrompt } = member.configs

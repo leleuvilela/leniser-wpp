@@ -5,7 +5,7 @@ import { Client } from 'whatsapp-web.js';
 import { Application } from '../app';
 import { IApplication } from '../application/contracts/IApplication';
 import { IAudioService } from '../application/contracts/IAudioService';
-import { IHandler, IStartWithHandler } from '../application/contracts/IHandler';
+import { IHandler } from '../application/contracts/IHandler';
 import { IMessageRepository } from '../application/contracts/IMessagesRepository';
 import { IResponseService } from '../application/contracts/IResponseService';
 import { BotHandler } from '../application/events/bot';
@@ -34,6 +34,13 @@ import { DeuitaHandler } from '../application/events/deuita';
 import { ITranscriptionService } from '../application/contracts/ITranscriptionService';
 import { TranscriptionService } from '../infrastructure/services/transcriptionService';
 import { GilsoHandler } from '../application/events/gilso';
+import { MenuHandler } from '../application/events/menu';
+import { AaHandler } from '../application/events/aa';
+import { ChacagemHandler } from '../application/events/checagem';
+import { PingHandler } from '../application/events/ping';
+import { StickerHandler } from '../application/events/sticker';
+import { ImagemHandler } from '../application/events/imagem';
+import { Mp3Handler } from '../application/events/mp3';
 
 const container = new Container();
 
@@ -47,12 +54,19 @@ container.bind<IListener>(TYPES.AuthenticationListener).to(AuthenticationListene
 container.bind<IListener>(TYPES.MessageCreateListener).to(MessageCreateListener);
 container.bind<IListener>(TYPES.MessageRevokeListener).to(MessageRevokeListener);
 
-container.bind<IStartWithHandler>(TYPES.BotHandler).to(BotHandler);
-container.bind<IStartWithHandler>(TYPES.FalaHandler).to(FalaHandler);
-container.bind<IStartWithHandler>(TYPES.RankingHandler).to(RankingHandler);
-container.bind<IStartWithHandler>(TYPES.TranscreverHandler).to(TranscreverHandler);
+container.bind<IHandler>(TYPES.BotHandler).to(BotHandler);
+container.bind<IHandler>(TYPES.FalaHandler).to(FalaHandler);
+container.bind<IHandler>(TYPES.RankingHandler).to(RankingHandler);
+container.bind<IHandler>(TYPES.TranscreverHandler).to(TranscreverHandler);
 container.bind<IHandler>(TYPES.DeuitaHandler).to(DeuitaHandler);
 container.bind<IHandler>(TYPES.GilsoHandler).to(GilsoHandler);
+container.bind<IHandler>(TYPES.MenuHandler).to(MenuHandler);
+container.bind<IHandler>(TYPES.AaHandler).to(AaHandler);
+container.bind<IHandler>(TYPES.ChecagemHandler).to(ChacagemHandler);
+container.bind<IHandler>(TYPES.PingHandler).to(PingHandler);
+container.bind<IHandler>(TYPES.StickerHandler).to(StickerHandler);
+container.bind<IHandler>(TYPES.ImagemHandler).to(ImagemHandler);
+container.bind<IHandler>(TYPES.Mp3Handler).to(Mp3Handler);
 
 container
     .bind<IConfigsRepository>(TYPES.ConfigsRepository)

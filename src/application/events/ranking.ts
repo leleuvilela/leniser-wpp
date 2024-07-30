@@ -2,11 +2,11 @@ import { inject, injectable } from 'inversify';
 import { type Message } from 'whatsapp-web.js';
 import { TYPES } from '../../ioc/types';
 import { IGroupMembersRepository } from '../contracts/IGroupMembersRepository';
-import { IStartWithHandler } from '../contracts/IHandler';
+import { IHandler } from '../contracts/IHandler';
 import { IMessageRepository } from '../contracts/IMessagesRepository';
 import { GroupMembers } from '../dtos/groupMembers';
 import { MessageCountDto } from '../dtos/messageCountDto';
-import { Member } from '../dtos/members';
+import { Member, MemberPermission } from '../dtos/members';
 
 interface RankingConfigs {
     startDate: Date;
@@ -16,19 +16,17 @@ interface RankingConfigs {
 }
 
 @injectable()
-export class RankingHandler implements IStartWithHandler {
+export class RankingHandler implements IHandler {
     public command = '!ranking';
 
-    messageRepository: IMessageRepository;
-    groupMembersRepository: IGroupMembersRepository;
+    @inject(TYPES.MessageRepository) messageRepository: IMessageRepository;
+    @inject(TYPES.GroupMembersRepository) groupMembersRepository: IGroupMembersRepository;
 
-    constructor(
-        @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
-        @inject(TYPES.GroupMembersRepository)
-        groupMembersRepository: IGroupMembersRepository
-    ) {
-        this.messageRepository = messageRepository;
-        this.groupMembersRepository = groupMembersRepository;
+    canHandle(msg: Message, member: Member | null): boolean {
+        const isAuthorized =
+            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+
+        return isAuthorized && msg.body.startsWith(this.command);
     }
 
     async handle(msg: Message, member: Member): Promise<Message> {

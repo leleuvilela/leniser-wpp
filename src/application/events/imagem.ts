@@ -1,6 +1,11 @@
 import { type Message, MessageMedia } from 'whatsapp-web.js';
 import { createCooldownFunction } from '../../utils/createCooldown';
 import { generateImage } from '../../infrastructure/services/imageService';
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../ioc/types';
+import { IConfigsRepository } from '../contracts/IConfigsRepository';
+import { IHandler } from '../contracts/IHandler';
+import { Member, MemberPermission } from '../dtos/members';
 
 const disableCooldown = process.env.IMAGE_COOLDOWN_DISABLED === 'true';
 
@@ -16,26 +21,36 @@ const cooldownSeconds = process.env.IMAGE_COOLDOWN_SECONDS
 
 const generateImageCd = createCooldownFunction(generateImage, cooldownSeconds);
 
-async function handleImagem(msg: Message): Promise<Message> {
-    const textArray = msg.body.split(' ');
-    textArray.shift();
-    const text = textArray.join(' ');
+@injectable()
+export class ImagemHandler implements IHandler {
+    @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
 
-    try {
-        const imageRes = disableCooldown
-            ? await generateImage(text)
-            : await generateImageCd(text);
+    public command = '!imagem';
 
-        if (!imageRes || !imageRes.data[0]?.b64_json) {
-            return msg.reply('🤖 Pera aí, tá em cooldown...');
+    canHandle(msg: Message, member: Member | null): boolean {
+        const isAuthorized =
+            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+
+        return isAuthorized && msg.body.startsWith(this.command);
+    }
+
+    async handle(msg: Message): Promise<Message> {
+        const text = msg.body.replace(this.command, '').trim();
+
+        try {
+            const imageRes = disableCooldown
+                ? await generateImage(text)
+                : await generateImageCd(text);
+
+            if (!imageRes || !imageRes.data[0]?.b64_json) {
+                return msg.reply('🤖 Pera aí, tá em cooldown...');
+            }
+
+            const imageBase64 = imageRes.data[0]?.b64_json;
+            return msg.reply(new MessageMedia('image/jpeg', imageBase64));
+        } catch (error) {
+            console.log(error);
+            return msg.reply('🤖 Calma lá calabreso, isso aí não pode não.');
         }
-
-        const imageBase64 = imageRes.data[0]?.b64_json;
-        return msg.reply(new MessageMedia('image/jpeg', imageBase64));
-    } catch (error) {
-        console.log(error);
-        return msg.reply('🤖 Calma lá calabreso, isso aí não pode não.');
     }
 }
-
-export { handleImagem };

@@ -1,11 +1,12 @@
 import { type Message, MessageMedia } from 'whatsapp-web.js';
 import { IAudioService } from '../contracts/IAudioService';
-import { IStartWithHandler } from '../contracts/IHandler';
+import { IHandler } from '../contracts/IHandler';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
+import { Member, MemberPermission } from '../dtos/members';
 
 @injectable()
-export class FalaHandler implements IStartWithHandler {
+export class FalaHandler implements IHandler {
     audioService: IAudioService;
 
     constructor(@inject(TYPES.AudioService) audioService: IAudioService) {
@@ -13,6 +14,13 @@ export class FalaHandler implements IStartWithHandler {
     }
 
     command = '!fala';
+
+    canHandle(msg: Message, member: Member | null): boolean {
+        const isAuthorized =
+            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+
+        return isAuthorized && msg.body.startsWith(this.command);
+    }
 
     async handle(msg: Message): Promise<Message> {
         const quoted = await msg.getQuotedMessage();
