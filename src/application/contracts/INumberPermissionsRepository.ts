@@ -1,4 +1,4 @@
-import { Member } from "../dtos/members";
+import { Member } from '../dtos/members';
 
 export interface IMembersRepository {
     getAll: () => Promise<Map<string, Member>>;

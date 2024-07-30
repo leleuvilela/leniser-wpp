@@ -1,10 +1,9 @@
 import ffmpeg = require('fluent-ffmpeg');
-import { PassThrough, Readable } from "stream";
-import { MessageMedia } from "whatsapp-web.js";
+import { PassThrough, Readable } from 'stream';
+import { MessageMedia } from 'whatsapp-web.js';
 
 export function convertToMp3(media: MessageMedia): Promise<string> {
     return new Promise((resolve, reject) => {
-
         const base64String = media.data;
 
         // Decode base64 string to a buffer
@@ -48,4 +47,4 @@ export function convertToMp3(media: MessageMedia): Promise<string> {
             reject(err);
         });
     });
-};
+}

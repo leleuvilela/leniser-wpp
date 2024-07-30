@@ -1,1 +1,4 @@
-export interface MessageCountDto { id: string, count: number };
+export interface MessageCountDto {
+    id: string;
+    count: number;
+}

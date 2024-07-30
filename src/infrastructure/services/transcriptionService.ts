@@ -1,17 +1,17 @@
-import { toFile } from "openai/uploads";
-import { ITranscriptionService } from "../../application/contracts/ITranscriptionService";
-import { inject, injectable } from "inversify";
-import { TYPES } from "../../ioc/types";
-import OpenAI from "openai";
+import { toFile } from 'openai/uploads';
+import { ITranscriptionService } from '../../application/contracts/ITranscriptionService';
+import { inject, injectable } from 'inversify';
+import { TYPES } from '../../ioc/types';
+import OpenAI from 'openai';
 
 @injectable()
 export class TranscriptionService implements ITranscriptionService {
-    @inject(TYPES.OpenAIClient) openAIClient: OpenAI
+    @inject(TYPES.OpenAIClient) openAIClient: OpenAI;
 
     public async generateTranscription(audioBuffer: Buffer, translate?: boolean) {
         try {
             const audioFile = await toFile(audioBuffer, 'audio.ogg', {
-                type: 'audio/ogg'
+                type: 'audio/ogg',
             });
 
             if (translate) {
@@ -31,7 +31,7 @@ export class TranscriptionService implements ITranscriptionService {
             return transcription.text;
         } catch (e) {
             console.log(e);
-            return "Algo de errado não está certo.";
+            return 'Algo de errado não está certo.';
         }
     }
-};
+}

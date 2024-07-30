@@ -1,12 +1,12 @@
-import { type ChatCompletionContentPart } from "openai/resources";
-import { MessageTypes, type Message } from "whatsapp-web.js";
-import { IStartWithHandler } from "../contracts/IHandler";
-import { IResponseService } from "../contracts/IResponseService";
+import { type ChatCompletionContentPart } from 'openai/resources';
+import { MessageTypes, type Message } from 'whatsapp-web.js';
+import { IStartWithHandler } from '../contracts/IHandler';
+import { IResponseService } from '../contracts/IResponseService';
 import { TYPES } from '../../ioc/types';
-import { inject, injectable } from "inversify";
-import { IConfigsRepository } from "../contracts/IConfigsRepository";
-import { Member } from "../dtos/members";
-import { ITranscriptionService } from "../contracts/ITranscriptionService";
+import { inject, injectable } from 'inversify';
+import { IConfigsRepository } from '../contracts/IConfigsRepository';
+import { Member } from '../dtos/members';
+import { ITranscriptionService } from '../contracts/ITranscriptionService';
 
 @injectable()
 export class BotHandler implements IStartWithHandler {
@@ -17,7 +17,6 @@ export class BotHandler implements IStartWithHandler {
     @inject(TYPES.TranscriptionService) transcriptionService: ITranscriptionService;
 
     public async handle(msg: Message, member: Member): Promise<Message> {
-
         const { botPrefix, systemPrompt } = member.configs
             ? member.configs
             : (await this.configsRepository.getDefaultConfigs()).defaultMemberConfigs;
@@ -32,7 +31,10 @@ export class BotHandler implements IStartWithHandler {
 
         const promptHistory = await this.getHistory(msg);
 
-        const res = await this.responseService.generateResponse(systemPrompt, promptHistory);
+        const res = await this.responseService.generateResponse(
+            systemPrompt,
+            promptHistory
+        );
 
         await chat.clearState();
 
@@ -40,11 +42,12 @@ export class BotHandler implements IStartWithHandler {
     }
 
     private hasValidMedia(msg: Message | null): boolean {
-        return (msg?.hasMedia && (msg?.type === 'image' || msg?.type === 'sticker')) ?? false;
+        return (
+            (msg?.hasMedia && (msg?.type === 'image' || msg?.type === 'sticker')) ?? false
+        );
     }
 
     private async getHistory(msg: Message): Promise<ChatCompletionContentPart[]> {
-
         const contents: ChatCompletionContentPart[] = [];
 
         const quoted = await msg.getQuotedMessage();
@@ -56,30 +59,34 @@ export class BotHandler implements IStartWithHandler {
 
         const image = msg.type === MessageTypes.IMAGE ? await msg.downloadMedia() : null;
         const text = msg.body ? this.cleanMessage(msg.body) : '';
-        const audio = msg.type === MessageTypes.AUDIO || msg.type === MessageTypes.VOICE ? await msg.downloadMedia() : null;
+        const audio =
+            msg.type === MessageTypes.AUDIO || msg.type === MessageTypes.VOICE
+                ? await msg.downloadMedia()
+                : null;
 
         if (text) {
             contents.push({
-                type: "text",
-                text: text
+                type: 'text',
+                text: body,
             });
         }
 
         if (image) {
             contents.push({
-                type: "image_url",
+                type: 'image_url',
                 image_url: {
-                    url: `data:image/jpeg;base64,${image.data}`
-                }
+                    url: `data:image/jpeg;base64,${media.data}`,
+                },
             });
         }
 
         if (audio) {
             const audioBuffer = Buffer.from(audio.data, 'base64');
-            const transcription = await this.transcriptionService.generateTranscription(audioBuffer);
+            const transcription =
+                await this.transcriptionService.generateTranscription(audioBuffer);
             contents.push({
-                type: "text",
-                text: `Isto é a transcrição de um áudio: ${transcription}`
+                type: 'text',
+                text: `Isto é a transcrição de um áudio: ${transcription}`,
             });
         }
 

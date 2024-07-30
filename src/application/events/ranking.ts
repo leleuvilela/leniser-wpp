@@ -1,12 +1,12 @@
-import { inject, injectable } from "inversify";
-import { type Message } from "whatsapp-web.js";
+import { inject, injectable } from 'inversify';
+import { type Message } from 'whatsapp-web.js';
 import { TYPES } from '../../ioc/types';
-import { IGroupMembersRepository } from "../contracts/IGroupMembersRepository";
-import { IStartWithHandler } from "../contracts/IHandler";
-import { IMessageRepository } from "../contracts/IMessagesRepository";
-import { GroupMembers } from "../dtos/groupMembers";
-import { MessageCountDto } from "../dtos/messageCountDto";
-import { Member } from "../dtos/members";
+import { IGroupMembersRepository } from '../contracts/IGroupMembersRepository';
+import { IStartWithHandler } from '../contracts/IHandler';
+import { IMessageRepository } from '../contracts/IMessagesRepository';
+import { GroupMembers } from '../dtos/groupMembers';
+import { MessageCountDto } from '../dtos/messageCountDto';
+import { Member } from '../dtos/members';
 
 interface RankingConfigs {
     startDate: Date;
@@ -24,7 +24,8 @@ export class RankingHandler implements IStartWithHandler {
 
     constructor(
         @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
-        @inject(TYPES.GroupMembersRepository) groupMembersRepository: IGroupMembersRepository,
+        @inject(TYPES.GroupMembersRepository)
+        groupMembersRepository: IGroupMembersRepository
     ) {
         this.messageRepository = messageRepository;
         this.groupMembersRepository = groupMembersRepository;
@@ -34,26 +35,27 @@ export class RankingHandler implements IStartWithHandler {
         const cfgs = this.getRankingConfig(msg);
 
         if (!cfgs) {
-            return msg.reply("🤖 Comando inválido. Tente `!menu`.");
+            return msg.reply('🤖 Comando inválido. Tente `!menu`.');
         }
 
-        const memberId = process.env.ENVIRONMENT === 'local'
-            ? msg.to
-            : member.id;
+        const memberId = process.env.ENVIRONMENT === 'local' ? msg.to : member.id;
 
-        const messageCounts = await this.messageRepository
-            .getMessageCountsByUser(cfgs.startDate, cfgs.endDate, memberId);
+        const messageCounts = await this.messageRepository.getMessageCountsByUser(
+            cfgs.startDate,
+            cfgs.endDate,
+            memberId
+        );
 
         if (!messageCounts) {
-            return msg.reply("🤖 Nenhuma mensagem encontrada.");
+            return msg.reply('🤖 Nenhuma mensagem encontrada.');
         }
 
-        const members = await this.groupMembersRepository.getMembers(memberId)
+        const members = await this.groupMembersRepository.getMembers(memberId);
 
         messageCounts.forEach((result) => {
             result.id = this.findName(result.id, members);
         });
-        
+
         const response = cfgs.isGraph
             ? this.generateMessageGraph(cfgs.title, messageCounts)
             : this.generateMessageCountsText(cfgs.title, messageCounts);
@@ -72,35 +74,34 @@ export class RankingHandler implements IStartWithHandler {
             return {
                 startDate: this.getStartOfDay(),
                 endDate: endDate,
-                title: "Ranking do Dia",
+                title: 'Ranking do Dia',
                 isGraph: isGraph,
-            }
+            };
         } else if (msg.body.toLowerCase().startsWith(`${this.command} semana`)) {
             return {
                 startDate: this.getStartOfWeek(),
                 endDate: endDate,
-                title: "Ranking da Semana",
+                title: 'Ranking da Semana',
                 isGraph: isGraph,
-            }
+            };
         } else if (msg.body.toLowerCase().startsWith(`${this.command} mes`)) {
             return {
                 startDate: this.getStartOfMonth(),
                 endDate: endDate,
-                title: "Ranking do Mês",
+                title: 'Ranking do Mês',
                 isGraph: isGraph,
-            }
+            };
         } else if (msg.body.toLowerCase().startsWith(`${this.command}`)) {
             return {
                 startDate: new Date(0), // Unix epoch start
                 endDate: new Date(),
-                title: "Ranking Geral",
+                title: 'Ranking Geral',
                 isGraph: isGraph,
-            }
+            };
         } else {
             return null;
         }
     }
-
 
     getStartOfDay(): Date {
         const now = new Date();
@@ -118,10 +119,7 @@ export class RankingHandler implements IStartWithHandler {
         return new Date(now.getFullYear(), now.getMonth(), 1);
     }
 
-    generateMessageCountsText(
-        title: string,
-        messageCounts: MessageCountDto[]
-    ) {
+    generateMessageCountsText(title: string, messageCounts: MessageCountDto[]) {
         let messageText = `📊 *${title}* 📊\n\n`;
         messageCounts.forEach((result, index) => {
             messageText += `${index + 1}º - 👤 ${result.id}: ${result.count}\n`;
@@ -130,15 +128,12 @@ export class RankingHandler implements IStartWithHandler {
         return messageText;
     }
 
-    generateMessageGraph(
-        title: string,
-        messageCounts: MessageCountDto[]
-    ) {
+    generateMessageGraph(title: string, messageCounts: MessageCountDto[]) {
         const bar = '#';
 
         const highestCount = messageCounts[0].count;
         const charCount = 30;
-        const messagesPerBar = Math.floor(highestCount / charCount);
+        const messagesPerBar = Math.floor(highestCount / charCount) || 1;
 
         let messageText = `📊 *${title}* 📊\n\n${bar} = ${messagesPerBar} mensagens\n\n`;
 

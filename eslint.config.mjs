@@ -1,20 +1,23 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import eslintConfigPrettier from "eslint-config-prettier";
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import eslintPluginPrettier from 'eslint-plugin-prettier/recommended';
 
 export default [
     {
-        files: ["**/*.ts"],
-        ignores: ["dist/", "src/init-mongo.js"],
+        files: ['**/*.ts'],
         rules: {
-            "semi": ["error", "always"],
-            "max-len": ["error", { code: 80, ignoreUrls: true }],
-        }
+            semi: ['error', 'always'],
+            'max-len': ['error', { code: 90, ignoreUrls: true }],
+            indent: 'error',
+        },
+    },
+    {
+        ignores: ['dist/', '**/*.js'],
     },
     { languageOptions: { globals: globals.browser } },
     pluginJs.configs.recommended,
     ...tseslint.configs.strict,
     ...tseslint.configs.stylistic,
-    eslintConfigPrettier
+    eslintPluginPrettier,
 ];

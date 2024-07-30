@@ -1,23 +1,20 @@
-import { type Message, MessageMedia } from "whatsapp-web.js";
-import { IAudioService } from "../contracts/IAudioService";
-import { IStartWithHandler } from "../contracts/IHandler";
-import { inject, injectable } from "inversify";
+import { type Message, MessageMedia } from 'whatsapp-web.js';
+import { IAudioService } from '../contracts/IAudioService';
+import { IStartWithHandler } from '../contracts/IHandler';
+import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 
 @injectable()
 export class FalaHandler implements IStartWithHandler {
-    audioService: IAudioService
+    audioService: IAudioService;
 
-    constructor(
-        @inject(TYPES.AudioService) audioService: IAudioService
-    ) {
+    constructor(@inject(TYPES.AudioService) audioService: IAudioService) {
         this.audioService = audioService;
     }
 
     command = '!fala';
 
     async handle(msg: Message): Promise<Message> {
-
         const quoted = await msg.getQuotedMessage();
         let prompt = msg.body;
 
@@ -27,7 +24,7 @@ export class FalaHandler implements IStartWithHandler {
 
         const textArray = prompt.split(' ');
         textArray.shift();
-        const text = textArray.join(" ");
+        const text = textArray.join(' ');
 
         const chat = await msg.getChat();
         try {

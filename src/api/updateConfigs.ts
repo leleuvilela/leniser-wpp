@@ -1,5 +1,5 @@
-import { Router } from "express";
-import { IApplication } from "../application/contracts/IApplication";
+import { Router } from 'express';
+import { IApplication } from '../application/contracts/IApplication';
 
 class UpdateConfigsRoutes {
     public router: Router;

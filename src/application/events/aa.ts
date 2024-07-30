@@ -1,4 +1,4 @@
-import { type Message } from "whatsapp-web.js";
+import { type Message } from 'whatsapp-web.js';
 
 const aaMessage = `🤖 Olá! 🍀
 

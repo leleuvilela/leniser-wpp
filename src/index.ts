@@ -1,9 +1,9 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 
-import { Application } from "./app";
-import { Server } from "./server";
-import { container } from "./ioc/inversify.config";
-import { TYPES } from "./ioc/types";
+import { Application } from './app';
+import { Server } from './server';
+import { container } from './ioc/inversify.config';
+import { TYPES } from './ioc/types';
 
 const app = container.get<Application>(TYPES.Application);
 

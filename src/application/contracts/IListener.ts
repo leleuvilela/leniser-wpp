@@ -1,4 +1,4 @@
-import { type Client as WwebClient } from "whatsapp-web.js";
+import { type Client as WwebClient } from 'whatsapp-web.js';
 
 export interface IListener {
     wwebClient: WwebClient;

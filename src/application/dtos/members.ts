@@ -17,4 +17,3 @@ export enum MemberPermission {
     MESSAGE_REVOKE = 'MESSAGE_REVOKE',
     SAVE_MESSAGE = 'SAVE_MESSAGE',
 }
-
