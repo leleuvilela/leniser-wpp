@@ -1,4 +1,4 @@
-import { Message, Client } from 'whatsapp-web.js';
+import { Message, Client, Events } from 'whatsapp-web.js';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { IListener } from '../contracts/IListener';
@@ -86,7 +86,7 @@ export class MessageCreateListener implements IListener {
     }
 
     public async initialize() {
-        this.wwebClient.on('message_create', this.handleMessage.bind(this));
+        this.wwebClient.on(Events.MESSAGE_CREATE, this.handleMessage.bind(this));
     }
 
     private async handleMessage(msg: Message) {

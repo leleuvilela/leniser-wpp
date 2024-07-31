@@ -1,6 +1,6 @@
 import { IListener } from '../contracts/IListener';
 import { inject, injectable } from 'inversify';
-import { type Client as WwebClient } from 'whatsapp-web.js';
+import { Events, type Client as WwebClient } from 'whatsapp-web.js';
 import { TYPES } from '../../ioc/types';
 import { IMembersRepository } from '../contracts/INumberPermissionsRepository';
 import { MemberPermission } from '../dtos/members';
@@ -20,7 +20,7 @@ class MessageRevokeListener implements IListener {
     }
 
     public async initialize() {
-        this.wwebClient.on('message_revoke_everyone', async (after, before) => {
+        this.wwebClient.on(Events.MESSAGE_REVOKED_EVERYONE, async (after, before) => {
             const numberPermission = await this.numberPermissionRepository.find(
                 after.from
             );

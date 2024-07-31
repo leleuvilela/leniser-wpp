@@ -41,6 +41,7 @@ import { PingHandler } from '../application/events/ping';
 import { StickerHandler } from '../application/events/sticker';
 import { ImagemHandler } from '../application/events/imagem';
 import { Mp3Handler } from '../application/events/mp3';
+import { GroupJoinListener } from '../application/listeners/groupJoin';
 
 const container = new Container();
 
@@ -53,6 +54,7 @@ container.bind(TYPES.MessageObserver).to(MessageObserver);
 container.bind<IListener>(TYPES.AuthenticationListener).to(AuthenticationListener);
 container.bind<IListener>(TYPES.MessageCreateListener).to(MessageCreateListener);
 container.bind<IListener>(TYPES.MessageRevokeListener).to(MessageRevokeListener);
+container.bind<IListener>(TYPES.GroupJoinListener).to(GroupJoinListener);
 
 container.bind<IHandler>(TYPES.BotHandler).to(BotHandler);
 container.bind<IHandler>(TYPES.FalaHandler).to(FalaHandler);

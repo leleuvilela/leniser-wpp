@@ -72,4 +72,19 @@ export class MembersRepository implements IMembersRepository {
 
         return this.members;
     }
+
+    public async create(member: Member): Promise<void> {
+        const collection = this.mongoClient
+            .db('rap')
+            .collection<MembersDocument>('members');
+
+        await collection.insertOne({
+            id: member.id,
+            desc: member.desc,
+            permissions: member.permissions,
+            configs: member.configs,
+        });
+
+        this.members.set(member.id, member);
+    }
 }

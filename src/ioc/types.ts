@@ -7,6 +7,7 @@ export const TYPES = {
     MessageObserver: Symbol.for('MessageObserver'),
     MessageCreateListener: Symbol.for('MessageCreateListener'),
     MessageRevokeListener: Symbol.for('MessageRevokeListener'),
+    GroupJoinListener: Symbol.for('GroupJoinListener'),
     ConfigsRepository: Symbol.for('ConfigsRepository'),
     MessageRepository: Symbol.for('MessageRepository'),
     MembersRepository: Symbol.for('NumberPermissionRepository'),
