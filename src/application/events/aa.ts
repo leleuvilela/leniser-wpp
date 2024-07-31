@@ -1,6 +1,11 @@
+import { injectable, inject } from 'inversify';
 import { type Message } from 'whatsapp-web.js';
+import { TYPES } from '../../ioc/types';
+import { IConfigsRepository } from '../contracts/IConfigsRepository';
+import { IHandler } from '../contracts/IHandler';
+import { Member, MemberPermission } from '../dtos/members';
 
-const aaMessage = `🤖 Olá! 🍀
+const aaMessage = `Olá! 🍀
 
 Beber com moderação é importante para a saúde e o bem-estar. Se você ou alguém que você conhece está enfrentando problemas com o consumo de álcool, saiba que não está sozinho.
 
@@ -16,8 +21,22 @@ Lembre-se de que pedir ajuda é um sinal de força, e há pessoas dispostas a aj
 
 Cuide-se e fique bem! 💚`;
 
-async function handleAA(msg: Message): Promise<Message> {
-    return await msg.reply(aaMessage);
-}
+@injectable()
+export class AaHandler implements IHandler {
+    @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
 
-export { handleAA };
+    public command = '!aa';
+
+    canHandle(msg: Message, member: Member | null): boolean {
+        const isAuthorized =
+            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+
+        return isAuthorized && msg.body.startsWith(this.command);
+    }
+
+    async handle(msg: Message): Promise<Message> {
+        const { defaultMemberConfigs } = await this.configsRepository.getDefaultConfigs();
+
+        return msg.reply(`${defaultMemberConfigs.botPrefix} ${aaMessage}`);
+    }
+}

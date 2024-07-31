@@ -1,34 +1,51 @@
+import { injectable, inject } from 'inversify';
 import { MessageTypes, type Message } from 'whatsapp-web.js';
+import { TYPES } from '../../ioc/types';
+import { IConfigsRepository } from '../contracts/IConfigsRepository';
+import { IHandler } from '../contracts/IHandler';
+import { Member, MemberPermission } from '../dtos/members';
 
-async function handleSticker(msg: Message): Promise<Message> {
-    const quoted = await msg.getQuotedMessage();
+@injectable()
+export class StickerHandler implements IHandler {
+    @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
 
-    const allowedTypes = [MessageTypes.IMAGE, MessageTypes.VIDEO];
+    public command = '!sticker';
 
-    if (!allowedTypes.includes(msg.type) && !allowedTypes.includes(quoted?.type)) {
-        return await msg.reply(
-            '🤖 Preciso de uma imagem ou vídeo para gerar um sticker!'
-        );
+    canHandle(msg: Message, member: Member | null): boolean {
+        const isAuthorized =
+            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+
+        return isAuthorized && msg.body.startsWith(this.command);
     }
 
-    const message = msg.hasMedia ? msg : quoted;
+    async handle(msg: Message): Promise<Message> {
+        const quoted = await msg.getQuotedMessage();
 
-    try {
-        const media = await message.downloadMedia();
+        const allowedTypes = [MessageTypes.IMAGE, MessageTypes.VIDEO];
 
-        if (!media?.data) {
-            return await msg.reply('🤖 Falha ao baixar a mídia!');
+        if (!allowedTypes.includes(msg.type) && !allowedTypes.includes(quoted?.type)) {
+            return await msg.reply(
+                '🤖 Preciso de uma imagem ou vídeo para gerar um sticker!'
+            );
         }
 
-        return msg.reply(media, undefined, {
-            sendMediaAsSticker: true,
-            stickerName: 'Sticker',
-            stickerAuthor: 'Bot da Lenise',
-        });
-    } catch (error) {
-        console.error('🤖 Error on download media: ', error);
-        return msg.reply('🤖 Shiiii... deu ruim');
+        const message = msg.hasMedia ? msg : quoted;
+
+        try {
+            const media = await message.downloadMedia();
+
+            if (!media?.data) {
+                return await msg.reply('🤖 Falha ao baixar a mídia!');
+            }
+
+            return msg.reply(media, undefined, {
+                sendMediaAsSticker: true,
+                stickerName: 'Sticker',
+                stickerAuthor: 'Bot da Lenise',
+            });
+        } catch (error) {
+            console.error('🤖 Error on download media: ', error);
+            return msg.reply('🤖 Shiiii... deu ruim');
+        }
     }
 }
-
-export { handleSticker };

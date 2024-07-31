@@ -19,5 +19,12 @@ export const TYPES = {
     RankingHandler: Symbol.for('RankingHandler'),
     DeuitaHandler: Symbol.for('DeuitaHandler'),
     GilsoHandler: Symbol.for('GilsoHandler'),
+    MenuHandler: Symbol.for('MenuHandler'),
+    AaHandler: Symbol.for('AaHandler'),
+    ChecagemHandler: Symbol.for('ChecagemHandler'),
     TranscreverHandler: Symbol.for('TranscreverHandler'),
+    PingHandler: Symbol.for('PingHandler'),
+    StickerHandler: Symbol.for('StickerHandler'),
+    ImagemHandler: Symbol.for('ImagemHandler'),
+    Mp3Handler: Symbol.for('Mp3Handler'),
 };

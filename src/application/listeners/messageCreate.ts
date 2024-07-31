@@ -3,21 +3,11 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { IListener } from '../contracts/IListener';
 import { type Client as WwebClient } from 'whatsapp-web.js';
-import {
-    handleMenu,
-    handlePing,
-    handleChecagem,
-    handleSticker,
-    handleAA,
-    handleImagem,
-    handleMp3,
-} from '../events';
 import { MessageObserver } from '../observers/messageObserver';
 import { IMessageRepository } from '../contracts/IMessagesRepository';
 import { IMembersRepository } from '../contracts/INumberPermissionsRepository';
 import { MemberPermission, Member } from '../dtos/members';
-import { IConfigsRepository } from '../contracts/IConfigsRepository';
-import { IHandler, IStartWithHandler } from '../contracts/IHandler';
+import { IHandler } from '../contracts/IHandler';
 
 @injectable()
 export class MessageCreateListener implements IListener {
@@ -25,26 +15,37 @@ export class MessageCreateListener implements IListener {
     wwebClient: WwebClient;
     messageRepository: IMessageRepository;
     membersRepository: IMembersRepository;
-    botHandler: IStartWithHandler;
-    falaHandler: IStartWithHandler;
-    rankingHandler: IStartWithHandler;
-    transcreverHandler: IStartWithHandler;
-    configsRepository: IConfigsRepository;
     deuitaHandler: IHandler;
     gilsoHandler: IHandler;
+    falaHandler: IHandler;
+    rankingHandler: IHandler;
+    botHandler: IHandler;
+    transcreverHandler: IHandler;
+    menuHandler: IHandler;
+    aaHandler: IHandler;
+    checagemHandler: IHandler;
+    pingHandler: IHandler;
+    stickerHandler: IHandler;
+    imagemHandler: IHandler;
+    mp3Handler: IHandler;
 
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
         @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
-        @inject(TYPES.MembersRepository)
-        numberPermissionsRepository: IMembersRepository,
-        @inject(TYPES.BotHandler) botHandler: IStartWithHandler,
-        @inject(TYPES.FalaHandler) falaHandler: IStartWithHandler,
-        @inject(TYPES.RankingHandler) rankingHandler: IStartWithHandler,
-        @inject(TYPES.TranscreverHandler) transcreverHandler: IStartWithHandler,
-        @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository,
+        @inject(TYPES.MembersRepository) numberPermissionsRepository: IMembersRepository,
         @inject(TYPES.DeuitaHandler) deuitaHandler: IHandler,
-        @inject(TYPES.GilsoHandler) gilsoHandler: IHandler
+        @inject(TYPES.FalaHandler) falaHandler: IHandler,
+        @inject(TYPES.RankingHandler) rankingHandler: IHandler,
+        @inject(TYPES.BotHandler) botHandler: IHandler,
+        @inject(TYPES.TranscreverHandler) transcreverHandler: IHandler,
+        @inject(TYPES.GilsoHandler) gilsoHandler: IHandler,
+        @inject(TYPES.MenuHandler) menuHandler: IHandler,
+        @inject(TYPES.AaHandler) aaHandler: IHandler,
+        @inject(TYPES.ChecagemHandler) checagemHandler: IHandler,
+        @inject(TYPES.PingHandler) pingHandler: IHandler,
+        @inject(TYPES.StickerHandler) stickerHandler: IHandler,
+        @inject(TYPES.ImagemHandler) imagemHandler: IHandler,
+        @inject(TYPES.Mp3Handler) mp3Handler: IHandler
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -55,25 +56,31 @@ export class MessageCreateListener implements IListener {
         this.messageRepository = messageRepository;
         this.membersRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
-        this.configsRepository = configsRepository;
         this.deuitaHandler = deuitaHandler;
         this.gilsoHandler = gilsoHandler;
+        this.menuHandler = menuHandler;
+        this.aaHandler = aaHandler;
+        this.checagemHandler = checagemHandler;
+        this.pingHandler = pingHandler;
+        this.stickerHandler = stickerHandler;
+        this.imagemHandler = imagemHandler;
+        this.mp3Handler = mp3Handler;
 
         this.startListeners();
     }
 
     private startListeners(): void {
-        this.messageObserver.addStartWithMessageHandler('!menu', handleMenu);
-        this.messageObserver.addStartWithMessageHandler('!aa', handleAA);
-        this.messageObserver.addStartWithMessageHandler('!checagem', handleChecagem);
-        this.messageObserver.addStartWithMessageHandler('!ping', handlePing);
-        this.messageObserver.addStartWithMessageHandler('!sticker', handleSticker);
-        this.messageObserver.addStartWithMessageHandler('!imagem', handleImagem);
-        this.messageObserver.addStartWithMessageHandler('!mp3', handleMp3);
-        this.messageObserver.addStartWithHandler(this.transcreverHandler);
-        this.messageObserver.addStartWithHandler(this.botHandler);
-        this.messageObserver.addStartWithHandler(this.falaHandler);
-        this.messageObserver.addStartWithHandler(this.rankingHandler);
+        this.messageObserver.addHandler(this.falaHandler);
+        this.messageObserver.addHandler(this.rankingHandler);
+        this.messageObserver.addHandler(this.botHandler);
+        this.messageObserver.addHandler(this.transcreverHandler);
+        this.messageObserver.addHandler(this.aaHandler);
+        this.messageObserver.addHandler(this.pingHandler);
+        this.messageObserver.addHandler(this.checagemHandler);
+        this.messageObserver.addHandler(this.menuHandler);
+        this.messageObserver.addHandler(this.stickerHandler);
+        this.messageObserver.addHandler(this.imagemHandler);
+        this.messageObserver.addHandler(this.mp3Handler);
         this.messageObserver.addHandler(this.deuitaHandler);
         this.messageObserver.addHandler(this.gilsoHandler);
     }
@@ -82,26 +89,26 @@ export class MessageCreateListener implements IListener {
         this.wwebClient.on('message_create', this.handleMessage.bind(this));
     }
 
-    async handleMessage(msg: Message) {
-        const member = await this.membersRepository.find(msg.from)
-
-        if (!member) {
+    private async handleMessage(msg: Message) {
+        if (!this.shouldProcessMessage(msg)) {
             return;
         }
+
+        const memberId = msg.fromMe ? msg.to : msg.from;
+
+        const member = await this.membersRepository.find(memberId);
 
         await this.saveMessageToMongo(msg, member);
-
-        if (!(await this.shouldProcessMessage(msg, member))) {
-            return;
-        }
 
         this.messageObserver.notify(msg, member);
     }
 
     private async saveMessageToMongo(msg: Message, member: Member | null): Promise<void> {
-        const { botNumber } = await this.configsRepository.getDefaultConfigs();
+        if (!member) {
+            return;
+        }
 
-        if (msg.from === botNumber) {
+        if (msg.fromMe) {
             return;
         }
 
@@ -116,16 +123,7 @@ export class MessageCreateListener implements IListener {
         }
     }
 
-    private async shouldProcessMessage(
-        msg: Message,
-        member: Member | null
-    ): Promise<boolean> {
-        const { botNumber } = await this.configsRepository.getDefaultConfigs();
-
-        if (!member) {
-            return false;
-        }
-
+    private shouldProcessMessage(msg: Message): boolean {
         // UTC timestamp in seconds
         const now = Math.floor(new Date().getTime() / 1000);
         const messageTime = new Date(msg.timestamp).getTime();
@@ -138,6 +136,6 @@ export class MessageCreateListener implements IListener {
             return true;
         }
 
-        return msg.from !== botNumber && member.permissions.includes(MemberPermission.MESSAGE_CREATE)
+        return !msg.fromMe;
     }
 }

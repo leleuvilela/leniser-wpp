@@ -1,39 +1,23 @@
 import { type Message } from 'whatsapp-web.js';
-import { IHandler, IStartWithHandler, MessageHandler } from '../contracts/IHandler';
+import { IHandler } from '../contracts/IHandler';
 import { injectable } from 'inversify';
 import { Member } from '../dtos/members';
 
 @injectable()
 export class MessageObserver {
     handlers: IHandler[];
-    startsWithHandlers: IStartWithHandler[];
 
     constructor() {
         this.handlers = [];
-        this.startsWithHandlers = [];
     }
 
     public addHandler(listener: IHandler) {
         this.handlers.push(listener);
     }
 
-    public addStartWithHandler(handler: IStartWithHandler) {
-        this.startsWithHandlers.push(handler);
-    }
-
-    public addStartWithMessageHandler(command: string, handle: MessageHandler) {
-        this.startsWithHandlers.push({ command, handle });
-    }
-
-    public notify(msg: Message, member: Member) {
+    public notify(msg: Message, member: Member | null) {
         this.handlers.forEach((handler) => {
-            if (handler.canHandle(msg)) {
-                handler.handle(msg, member);
-            }
-        });
-
-        this.startsWithHandlers.forEach((handler) => {
-            if (msg.body.toLowerCase().startsWith(handler.command)) {
+            if (handler.canHandle(msg, member)) {
                 handler.handle(msg, member);
             }
         });
