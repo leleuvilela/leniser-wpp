@@ -12,6 +12,7 @@ class Application implements IApplication {
     @inject(TYPES.AuthenticationListener) authenticationListener: IListener;
     @inject(TYPES.MessageCreateListener) messageCreateListener: IListener;
     @inject(TYPES.MessageRevokeListener) messageRevokeListener: IListener;
+    @inject(TYPES.GroupJoinListener) groupJoinListener: IListener;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     @inject(TYPES.MembersRepository) membersRepository: IMembersRepository;
 
@@ -23,6 +24,7 @@ class Application implements IApplication {
         this.authenticationListener.initialize();
         this.messageCreateListener.initialize();
         this.messageRevokeListener.initialize();
+        this.groupJoinListener.initialize();
 
         console.log('Initializing wwapweb client');
         this.wweb.initialize();
