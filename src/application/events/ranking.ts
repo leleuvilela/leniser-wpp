@@ -7,6 +7,7 @@ import { IMessageRepository } from '../contracts/IMessagesRepository';
 import { GroupMembers } from '../dtos/groupMembers';
 import { MessageCountDto } from '../dtos/messageCountDto';
 import { Member, MemberPermission } from '../dtos/members';
+import { hasPermissions } from '../../utils/hasPermissions';
 
 interface RankingConfigs {
     startDate: Date;
@@ -23,10 +24,11 @@ export class RankingHandler implements IHandler {
     @inject(TYPES.GroupMembersRepository) groupMembersRepository: IGroupMembersRepository;
 
     canHandle(msg: Message, member: Member | null): boolean {
-        const isAuthorized =
-            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+        if (!msg.body.startsWith(this.command)) {
+            return false;
+        }
 
-        return isAuthorized && msg.body.startsWith(this.command);
+        return hasPermissions(member, [MemberPermission.MESSAGE_CREATE], msg);
     }
 
     async handle(msg: Message, member: Member): Promise<Message> {

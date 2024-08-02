@@ -28,10 +28,15 @@ export class AaHandler implements IHandler {
     public command = '!aa';
 
     canHandle(msg: Message, member: Member | null): boolean {
-        const isAuthorized =
-            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+        if (!msg.body.startsWith(this.command)) {
+            return false;
+        }
 
-        return isAuthorized && msg.body.startsWith(this.command);
+        if (process.env.ENVIRONMENT === 'local' && msg.fromMe) {
+            return true;
+        }
+
+        return !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
     }
 
     async handle(msg: Message): Promise<Message> {

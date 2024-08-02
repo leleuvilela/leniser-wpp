@@ -6,6 +6,7 @@ import { TYPES } from '../../ioc/types';
 import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { IHandler } from '../contracts/IHandler';
 import { Member, MemberPermission } from '../dtos/members';
+import { hasPermissions } from '../../utils/hasPermissions';
 
 const disableCooldown = process.env.IMAGE_COOLDOWN_DISABLED === 'true';
 
@@ -28,10 +29,11 @@ export class ImagemHandler implements IHandler {
     public command = '!imagem';
 
     canHandle(msg: Message, member: Member | null): boolean {
-        const isAuthorized =
-            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+        if (!msg.body.startsWith(this.command)) {
+            return false;
+        }
 
-        return isAuthorized && msg.body.startsWith(this.command);
+        return hasPermissions(member, [MemberPermission.MESSAGE_CREATE], msg);
     }
 
     async handle(msg: Message): Promise<Message> {

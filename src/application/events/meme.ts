@@ -5,6 +5,7 @@ import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { IHandler } from '../contracts/IHandler';
 import { IImgflipService } from '../contracts/IImgflipService';
 import { Member, MemberPermission } from '../dtos/members';
+import { hasPermissions } from '../../utils/hasPermissions';
 
 @injectable()
 export class MemeHandler implements IHandler {
@@ -14,10 +15,11 @@ export class MemeHandler implements IHandler {
     public command = '!meme';
 
     canHandle(msg: Message, member: Member): boolean {
-        const isAuthorized =
-            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+        if (!msg.body.startsWith(this.command)) {
+            return false;
+        }
 
-        return isAuthorized && msg.body.startsWith(this.command);
+        return hasPermissions(member, [MemberPermission.MESSAGE_CREATE], msg);
     }
 
     async handle(msg: Message): Promise<Message> {
