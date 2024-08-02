@@ -98,15 +98,15 @@ export class MessageCreateListener implements IListener {
     }
 
     private async handleMessage(msg: Message) {
-        if (!this.shouldProcessMessage(msg)) {
-            return;
-        }
-
         const memberId = msg.fromMe ? msg.to : msg.from;
 
         const member = await this.membersRepository.find(memberId);
 
         await this.saveMessageToMongo(msg, member);
+
+        if (!this.shouldProcessMessage(msg)) {
+            return;
+        }
 
         this.messageObserver.notify(msg, member);
     }
