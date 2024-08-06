@@ -42,6 +42,10 @@ import { StickerHandler } from '../application/events/sticker';
 import { ImagemHandler } from '../application/events/imagem';
 import { Mp3Handler } from '../application/events/mp3';
 import { GroupJoinListener } from '../application/listeners/groupJoin';
+import { IImgflipService } from '../application/contracts/IImgflipService';
+import { ImgflipService } from '../infrastructure/services/imgflipService';
+import { AiMemeHandler } from '../application/events/aimeme';
+import { MemeHandler } from '../application/events/meme';
 
 const container = new Container();
 
@@ -69,6 +73,8 @@ container.bind<IHandler>(TYPES.PingHandler).to(PingHandler);
 container.bind<IHandler>(TYPES.StickerHandler).to(StickerHandler);
 container.bind<IHandler>(TYPES.ImagemHandler).to(ImagemHandler);
 container.bind<IHandler>(TYPES.Mp3Handler).to(Mp3Handler);
+container.bind<IHandler>(TYPES.AiMemeHandler).to(AiMemeHandler);
+container.bind<IHandler>(TYPES.MemeHandler).to(MemeHandler);
 
 container
     .bind<IConfigsRepository>(TYPES.ConfigsRepository)
@@ -92,6 +98,8 @@ container
     .to(TranscriptionService);
 container.bind<IResponseService>(TYPES.ResponseService).to(ResponseService);
 container.bind<IAudioService>(TYPES.AudioService).to(AudioService);
+container.bind<IImgflipService>(TYPES.ImgflipService).to(ImgflipService);
+
 container.bind<IApplication>(TYPES.Application).to(Application);
 
 export { container };

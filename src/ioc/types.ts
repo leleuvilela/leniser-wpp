@@ -15,6 +15,7 @@ export const TYPES = {
     ResponseService: Symbol.for('ResponseService'),
     AudioService: Symbol.for('AudioService'),
     TranscriptionService: Symbol.for('TranscriptionService'),
+    ImgflipService: Symbol.for('ImgflipService'),
     BotHandler: Symbol.for('BotHandler'),
     FalaHandler: Symbol.for('FalaHandler'),
     RankingHandler: Symbol.for('RankingHandler'),
@@ -28,4 +29,6 @@ export const TYPES = {
     StickerHandler: Symbol.for('StickerHandler'),
     ImagemHandler: Symbol.for('ImagemHandler'),
     Mp3Handler: Symbol.for('Mp3Handler'),
+    AiMemeHandler: Symbol.for('AiMemeHandler'),
+    MemeHandler: Symbol.for('MemeHandler'),
 };

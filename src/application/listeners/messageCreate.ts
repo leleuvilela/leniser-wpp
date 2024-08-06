@@ -28,6 +28,8 @@ export class MessageCreateListener implements IListener {
     stickerHandler: IHandler;
     imagemHandler: IHandler;
     mp3Handler: IHandler;
+    aiMemeHandler: IHandler;
+    memeHandler: IHandler;
 
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
@@ -45,7 +47,9 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.PingHandler) pingHandler: IHandler,
         @inject(TYPES.StickerHandler) stickerHandler: IHandler,
         @inject(TYPES.ImagemHandler) imagemHandler: IHandler,
-        @inject(TYPES.Mp3Handler) mp3Handler: IHandler
+        @inject(TYPES.Mp3Handler) mp3Handler: IHandler,
+        @inject(TYPES.AiMemeHandler) aiMemeHandler: IHandler,
+        @inject(TYPES.MemeHandler) memeHandler: IHandler
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -65,6 +69,8 @@ export class MessageCreateListener implements IListener {
         this.stickerHandler = stickerHandler;
         this.imagemHandler = imagemHandler;
         this.mp3Handler = mp3Handler;
+        this.aiMemeHandler = aiMemeHandler;
+        this.memeHandler = memeHandler;
 
         this.startListeners();
     }
@@ -83,6 +89,8 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addHandler(this.mp3Handler);
         this.messageObserver.addHandler(this.deuitaHandler);
         this.messageObserver.addHandler(this.gilsoHandler);
+        this.messageObserver.addHandler(this.aiMemeHandler);
+        this.messageObserver.addHandler(this.memeHandler);
     }
 
     public async initialize() {

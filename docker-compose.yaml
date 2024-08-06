@@ -9,6 +9,8 @@ services:
       DB_URI: "mongodb://mongo:27017/rap"
       API_GPT: ""
       ENVIRONMENT: "local"
+      IMGFLIP_USERNAME: ""
+      IMGFLIP_PASSWORD: ""
     volumes:
       - ./.wwebjs_auth:/app/.wwebjs_auth
     networks:
