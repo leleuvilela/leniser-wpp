@@ -8,6 +8,7 @@ import { GroupMembers } from '../dtos/groupMembers';
 import { MessageCountDto } from '../dtos/messageCountDto';
 import { Member, MemberPermission } from '../dtos/members';
 import { hasPermissions } from '../../utils/hasPermissions';
+import { getBRDateNow } from '../../utils/dateExtensions';
 
 interface RankingConfigs {
     startDate: Date;
@@ -64,7 +65,7 @@ export class RankingHandler implements IHandler {
     }
 
     getRankingConfig(msg: Message): RankingConfigs | null {
-        const endDate = new Date();
+        const now = getBRDateNow();
 
         const args = msg.body.split(' ');
         const lastArg = args[args.length - 1];
@@ -72,29 +73,29 @@ export class RankingHandler implements IHandler {
 
         if (msg.body.toLowerCase().startsWith(`${this.command} dia`)) {
             return {
-                startDate: this.getStartOfDay(),
-                endDate: endDate,
+                startDate: this.getStartOfDay(now),
+                endDate: now,
                 title: 'Ranking do Dia',
                 isGraph: isGraph,
             };
         } else if (msg.body.toLowerCase().startsWith(`${this.command} semana`)) {
             return {
-                startDate: this.getStartOfWeek(),
-                endDate: endDate,
+                startDate: this.getStartOfWeek(now),
+                endDate: now,
                 title: 'Ranking da Semana',
                 isGraph: isGraph,
             };
         } else if (msg.body.toLowerCase().startsWith(`${this.command} mes`)) {
             return {
-                startDate: this.getStartOfMonth(),
-                endDate: endDate,
+                startDate: this.getStartOfMonth(now),
+                endDate: now,
                 title: 'Ranking do Mês',
                 isGraph: isGraph,
             };
         } else if (msg.body.toLowerCase().startsWith(`${this.command}`)) {
             return {
                 startDate: new Date(0), // Unix epoch start
-                endDate: new Date(),
+                endDate: now,
                 title: 'Ranking Geral',
                 isGraph: isGraph,
             };
@@ -103,19 +104,16 @@ export class RankingHandler implements IHandler {
         }
     }
 
-    getStartOfDay(): Date {
-        const now = new Date();
+    getStartOfDay(now: Date): Date {
         return new Date(now.getFullYear(), now.getMonth(), now.getDate());
     }
 
-    getStartOfWeek(): Date {
-        const now = new Date();
+    getStartOfWeek(now: Date): Date {
         const firstDayOfWeek = now.getDate() - now.getDay();
         return new Date(now.getFullYear(), now.getMonth(), firstDayOfWeek);
     }
 
-    getStartOfMonth(): Date {
-        const now = new Date();
+    getStartOfMonth(now: Date): Date {
         return new Date(now.getFullYear(), now.getMonth(), 1);
     }
 

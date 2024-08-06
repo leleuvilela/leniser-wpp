@@ -37,8 +37,8 @@ export class MessageRepository implements IMessageRepository {
                 {
                     $match: {
                         timestamp: {
-                            $gte: Math.floor(startDateInSeconds),
-                            $lte: Math.floor(endDateInSeconds),
+                            $gte: startDateInSeconds,
+                            $lte: endDateInSeconds,
                         },
                         from: groupId,
                     },

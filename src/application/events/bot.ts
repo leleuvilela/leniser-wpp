@@ -26,8 +26,6 @@ export class BotHandler implements IHandler {
     }
 
     public async handle(msg: Message, member: Member): Promise<Message> {
-        console.log('🤖 BotHandler');
-
         const { botPrefix, systemPrompt } = member.configs
             ? member.configs
             : (await this.configsRepository.getDefaultConfigs()).defaultMemberConfigs;
