@@ -119,6 +119,8 @@ export class RankingHandler implements IHandler {
 
     generateMessageCountsText(title: string, messageCounts: MessageCountDto[]) {
         let messageText = `📊 *${title}* 📊\n\n`;
+        messageText += this.getTotalMessages(messageCounts) + '\n\n';
+
         messageCounts.forEach((result, index) => {
             messageText += `${index + 1}º - 👤 ${result.id}: ${result.count}\n`;
         });
@@ -127,13 +129,15 @@ export class RankingHandler implements IHandler {
     }
 
     generateMessageGraph(title: string, messageCounts: MessageCountDto[]) {
-        const bar = '#';
+        const bar = '█';
 
         const highestCount = messageCounts[0].count;
         const charCount = 30;
         const messagesPerBar = Math.floor(highestCount / charCount) || 1;
 
-        let messageText = `📊 *${title}* 📊\n\n${bar} = ${messagesPerBar} mensagens\n\n`;
+        let messageText = `📊 *${title}* 📊\n\n`;
+        messageText += `${bar} = ${messagesPerBar} mensagens\n\n`;
+        messageText += this.getTotalMessages(messageCounts) + '\n\n';
 
         messageCounts.forEach((result, index) => {
             const barLength = Math.floor(result.count / messagesPerBar);
@@ -143,6 +147,15 @@ export class RankingHandler implements IHandler {
         });
 
         return messageText;
+    }
+
+    getTotalMessages(messageCounts: MessageCountDto[]) {
+        const totalMessages = messageCounts.reduce(
+            (acc, result) => acc + result.count,
+            0
+        );
+
+        return `Total de ${totalMessages} mensagens`;
     }
 
     findName(id: string, members: GroupMembers | null): string {
