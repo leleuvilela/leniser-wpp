@@ -4,6 +4,7 @@ import { IHandler } from '../contracts/IHandler';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { Member, MemberPermission } from '../dtos/members';
+import { hasPermissions } from '../../utils/hasPermissions';
 
 @injectable()
 class TranscreverHandler implements IHandler {
@@ -13,10 +14,11 @@ class TranscreverHandler implements IHandler {
     transcriptionService: TranscriptionService;
 
     canHandle(msg: Message, member: Member | null): boolean {
-        const isAuthorized =
-            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+        if (!msg.body.startsWith(this.command)) {
+            return false;
+        }
 
-        return isAuthorized && msg.body.startsWith(this.command);
+        return hasPermissions(member, [MemberPermission.MESSAGE_CREATE], msg);
     }
 
     public async handle(msg: Message): Promise<Message> {

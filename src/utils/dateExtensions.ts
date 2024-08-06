@@ -10,3 +10,15 @@ export function formatTimestamp(timestamp: number) {
 
     return `${year}/${month}/${day} - ${hours}:${minutes}:${seconds}`;
 }
+
+export function getBRDateNow(): Date {
+    return convertTZ(new Date(), 'America/Sao_Paulo');
+}
+
+export function convertTZ(date: Date | string, tzString: string): Date {
+    return new Date(
+        (typeof date === 'string' ? new Date(date) : date).toLocaleString('en-US', {
+            timeZone: tzString,
+        })
+    );
+}
