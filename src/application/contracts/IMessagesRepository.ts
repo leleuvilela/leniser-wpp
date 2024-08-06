@@ -1,8 +1,8 @@
-import { Message } from 'whatsapp-web.js';
 import { MessageCountDto } from '../dtos/messageCountDto';
+import { IMessage } from '../dtos/message';
 
 export interface IMessageRepository {
-    addMessage: (msg: Message) => Promise<boolean>;
+    addMessage: (msg: IMessage) => Promise<boolean>;
     getMessageCountsByUser(
         startDate: Date,
         endDate: Date,
