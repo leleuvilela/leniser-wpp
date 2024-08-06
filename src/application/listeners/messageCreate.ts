@@ -8,6 +8,26 @@ import { IMessageRepository } from '../contracts/IMessagesRepository';
 import { IMembersRepository } from '../contracts/INumberPermissionsRepository';
 import { MemberPermission, Member } from '../dtos/members';
 import { IHandler } from '../contracts/IHandler';
+import { IMessage } from '../dtos/message';
+import { toDateOnlyString, toDateTimeString } from '../../utils/dateExtensions';
+import { transcode } from 'buffer';
+
+interface MessageDocument {
+    _data: {
+        notifyName: string;
+        quotedParticipant?: string;
+        mimetype?: string;
+    };
+    from: string;
+    to: string;
+    type: string;
+    timestamp: number;
+    author?: string;
+    hasMedia: boolean;
+    body?: string;
+    isForwarded: boolean;
+    deviceType: string;
+}
 
 @injectable()
 export class MessageCreateListener implements IListener {
@@ -124,10 +144,51 @@ export class MessageCreateListener implements IListener {
             return;
         }
 
+        await this.addMessage(msg);
+        await this.addFullMessage(msg);
+    }
+
+    async addMessage(msg: Message) {
+        const msgDocument = msg as unknown as MessageDocument;
+
+        if (!msgDocument) {
+            console.error('Error to cast message to MessageDocument!', msg);
+            return;
+        }
+
         try {
-            await this.messageRepository.addMessage(msg);
+            const threeHoursInSeconds = 3 * 60 * 60;
+            const timestampBrasil = (msg.timestamp - threeHoursInSeconds) * 1000;
+
+            const message: IMessage = {
+                timestampUtc: msgDocument.timestamp * 1000,
+                timestampBrasil: timestampBrasil,
+                timestampBrasilString: toDateTimeString(timestampBrasil, '-03:00'),
+                day: toDateOnlyString(timestampBrasil),
+                from: msgDocument.from,
+                to: msgDocument.to,
+                type: msgDocument.type,
+                notifyName: msgDocument._data.notifyName,
+                author: msgDocument.author || null,
+                mimetype: msgDocument._data.mimetype || null,
+                quotedParticipant: msgDocument._data.quotedParticipant || null,
+                hasMedia: msgDocument.hasMedia,
+                isForwarded: msgDocument.isForwarded,
+                deviceType: msgDocument.deviceType,
+                characterCount: msgDocument.body ? msgDocument.body.length : 0,
+            };
+
+            await this.messageRepository.addMessage(message);
         } catch {
             console.log('MONGO: error to add message to collections in mongo');
+        }
+    }
+
+    async addFullMessage(msg: Message) {
+        try {
+            await this.messageRepository.addFullMessage(msg);
+        } catch (error) {
+            console.log('MONGO: error to add FULL message to collections in mongo');
         }
     }
 

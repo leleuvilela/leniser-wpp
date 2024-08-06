@@ -1,18 +1,28 @@
 import { MongoClient } from 'mongodb';
-import { Message } from 'whatsapp-web.js';
 import { IMessageRepository } from '../../application/contracts/IMessagesRepository';
 import { MessageCountDto } from '../../application/dtos/messageCountDto';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
+import { IMessage } from '../../application/dtos/message';
+import { Message } from 'whatsapp-web.js';
 
 @injectable()
 export class MessageRepository implements IMessageRepository {
     @inject(TYPES.MongoClient) mongoClient: MongoClient;
 
-    async addMessage(msg: Message): Promise<boolean> {
+    async addFullMessage(msg: Message): Promise<boolean> {
         const result = await this.mongoClient
             .db('rap')
             .collection('messages')
+            .insertOne(msg);
+
+        return result.acknowledged;
+    }
+
+    async addMessage(msg: IMessage): Promise<boolean> {
+        const result = await this.mongoClient
+            .db('rap')
+            .collection('new-messages')
             .insertOne(msg);
 
         return result.acknowledged;
