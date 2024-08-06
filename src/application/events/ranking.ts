@@ -118,11 +118,15 @@ export class RankingHandler implements IHandler {
     }
 
     generateMessageCountsText(title: string, messageCounts: MessageCountDto[]) {
+        const totalMessages = this.getTotalMessages(messageCounts);
+
         let messageText = `📊 *${title}* 📊\n\n`;
-        messageText += this.getTotalMessages(messageCounts) + '\n\n';
+        messageText += `Total de ${totalMessages} mensagens\n\n`;
 
         messageCounts.forEach((result, index) => {
-            messageText += `${index + 1}º - 👤 ${result.id}: ${result.count}\n`;
+            const share = this.getShareForMember(totalMessages, result.count);
+            const shareMsg = `${share.toFixed(2)}%`;
+            messageText += `${index + 1}º - 👤 ${result.id}: ${result.count} (${shareMsg})\n`;
         });
 
         return messageText;
@@ -134,28 +138,37 @@ export class RankingHandler implements IHandler {
         const highestCount = messageCounts[0].count;
         const charCount = 30;
         const messagesPerBar = Math.floor(highestCount / charCount) || 1;
+        const totalMessages = this.getTotalMessages(messageCounts);
 
         let messageText = `📊 *${title}* 📊\n\n`;
-        messageText += `${bar} = ${messagesPerBar} mensagens\n\n`;
-        messageText += this.getTotalMessages(messageCounts) + '\n\n';
+
+        messageText +=
+            messagesPerBar === 1
+                ? `${bar} = ${messagesPerBar} mensagem(s)\n\n`
+                : `${bar} = ${messagesPerBar} mensagens\n\n`;
+
+        messageText += `Total de ${totalMessages} mensagens\n\n`;
 
         messageCounts.forEach((result, index) => {
             const barLength = Math.floor(result.count / messagesPerBar);
             const barText = bar.repeat(barLength);
 
-            messageText += `${index + 1}º - 👤 ${result.id}: (${result.count})\n${barText}\n`;
+            const share = this.getShareForMember(totalMessages, result.count);
+            const shareMsg = `${share.toFixed(2)}%`;
+
+            messageText += `${index + 1}º - 👤 ${result.id}: ${result.count} (${shareMsg})\n`;
+            messageText += `${barText}\n`;
         });
 
         return messageText;
     }
 
     getTotalMessages(messageCounts: MessageCountDto[]) {
-        const totalMessages = messageCounts.reduce(
-            (acc, result) => acc + result.count,
-            0
-        );
+        return messageCounts.reduce((acc, result) => acc + result.count, 0);
+    }
 
-        return `Total de ${totalMessages} mensagens`;
+    getShareForMember(totalMessages: number, memberMessages: number): number {
+        return (memberMessages / totalMessages) * 100;
     }
 
     findName(id: string, members: GroupMembers | null): string {
