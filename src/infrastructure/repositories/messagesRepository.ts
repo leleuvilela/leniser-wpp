@@ -5,6 +5,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { IMessage } from '../../application/dtos/message';
 import { Message } from 'whatsapp-web.js';
+import { toDateOnlyString } from '../../utils/dateExtensions';
 
 @injectable()
 export class MessageRepository implements IMessageRepository {
@@ -35,20 +36,17 @@ export class MessageRepository implements IMessageRepository {
     ): Promise<MessageCountDto[]> {
         try {
             const db = this.mongoClient.db('rap');
-            const collection = db.collection('messages');
+            const collection = db.collection('new-messages');
 
-            const threeHours = 60 * 60 * 3;
-
-            const startDateInSeconds =
-                Math.floor(startDate.getTime() / 1000) + threeHours;
-            const endDateInSeconds = Math.floor(endDate.getTime() / 1000) + threeHours;
+            const startDay = toDateOnlyString(startDate.getTime());
+            const endDay = toDateOnlyString(endDate.getTime());
 
             const pipeline = [
                 {
                     $match: {
-                        timestamp: {
-                            $gte: startDateInSeconds,
-                            $lte: endDateInSeconds,
+                        day: {
+                            $gte: startDay,
+                            $lte: endDay,
                         },
                         from: groupId,
                     },

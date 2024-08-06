@@ -127,7 +127,7 @@ export class RankingHandler implements IHandler {
     }
 
     generateMessageGraph(title: string, messageCounts: MessageCountDto[]) {
-        const bar = '#';
+        const bar = '█';
 
         const highestCount = messageCounts[0].count;
         const charCount = 30;
