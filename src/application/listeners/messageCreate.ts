@@ -10,7 +10,6 @@ import { MemberPermission, Member } from '../dtos/members';
 import { IHandler } from '../contracts/IHandler';
 import { IMessage } from '../dtos/message';
 import { toDateOnlyString, toDateTimeString } from '../../utils/dateExtensions';
-import { transcode } from 'buffer';
 
 interface MessageDocument {
     _data: {
@@ -136,7 +135,7 @@ export class MessageCreateListener implements IListener {
             return;
         }
 
-        if (msg.fromMe) {
+        if (process.env.ENVIRONMENT !== 'local' && msg.fromMe) {
             return;
         }
 
