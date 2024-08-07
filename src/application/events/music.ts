@@ -5,6 +5,7 @@ import { Member, MemberPermission } from '../dtos/members';
 import { TYPES } from '../../ioc/types';
 import { IMusicService } from '../contracts/IMusicService';
 import { IConfigsRepository } from '../contracts/IConfigsRepository';
+import { hasPermissions } from '../../utils/hasPermissions';
 
 @injectable()
 export class MusicHandler implements IHandler {
@@ -12,10 +13,12 @@ export class MusicHandler implements IHandler {
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     public command = '!musica';
 
-    canHandle(msg: Message, member: Member | null): boolean {
-        const isAuthorized =
-            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
-        return isAuthorized && msg.body.startsWith(this.command);
+    canHandle(msg: Message, member: Member): boolean {
+        if (!msg.body.startsWith(this.command)) {
+            return false;
+        }
+
+        return hasPermissions(member, [MemberPermission.MESSAGE_CREATE], msg);
     }
 
     async handle(msg: Message): Promise<Message> {
@@ -26,16 +29,21 @@ export class MusicHandler implements IHandler {
             msg.reply(
                 `${defaultMemberConfigs.botPrefix} Gerando música... (Leva em média 3 minutos)`
             );
-            const musicFiles = await this.musicService.generate(prompt, false);
-            if (!musicFiles) {
+
+            const musics = await this.musicService.generate(prompt, false);
+
+            if (!musics || musics.length === 0) {
                 return msg.reply(
                     `${defaultMemberConfigs.botPrefix} Ocorreu um erro ao gerar a música!`
                 );
             }
-            const music0 = musicFiles[0];
-            const messageMedia = await MessageMedia.fromUrl(music0.audio_url, {
+
+            const [music] = musics;
+
+            const messageMedia = await MessageMedia.fromUrl(music.audio_url, {
                 unsafeMime: true,
             });
+
             return msg.reply(messageMedia);
         } catch (error) {
             console.error(error);

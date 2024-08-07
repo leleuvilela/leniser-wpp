@@ -26,7 +26,6 @@ export class MusicService implements IMusicService {
                 make_instrumental: makeInstrumental,
                 prompt,
             });
-            console.log(response.data);
             return response.data;
         } catch (error) {
             console.error(error);
