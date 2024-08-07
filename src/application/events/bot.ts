@@ -7,6 +7,7 @@ import { inject, injectable } from 'inversify';
 import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { Member, MemberPermission } from '../dtos/members';
 import { ITranscriptionService } from '../contracts/ITranscriptionService';
+import { hasPermissions } from '../../utils/hasPermissions';
 
 @injectable()
 export class BotHandler implements IHandler {
@@ -17,10 +18,11 @@ export class BotHandler implements IHandler {
     @inject(TYPES.TranscriptionService) transcriptionService: ITranscriptionService;
 
     canHandle(msg: Message, member: Member | null): boolean {
-        const isAuthorized =
-            !!member && member.permissions.includes(MemberPermission.MESSAGE_CREATE);
+        if (!msg.body.startsWith(this.command)) {
+            return false;
+        }
 
-        return isAuthorized && msg.body.startsWith(this.command);
+        return hasPermissions(member, [MemberPermission.MESSAGE_CREATE], msg);
     }
 
     public async handle(msg: Message, member: Member): Promise<Message> {

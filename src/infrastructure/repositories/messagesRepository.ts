@@ -1,18 +1,29 @@
 import { MongoClient } from 'mongodb';
-import { Message } from 'whatsapp-web.js';
 import { IMessageRepository } from '../../application/contracts/IMessagesRepository';
 import { MessageCountDto } from '../../application/dtos/messageCountDto';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
+import { IMessage } from '../../application/dtos/message';
+import { Message } from 'whatsapp-web.js';
+import { toDateOnlyString } from '../../utils/dateExtensions';
 
 @injectable()
 export class MessageRepository implements IMessageRepository {
     @inject(TYPES.MongoClient) mongoClient: MongoClient;
 
-    async addMessage(msg: Message): Promise<boolean> {
+    async addFullMessage(msg: Message): Promise<boolean> {
         const result = await this.mongoClient
             .db('rap')
             .collection('messages')
+            .insertOne(msg);
+
+        return result.acknowledged;
+    }
+
+    async addMessage(msg: IMessage): Promise<boolean> {
+        const result = await this.mongoClient
+            .db('rap')
+            .collection('new-messages')
             .insertOne(msg);
 
         return result.acknowledged;
@@ -25,20 +36,17 @@ export class MessageRepository implements IMessageRepository {
     ): Promise<MessageCountDto[]> {
         try {
             const db = this.mongoClient.db('rap');
-            const collection = db.collection('messages');
+            const collection = db.collection('new-messages');
 
-            const threeHours = 60 * 60 * 3;
-
-            const startDateInSeconds =
-                Math.floor(startDate.getTime() / 1000) + threeHours;
-            const endDateInSeconds = Math.floor(endDate.getTime() / 1000) + threeHours;
+            const startDay = toDateOnlyString(startDate.getTime());
+            const endDay = toDateOnlyString(endDate.getTime());
 
             const pipeline = [
                 {
                     $match: {
-                        timestamp: {
-                            $gte: Math.floor(startDateInSeconds),
-                            $lte: Math.floor(endDateInSeconds),
+                        day: {
+                            $gte: startDay,
+                            $lte: endDay,
                         },
                         from: groupId,
                     },
