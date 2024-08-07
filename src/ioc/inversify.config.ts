@@ -46,6 +46,9 @@ import { IImgflipService } from '../application/contracts/IImgflipService';
 import { ImgflipService } from '../infrastructure/services/imgflipService';
 import { AiMemeHandler } from '../application/events/aimeme';
 import { MemeHandler } from '../application/events/meme';
+import { MusicHandler } from '../application/events/music';
+import { IMusicService } from '../application/contracts/IMusicService';
+import { MusicService } from '../infrastructure/services/musicService';
 
 const container = new Container();
 
@@ -75,6 +78,7 @@ container.bind<IHandler>(TYPES.ImagemHandler).to(ImagemHandler);
 container.bind<IHandler>(TYPES.Mp3Handler).to(Mp3Handler);
 container.bind<IHandler>(TYPES.AiMemeHandler).to(AiMemeHandler);
 container.bind<IHandler>(TYPES.MemeHandler).to(MemeHandler);
+container.bind<IHandler>(TYPES.MusicHandler).to(MusicHandler);
 
 container
     .bind<IConfigsRepository>(TYPES.ConfigsRepository)
@@ -99,6 +103,7 @@ container
 container.bind<IResponseService>(TYPES.ResponseService).to(ResponseService);
 container.bind<IAudioService>(TYPES.AudioService).to(AudioService);
 container.bind<IImgflipService>(TYPES.ImgflipService).to(ImgflipService);
+container.bind<IMusicService>(TYPES.MusicService).to(MusicService);
 
 container.bind<IApplication>(TYPES.Application).to(Application);
 
