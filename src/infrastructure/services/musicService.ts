@@ -16,16 +16,18 @@ export class MusicService implements IMusicService {
         });
     }
 
-    async generate(
-        prompt: string,
-        makeInstrumental: boolean
-    ): Promise<MusicResponse[] | undefined> {
+    async generate(prompt: string): Promise<MusicResponse[] | undefined> {
         try {
             const response = await this.client.post('/api/generate', {
                 wait_audio: true,
-                make_instrumental: makeInstrumental,
+                make_instrumental: false,
                 prompt,
             });
+
+            if (response.status !== 200) {
+                throw new Error(JSON.stringify(response.data));
+            }
+
             return response.data;
         } catch (error) {
             console.error(error);

@@ -12,4 +12,5 @@ export interface MusicResponse {
     prompt: string;
     type: string;
     tags: string;
+    error_message: string;
 }
