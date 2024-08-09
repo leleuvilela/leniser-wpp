@@ -20,6 +20,7 @@ const menuMessage = `Menu
 10. \`!bot [prompt]\` - Interage com o chat GPT.
 11. \`!fala [prompt]\` - Faz o bot gerar um audio.
 12. \`!imagem [prompt]\` - Faz o bot gerar uma imagem com base no prompt (use com moderação).
+13. \`!musica [prompt]\` - Faz o bot gerar uma musica com base no prompt (use com moderação).
 
 Exemplo: 
 \`\`\`

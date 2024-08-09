@@ -20,7 +20,6 @@ export class MusicHandler implements IHandler {
 
         return hasPermissions(member, [MemberPermission.MESSAGE_CREATE], msg);
     }
-
     async handle(msg: Message): Promise<Message> {
         const { defaultMemberConfigs } = await this.configsRepository.getDefaultConfigs();
         try {
@@ -30,7 +29,7 @@ export class MusicHandler implements IHandler {
                 `${defaultMemberConfigs.botPrefix} Gerando música... (Leva em média 3 minutos)`
             );
 
-            const musics = await this.musicService.generate(prompt, false);
+            const musics = await this.musicService.generate(prompt);
 
             if (!musics || musics.length === 0) {
                 return msg.reply(
@@ -39,6 +38,13 @@ export class MusicHandler implements IHandler {
             }
 
             const [music] = musics;
+
+            if (music.status === 'error') {
+                console.error(music.error_message);
+                return msg.reply(
+                    `${defaultMemberConfigs.botPrefix} Algo deu errado. Tente novamente com um prompt menos específico.`
+                );
+            }
 
             const messageMedia = await MessageMedia.fromUrl(music.audio_url, {
                 unsafeMime: true,
