@@ -44,6 +44,7 @@ export class MessageCreateListener implements IListener {
     menuHandler: IHandler;
     aaHandler: IHandler;
     checagemHandler: IHandler;
+    vaiNeleHandler: IHandler;
     pingHandler: IHandler;
     stickerHandler: IHandler;
     imagemHandler: IHandler;
@@ -66,6 +67,7 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.MenuHandler) menuHandler: IHandler,
         @inject(TYPES.AaHandler) aaHandler: IHandler,
         @inject(TYPES.ChecagemHandler) checagemHandler: IHandler,
+        @inject(TYPES.VaiNeleHandler) vaiNeleHandler: IHandler,
         @inject(TYPES.PingHandler) pingHandler: IHandler,
         @inject(TYPES.StickerHandler) stickerHandler: IHandler,
         @inject(TYPES.ImagemHandler) imagemHandler: IHandler,
@@ -89,6 +91,7 @@ export class MessageCreateListener implements IListener {
         this.menuHandler = menuHandler;
         this.aaHandler = aaHandler;
         this.checagemHandler = checagemHandler;
+        this.vaiNeleHandler = vaiNeleHandler;
         this.pingHandler = pingHandler;
         this.stickerHandler = stickerHandler;
         this.imagemHandler = imagemHandler;
@@ -109,6 +112,7 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addHandler(this.aaHandler);
         this.messageObserver.addHandler(this.pingHandler);
         this.messageObserver.addHandler(this.checagemHandler);
+        this.messageObserver.addHandler(this.vaiNeleHandler);
         this.messageObserver.addHandler(this.menuHandler);
         this.messageObserver.addHandler(this.stickerHandler);
         this.messageObserver.addHandler(this.imagemHandler);

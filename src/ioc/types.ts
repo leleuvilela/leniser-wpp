@@ -26,6 +26,7 @@ export const TYPES = {
     MenuHandler: Symbol.for('MenuHandler'),
     AaHandler: Symbol.for('AaHandler'),
     ChecagemHandler: Symbol.for('ChecagemHandler'),
+    VaiNeleHandler: Symbol.for('VaiNeleHandler'),
     TranscreverHandler: Symbol.for('TranscreverHandler'),
     PingHandler: Symbol.for('PingHandler'),
     StickerHandler: Symbol.for('StickerHandler'),

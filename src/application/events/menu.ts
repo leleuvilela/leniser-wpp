@@ -10,14 +10,16 @@ const menuMessage = `Menu
 
 1. \`!ping\` - Verifica se o bot está ativo e responde com "pong".
 2. \`!checagem\` - Checagem da peça.
-3. \`!sticker\` - Converte uma imagem em sticker
-4. \`!aa\` - Alcoolicos Anônimos
-5. \`!mp3\` - Converte um áudio ou vídeo em mp3.
-6. \`!ranking <dia/semana/mes> <graph>\` - Mostra o ranking de mensagens do grupo, com opção de gráfico.
-7. \`!transcrever\` - Transcreve uma mensagem de áudio para texto.
-8. \`!bot [prompt]\` - Interage com o chat GPT.
-9. \`!fala [prompt]\` - Faz o bot gerar um audio.
-10. \`!imagem [prompt]\` - Faz o bot gerar uma imagem com base no prompt (use com moderação).
+3. \`!vainele\` - Vai nele?
+4. \`!sticker\` - Converte uma imagem em sticker.
+5. \`!aa\` - Alcoolicos Anônimos
+6. \`!mp3\` - Converte um áudio ou vídeo em mp3.
+7. \`!ranking <dia/semana/mes> <graph>\` - Mostra o ranking de mensagens do grupo, com opção de gráfico.
+8. \`!msgsdia\` - Mostra a quantidade de mensagem por dia.
+9. \`!transcrever\` - Transcreve uma mensagem de áudio para texto.
+10. \`!bot [prompt]\` - Interage com o chat GPT.
+11. \`!fala [prompt]\` - Faz o bot gerar um audio.
+12. \`!imagem [prompt]\` - Faz o bot gerar uma imagem com base no prompt (use com moderação).
 
 Exemplo: 
 \`\`\`
