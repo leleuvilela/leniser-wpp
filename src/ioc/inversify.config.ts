@@ -37,7 +37,7 @@ import { TranscriptionService } from '../infrastructure/services/transcriptionSe
 import { GilsoHandler } from '../application/events/gilso';
 import { MenuHandler } from '../application/events/menu';
 import { AaHandler } from '../application/events/aa';
-import { ChacagemHandler } from '../application/events/checagem';
+import { ChecagemHandler } from '../application/events/checagem';
 import { PingHandler } from '../application/events/ping';
 import { StickerHandler } from '../application/events/sticker';
 import { ImagemHandler } from '../application/events/imagem';

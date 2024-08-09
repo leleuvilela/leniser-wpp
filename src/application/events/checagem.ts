@@ -5,7 +5,7 @@ import { Member, MemberPermission } from '../dtos/members';
 import { hasPermissions } from '../../utils/hasPermissions';
 
 @injectable()
-export class ChacagemHandler implements IHandler {
+export class ChecagemHandler implements IHandler {
     public command = '!checagem';
 
     canHandle(msg: Message, member: Member | null): boolean {
