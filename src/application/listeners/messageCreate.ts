@@ -38,6 +38,7 @@ export class MessageCreateListener implements IListener {
     gilsoHandler: IHandler;
     falaHandler: IHandler;
     rankingHandler: IHandler;
+    mensagensPorDiaHandler: IHandler;
     botHandler: IHandler;
     transcreverHandler: IHandler;
     menuHandler: IHandler;
@@ -58,6 +59,7 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.DeuitaHandler) deuitaHandler: IHandler,
         @inject(TYPES.FalaHandler) falaHandler: IHandler,
         @inject(TYPES.RankingHandler) rankingHandler: IHandler,
+        @inject(TYPES.MensagensPorDiaHandler) mensagensPorDiaHandler: IHandler,
         @inject(TYPES.BotHandler) botHandler: IHandler,
         @inject(TYPES.TranscreverHandler) transcreverHandler: IHandler,
         @inject(TYPES.GilsoHandler) gilsoHandler: IHandler,
@@ -78,6 +80,7 @@ export class MessageCreateListener implements IListener {
         this.botHandler = botHandler;
         this.falaHandler = falaHandler;
         this.rankingHandler = rankingHandler;
+        this.mensagensPorDiaHandler = mensagensPorDiaHandler;
         this.messageRepository = messageRepository;
         this.membersRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
@@ -100,6 +103,7 @@ export class MessageCreateListener implements IListener {
     private startListeners(): void {
         this.messageObserver.addHandler(this.falaHandler);
         this.messageObserver.addHandler(this.rankingHandler);
+        this.messageObserver.addHandler(this.mensagensPorDiaHandler);
         this.messageObserver.addHandler(this.botHandler);
         this.messageObserver.addHandler(this.transcreverHandler);
         this.messageObserver.addHandler(this.aaHandler);

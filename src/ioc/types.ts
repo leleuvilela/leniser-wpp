@@ -20,6 +20,7 @@ export const TYPES = {
     BotHandler: Symbol.for('BotHandler'),
     FalaHandler: Symbol.for('FalaHandler'),
     RankingHandler: Symbol.for('RankingHandler'),
+    MensagensPorDiaHandler: Symbol.for('MensagensPorDiaHandler'),
     DeuitaHandler: Symbol.for('DeuitaHandler'),
     GilsoHandler: Symbol.for('GilsoHandler'),
     MenuHandler: Symbol.for('MenuHandler'),

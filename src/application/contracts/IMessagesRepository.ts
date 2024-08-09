@@ -10,4 +10,5 @@ export interface IMessageRepository {
         endDate: Date,
         groupId: string
     ): Promise<MessageCountDto[]>;
+    getMessageCountsByDay(endDate: Date, groupId: string): Promise<MessageCountDto[]>;
 }
