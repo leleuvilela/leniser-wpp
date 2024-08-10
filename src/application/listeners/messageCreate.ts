@@ -38,11 +38,13 @@ export class MessageCreateListener implements IListener {
     gilsoHandler: IHandler;
     falaHandler: IHandler;
     rankingHandler: IHandler;
+    mensagensPorDiaHandler: IHandler;
     botHandler: IHandler;
     transcreverHandler: IHandler;
     menuHandler: IHandler;
     aaHandler: IHandler;
     checagemHandler: IHandler;
+    vaiNeleHandler: IHandler;
     pingHandler: IHandler;
     stickerHandler: IHandler;
     imagemHandler: IHandler;
@@ -58,12 +60,14 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.DeuitaHandler) deuitaHandler: IHandler,
         @inject(TYPES.FalaHandler) falaHandler: IHandler,
         @inject(TYPES.RankingHandler) rankingHandler: IHandler,
+        @inject(TYPES.MensagensPorDiaHandler) mensagensPorDiaHandler: IHandler,
         @inject(TYPES.BotHandler) botHandler: IHandler,
         @inject(TYPES.TranscreverHandler) transcreverHandler: IHandler,
         @inject(TYPES.GilsoHandler) gilsoHandler: IHandler,
         @inject(TYPES.MenuHandler) menuHandler: IHandler,
         @inject(TYPES.AaHandler) aaHandler: IHandler,
         @inject(TYPES.ChecagemHandler) checagemHandler: IHandler,
+        @inject(TYPES.VaiNeleHandler) vaiNeleHandler: IHandler,
         @inject(TYPES.PingHandler) pingHandler: IHandler,
         @inject(TYPES.StickerHandler) stickerHandler: IHandler,
         @inject(TYPES.ImagemHandler) imagemHandler: IHandler,
@@ -78,6 +82,7 @@ export class MessageCreateListener implements IListener {
         this.botHandler = botHandler;
         this.falaHandler = falaHandler;
         this.rankingHandler = rankingHandler;
+        this.mensagensPorDiaHandler = mensagensPorDiaHandler;
         this.messageRepository = messageRepository;
         this.membersRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
@@ -86,6 +91,7 @@ export class MessageCreateListener implements IListener {
         this.menuHandler = menuHandler;
         this.aaHandler = aaHandler;
         this.checagemHandler = checagemHandler;
+        this.vaiNeleHandler = vaiNeleHandler;
         this.pingHandler = pingHandler;
         this.stickerHandler = stickerHandler;
         this.imagemHandler = imagemHandler;
@@ -100,11 +106,13 @@ export class MessageCreateListener implements IListener {
     private startListeners(): void {
         this.messageObserver.addHandler(this.falaHandler);
         this.messageObserver.addHandler(this.rankingHandler);
+        this.messageObserver.addHandler(this.mensagensPorDiaHandler);
         this.messageObserver.addHandler(this.botHandler);
         this.messageObserver.addHandler(this.transcreverHandler);
         this.messageObserver.addHandler(this.aaHandler);
         this.messageObserver.addHandler(this.pingHandler);
         this.messageObserver.addHandler(this.checagemHandler);
+        this.messageObserver.addHandler(this.vaiNeleHandler);
         this.messageObserver.addHandler(this.menuHandler);
         this.messageObserver.addHandler(this.stickerHandler);
         this.messageObserver.addHandler(this.imagemHandler);

@@ -5,8 +5,8 @@ import { Member, MemberPermission } from '../dtos/members';
 import { hasPermissions } from '../../utils/hasPermissions';
 
 @injectable()
-export class ChecagemHandler implements IHandler {
-    public command = '!checagem';
+export class VaiNeleHandler implements IHandler {
+    public command = '!vainele';
 
     canHandle(msg: Message, member: Member | null): boolean {
         if (!msg.body.startsWith(this.command)) {
@@ -17,13 +17,6 @@ export class ChecagemHandler implements IHandler {
     }
 
     async handle(msg: Message): Promise<Message> {
-        return msg.reply(
-            new Poll(`🍆🍆🍆 CHECAGEM DA PEÇA NO GRUPO 🍆🍆🍆`, [
-                'MOLE',
-                'MEIA BOMBA',
-                'DURA',
-                'TOMEI UM TADALA',
-            ])
-        );
+        return msg.reply(new Poll(`Vai nele? 🤔`, ['Sim', 'Não', 'Tal tal']));
     }
 }

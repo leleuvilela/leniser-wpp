@@ -69,4 +69,42 @@ export class MessageRepository implements IMessageRepository {
             return [];
         }
     }
+
+    async getMessageCountsByDay(
+        endDate: Date,
+        groupId: string
+    ): Promise<MessageCountDto[]> {
+        try {
+            const db = this.mongoClient.db('rap');
+            const collection = db.collection('new-messages');
+
+            const endDay = toDateOnlyString(endDate.getTime());
+
+            const pipeline = [
+                {
+                    $match: {
+                        day: {
+                            $lte: endDay,
+                        },
+                        from: groupId,
+                    },
+                },
+                { $group: { _id: '$day', count: { $sum: 1 } } },
+                { $sort: { count: -1 } },
+            ];
+
+            const results = await collection.aggregate(pipeline).toArray();
+
+            return results.map(
+                (result) =>
+                    ({
+                        id: result._id as string,
+                        count: result.count as number,
+                    }) as MessageCountDto
+            );
+        } catch (error) {
+            console.error('Error fetching message counts by user:', error);
+            return [];
+        }
+    }
 }
