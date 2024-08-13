@@ -52,6 +52,7 @@ export class MessageCreateListener implements IListener {
     aiMemeHandler: IHandler;
     memeHandler: IHandler;
     musicHandler: IHandler;
+    resumoHandler: IHandler;
 
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
@@ -74,7 +75,8 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.Mp3Handler) mp3Handler: IHandler,
         @inject(TYPES.AiMemeHandler) aiMemeHandler: IHandler,
         @inject(TYPES.MemeHandler) memeHandler: IHandler,
-        @inject(TYPES.MusicHandler) musicaHandler: IHandler
+        @inject(TYPES.MusicHandler) musicaHandler: IHandler,
+        @inject(TYPES.ResumoHandler) resumoHandler: IHandler
     ) {
         this.messageObserver = new MessageObserver();
 
@@ -99,6 +101,7 @@ export class MessageCreateListener implements IListener {
         this.aiMemeHandler = aiMemeHandler;
         this.memeHandler = memeHandler;
         this.musicHandler = musicaHandler;
+        this.resumoHandler = resumoHandler;
 
         this.startListeners();
     }
@@ -122,6 +125,7 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addHandler(this.aiMemeHandler);
         this.messageObserver.addHandler(this.memeHandler);
         this.messageObserver.addHandler(this.musicHandler);
+        this.messageObserver.addHandler(this.resumoHandler);
     }
 
     public async initialize() {
