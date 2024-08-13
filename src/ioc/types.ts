@@ -35,4 +35,5 @@ export const TYPES = {
     AiMemeHandler: Symbol.for('AiMemeHandler'),
     MemeHandler: Symbol.for('MemeHandler'),
     MusicHandler: Symbol.for('MusicHandler'),
+    ResumoHandler: Symbol.for('ResumoHandler'),
 };
