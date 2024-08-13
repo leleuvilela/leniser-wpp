@@ -5,6 +5,8 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { Member, MemberPermission } from '../dtos/members';
 import { hasPermissions } from '../../utils/hasPermissions';
+import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
+import { ReqRegisterType } from '../dtos/reqRegister';
 
 @injectable()
 class TranscreverHandler implements IHandler {
@@ -12,6 +14,7 @@ class TranscreverHandler implements IHandler {
 
     @inject(TYPES.TranscriptionService)
     transcriptionService: TranscriptionService;
+    @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
 
     canHandle(msg: Message, member: Member | null): boolean {
         if (!msg.body.startsWith(this.command)) {
@@ -49,6 +52,13 @@ class TranscreverHandler implements IHandler {
             );
 
             await chat.clearState();
+
+            this.reqRegistersRepository.addRegister({
+                author: msg.author,
+                memberId: msg.from,
+                timestamp: new Date(),
+                type: ReqRegisterType.MUSIC,
+            });
 
             return msg.reply(`🤖 ${transcription}`);
         } catch (e) {

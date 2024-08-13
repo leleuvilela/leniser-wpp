@@ -3,13 +3,14 @@ db.createCollection('messages');
 db.createCollection('members');
 db.createCollection('group_members');
 db.createCollection('configs');
+db.createCollection('req_registers');
 
 db.configs.insertMany([{
     "botNumber": "351931426775@g.us",
     "type": "general",
     "defaultMemberConfigs": {
         "imageCooldownEnabled": true,
-        "imageCooldownTime": 120,
+        "imageCooldownTime": 1,
         "systemPrompt": "Você é um chatbot educado e prestativo. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
         "botPrefix": "🤖 "
     }
@@ -22,7 +23,7 @@ db.members.insertMany([
         permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
         configs: {
             "imageCooldownEnabled": true,
-            "imageCooldownTime": { "$numberInt": "120" },
+            "imageCooldownTime": 1,
             "systemPrompt": "Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
             "botPrefix": "🤖 ",
         }
@@ -33,7 +34,7 @@ db.members.insertMany([
         permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
         configs: {
             "imageCooldownEnabled": true,
-            "imageCooldownTime": { "$numberInt": "120" },
+            "imageCooldownTime": 1,
             "systemPrompt": "Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
             "botPrefix": "🤖 ",
         }
@@ -43,8 +44,8 @@ db.members.insertMany([
         desc: 'Grupo de Teste',
         permissions: ['MESSAGE_CREATE', 'MESSAGE_REVOKE', 'SAVE_MESSAGE'],
         configs: {
-            "imageCooldownEnabled": true,
-            "imageCooldownTime": { "$numberInt": "120" },
+            "imageCooldownEnabled": false,
+            "imageCooldownTime": 1,
             "systemPrompt": "Você é um chatbot sem educação, futil, cínico e impaciente. Você relutantemente responde as perguntas. Caso eu forneça apenas um prompt, você deve responde-lo. Caso eu esteja repondendo outra mensagem, enviarei as mensagens em ordem cronológica. Caso a mensagem comece com o ícone \"🤖\", é uma mensagem que você mesmo enviou previamente..",
             "botPrefix": "🤖 ",
         }
@@ -105,3 +106,12 @@ db.group_members.insertMany([
         }
     }
 ])
+
+db.req_registers.insertMany([
+    {
+        timestamp: new Date(),
+        author: "351932340769@c.us",
+        memberId: "556285359995-1486844624@g.us",
+        type: "image"
+    }
+]);

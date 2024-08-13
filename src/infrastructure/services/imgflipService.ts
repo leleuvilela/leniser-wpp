@@ -66,8 +66,6 @@ export class ImgflipService implements IImgflipService {
                 prefix_text: prefix,
             };
 
-            console.log(body);
-
             const response = await this.client.postForm<ImgflipResponse<AiMemeData>>(
                 '/ai_meme',
                 body

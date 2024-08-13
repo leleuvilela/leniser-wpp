@@ -8,6 +8,8 @@ import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { Member, MemberPermission } from '../dtos/members';
 import { ITranscriptionService } from '../contracts/ITranscriptionService';
 import { hasPermissions } from '../../utils/hasPermissions';
+import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
+import { ReqRegisterType } from '../dtos/reqRegister';
 
 @injectable()
 export class BotHandler implements IHandler {
@@ -16,6 +18,7 @@ export class BotHandler implements IHandler {
     @inject(TYPES.ResponseService) responseService: IResponseService;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     @inject(TYPES.TranscriptionService) transcriptionService: ITranscriptionService;
+    @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
 
     canHandle(msg: Message, member: Member | null): boolean {
         if (!msg.body.startsWith(this.command)) {
@@ -46,6 +49,13 @@ export class BotHandler implements IHandler {
         );
 
         await chat.clearState();
+
+        this.reqRegistersRepository.addRegister({
+            author: msg.author,
+            memberId: msg.from,
+            timestamp: new Date(),
+            type: ReqRegisterType.TEXT,
+        });
 
         return await msg.reply(`${botPrefix} ${res}`);
     }
