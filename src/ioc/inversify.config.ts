@@ -52,6 +52,10 @@ import { MusicHandler } from '../application/events/music';
 import { IMusicService } from '../application/contracts/IMusicService';
 import { MusicService } from '../infrastructure/services/musicService';
 import { ResumoHandler } from '../application/events/resumo';
+import { IReqRegistersRepository } from '../application/contracts/IReqRegistersRepository';
+import { ReqRegistersRepository } from '../infrastructure/repositories/reqRegistersRepository';
+import { IImageService } from '../application/contracts/IImageService';
+import { ImageService } from '../infrastructure/services/imageService';
 
 const container = new Container();
 
@@ -102,6 +106,10 @@ container
     .bind<IGroupMembersRepository>(TYPES.GroupMembersRepository)
     .to(GroupMembersRepository)
     .inSingletonScope();
+container
+    .bind<IReqRegistersRepository>(TYPES.ReqRegistersRepository)
+    .to(ReqRegistersRepository)
+    .inRequestScope();
 
 container
     .bind<ITranscriptionService>(TYPES.TranscriptionService)
@@ -110,6 +118,7 @@ container.bind<IResponseService>(TYPES.ResponseService).to(ResponseService);
 container.bind<IAudioService>(TYPES.AudioService).to(AudioService);
 container.bind<IImgflipService>(TYPES.ImgflipService).to(ImgflipService);
 container.bind<IMusicService>(TYPES.MusicService).to(MusicService);
+container.bind<IImageService>(TYPES.ImageService).to(ImageService);
 
 container.bind<IApplication>(TYPES.Application).to(Application);
 

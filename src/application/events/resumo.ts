@@ -8,12 +8,15 @@ import { Member, MemberPermission } from '../dtos/members';
 import { ChatCompletionContentPart } from 'openai/resources';
 import { IResponseService } from '../contracts/IResponseService';
 import { IGroupMembersRepository } from '../contracts/IGroupMembersRepository';
+import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
+import { ReqRegisterType } from '../dtos/reqRegister';
 
 @injectable()
 export class ResumoHandler implements IHandler {
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     @inject(TYPES.ResponseService) responseService: IResponseService;
     @inject(TYPES.GroupMembersRepository) groupMembersRepository: IGroupMembersRepository;
+    @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
 
     public command = '!resumo';
 
@@ -50,6 +53,13 @@ export class ResumoHandler implements IHandler {
                 Faça a resposta como se fosse um integrante do grupo dizendo o que foi dito.`;
 
         const res = await this.responseService.generateResponse(systemPrompt, contents);
+
+        this.reqRegistersRepository.addRegister({
+            author: msg.author,
+            memberId: msg.from,
+            timestamp: new Date(),
+            type: ReqRegisterType.TEXT,
+        });
 
         return msg.reply(`${botPrefix} ${res}`);
     }

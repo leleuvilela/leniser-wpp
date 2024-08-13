@@ -7,6 +7,7 @@ import { MusicResponse } from '../../application/dtos/musicDto';
 export class MusicService implements IMusicService {
     private baseUrl = 'https://sunoapi-eight.vercel.app';
     private client: AxiosInstance;
+
     constructor() {
         this.client = axios.create({
             baseURL: this.baseUrl,

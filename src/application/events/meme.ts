@@ -6,11 +6,14 @@ import { IHandler } from '../contracts/IHandler';
 import { IImgflipService } from '../contracts/IImgflipService';
 import { Member, MemberPermission } from '../dtos/members';
 import { hasPermissions } from '../../utils/hasPermissions';
+import { ReqRegisterType } from '../dtos/reqRegister';
+import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
 
 @injectable()
 export class MemeHandler implements IHandler {
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     @inject(TYPES.ImgflipService) imgflipService: IImgflipService;
+    @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
 
     public command = '!meme';
 
@@ -34,6 +37,13 @@ export class MemeHandler implements IHandler {
         }
 
         const messageMedia = await MessageMedia.fromUrl(meme.url);
+
+        this.reqRegistersRepository.addRegister({
+            author: msg.author,
+            memberId: msg.from,
+            timestamp: new Date(),
+            type: ReqRegisterType.MEME,
+        });
 
         return msg.reply(messageMedia);
     }

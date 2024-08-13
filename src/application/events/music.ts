@@ -6,11 +6,15 @@ import { TYPES } from '../../ioc/types';
 import { IMusicService } from '../contracts/IMusicService';
 import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { hasPermissions } from '../../utils/hasPermissions';
+import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
+import { ReqRegisterType } from '../dtos/reqRegister';
 
 @injectable()
 export class MusicHandler implements IHandler {
     @inject(TYPES.MusicService) musicService: IMusicService;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
+    @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
+
     public command = '!musica';
 
     canHandle(msg: Message, member: Member): boolean {
@@ -48,6 +52,13 @@ export class MusicHandler implements IHandler {
 
             const messageMedia = await MessageMedia.fromUrl(music.audio_url, {
                 unsafeMime: true,
+            });
+
+            this.reqRegistersRepository.addRegister({
+                author: msg.author,
+                memberId: msg.from,
+                timestamp: new Date(),
+                type: ReqRegisterType.MUSIC,
             });
 
             return msg.reply(messageMedia);
