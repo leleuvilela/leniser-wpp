@@ -33,15 +33,19 @@ export class ResumoHandler implements IHandler {
             ? member.configs
             : (await this.configsRepository.getDefaultConfigs()).defaultMemberConfigs;
 
-        const limit = msg.body.replace(this.command, '').trim();
-        if (limit && !Number(limit)) {
+        const prompt = msg.body.replace(this.command, '').trim();
+
+        if (prompt && !Number(prompt)) {
             return msg.reply('🤖 Isso não é um número válido.');
         }
+
+        let limit = Number(prompt);
+        limit = limit > 200 ? 200 : limit;
 
         const chat = await msg.getChat();
         const messages = await chat.fetchMessages({
             fromMe: false,
-            limit: limit ? Number(limit) : 50,
+            limit: limit ? limit : 50,
         });
 
         const memberId = process.env.ENVIRONMENT === 'local' ? msg.to : member.id;
