@@ -32,6 +32,12 @@ export class GroupJoinListener implements IListener {
                 configs: defaultMemberConfigs,
             };
 
+            const memberExists = await this.membersRepository.find(member.id);
+
+            if (memberExists) {
+                return;
+            }
+
             await this.membersRepository.create(member);
         } catch (error) {
             console.error('Error on handleGroupJoin', error);
