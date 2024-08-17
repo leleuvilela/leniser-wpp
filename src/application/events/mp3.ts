@@ -6,10 +6,12 @@ import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { IHandler } from '../contracts/IHandler';
 import { Member, MemberPermission } from '../dtos/members';
 import { hasPermissions } from '../../utils/hasPermissions';
+import { Logger } from 'winston';
 
 @injectable()
 export class Mp3Handler implements IHandler {
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
+    @inject(TYPES.Logger) logger: Logger;
 
     public command = '!mp3';
 
@@ -55,7 +57,7 @@ export class Mp3Handler implements IHandler {
                 sendMediaAsDocument: !!inputfileName,
             });
         } catch (error) {
-            console.error('Error occurred:', error);
+            this.logger.error('🤖 Error on convert media: ', error);
             return await msg.reply('🤖 Ocorreu um erro ao converter o audio!');
         }
     }

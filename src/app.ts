@@ -5,6 +5,7 @@ import { TYPES } from './ioc/types';
 import { IConfigsRepository } from './application/contracts/IConfigsRepository';
 import { IListener } from './application/contracts/IListener';
 import { IMembersRepository } from './application/contracts/INumberPermissionsRepository';
+import { Logger } from 'winston';
 
 @injectable()
 class Application implements IApplication {
@@ -15,24 +16,24 @@ class Application implements IApplication {
     @inject(TYPES.GroupJoinListener) groupJoinListener: IListener;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     @inject(TYPES.MembersRepository) membersRepository: IMembersRepository;
+    @inject(TYPES.Logger) logger: Logger;
 
     public async start() {
-        console.log('Getting configs');
+        this.logger.info('Getting configs');
         await this.configsRepository.fetchDefaultConfigs();
 
-        console.log('Starting wweb listeners');
+        this.logger.info('Starting wweb listeners');
         this.authenticationListener.initialize();
         this.messageCreateListener.initialize();
         this.messageRevokeListener.initialize();
         this.groupJoinListener.initialize();
 
-        console.log('Initializing wwapweb client');
+        this.logger.info('Initializing wwapweb client');
         this.wweb.initialize();
     }
 
     public async updateConfigs() {
-        //TODO: implements a method to update configs to be called in a route
-        console.log('Updating configs');
+        this.logger.info('Updating configs');
         this.configsRepository.fetchDefaultConfigs();
         this.membersRepository.fetchAll();
     }

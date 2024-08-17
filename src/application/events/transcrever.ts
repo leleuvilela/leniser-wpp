@@ -1,5 +1,4 @@
 import { type Message, MessageTypes } from 'whatsapp-web.js';
-import { TranscriptionService } from '../../infrastructure/services/transcriptionService';
 import { IHandler } from '../contracts/IHandler';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
@@ -7,14 +6,17 @@ import { Member, MemberPermission } from '../dtos/members';
 import { hasPermissions } from '../../utils/hasPermissions';
 import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
 import { ReqRegisterType } from '../dtos/reqRegister';
+import { Logger } from 'winston';
+import { ITranscriptionService } from '../contracts/ITranscriptionService';
 
 @injectable()
 class TranscreverHandler implements IHandler {
     public command = '!transcrever';
 
     @inject(TYPES.TranscriptionService)
-    transcriptionService: TranscriptionService;
+    transcriptionService: ITranscriptionService;
     @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
+    @inject(TYPES.Logger) logger: Logger;
 
     canHandle(msg: Message, member: Member | null): boolean {
         if (!msg.body.startsWith(this.command)) {
@@ -45,11 +47,8 @@ class TranscreverHandler implements IHandler {
                 return msg.reply(`🤖 Parece que esse áudio não tá disponivel.`);
             }
 
-            const translate = msg.body.split(' ').length > 1;
-            const transcription = await this.transcriptionService.generateTranscription(
-                audioBuffer,
-                translate
-            );
+            const transcription =
+                await this.transcriptionService.generateTranscription(audioBuffer);
 
             await chat.clearState();
 
@@ -61,8 +60,8 @@ class TranscreverHandler implements IHandler {
             });
 
             return msg.reply(`🤖 ${transcription}`);
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            this.logger.error('Error on handle transcrever', error);
             return await msg.reply(`🤖 eita, pera. algo de errado não está certo.`);
         }
     }

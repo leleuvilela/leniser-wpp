@@ -8,12 +8,14 @@ import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { hasPermissions } from '../../utils/hasPermissions';
 import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
 import { ReqRegisterType } from '../dtos/reqRegister';
+import { Logger } from 'winston';
 
 @injectable()
 export class MusicHandler implements IHandler {
     @inject(TYPES.MusicService) musicService: IMusicService;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
+    @inject(TYPES.Logger) logger: Logger;
 
     public command = '!musica';
 
@@ -44,7 +46,6 @@ export class MusicHandler implements IHandler {
             const [music] = musics;
 
             if (music.status === 'error') {
-                console.error(music.error_message);
                 return msg.reply(
                     `${defaultMemberConfigs.botPrefix} Algo deu errado. Tente novamente com um prompt menos específico.`
                 );
@@ -63,7 +64,7 @@ export class MusicHandler implements IHandler {
 
             return msg.reply(messageMedia);
         } catch (error) {
-            console.error(error);
+            this.logger.error('Erro ao gerar música:', error);
             return msg.reply(
                 `${defaultMemberConfigs.botPrefix} Ocorreu um erro ao gerar a música!`
             );

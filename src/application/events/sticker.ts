@@ -5,10 +5,12 @@ import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { IHandler } from '../contracts/IHandler';
 import { Member, MemberPermission } from '../dtos/members';
 import { hasPermissions } from '../../utils/hasPermissions';
+import { Logger } from 'winston';
 
 @injectable()
 export class StickerHandler implements IHandler {
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
+    @inject(TYPES.Logger) logger: Logger;
 
     public command = '!sticker';
 
@@ -46,7 +48,7 @@ export class StickerHandler implements IHandler {
                 stickerAuthor: 'Bot da Lenise',
             });
         } catch (error) {
-            console.error('🤖 Error on download media: ', error);
+            this.logger.error('🤖 Error on download media: ', error);
             return msg.reply('🤖 Shiiii... deu ruim');
         }
     }

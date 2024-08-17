@@ -1,5 +1,6 @@
 export const TYPES = {
     Application: Symbol.for('Application'),
+    Logger: Symbol.for('Logger'),
     OpenAIClient: Symbol.for('OpenAI'),
     MongoClient: Symbol.for('MongoClient'),
     WwebClient: Symbol.for('WwebClient'),

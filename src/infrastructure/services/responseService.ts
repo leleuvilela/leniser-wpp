@@ -6,10 +6,12 @@ import {
 } from 'openai/resources';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
+import { Logger } from 'winston';
 
 @injectable()
 export class ResponseService implements IResponseService {
     @inject(TYPES.OpenAIClient) openAIClient: OpenAI;
+    @inject(TYPES.Logger) logger: Logger;
 
     async generateResponse(
         systemRoleMessage: string,
@@ -35,12 +37,14 @@ export class ResponseService implements IResponseService {
             });
 
             const completion = await this.openAIClient.chat.completions.create(req);
+            this.logger.info('Response generated');
+
             return (
                 completion.choices[0].message.content?.trim() ??
                 'ih carai, deu erro aqui, foi mal.'
             );
         } catch (error) {
-            console.error('Erro ao gerar resposta:', error);
+            this.logger.error('Error in generateResponse:', error);
             return 'ih carai, deu erro aqui, foi mal.';
         }
     }

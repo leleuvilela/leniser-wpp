@@ -3,10 +3,12 @@ import { IConfigsRepository } from '../../application/contracts/IConfigsReposito
 import { MongoClient } from 'mongodb';
 import { TYPES } from '../../ioc/types';
 import { Configs, ConfigType } from '../../application/dtos/configs';
+import { Logger } from 'winston';
 
 @injectable()
 export class ConfigsRepository implements IConfigsRepository {
     @inject(TYPES.MongoClient) mongoClient: MongoClient;
+    @inject(TYPES.Logger) logger: Logger;
 
     private defaultConfigs: Configs;
 
@@ -22,6 +24,7 @@ export class ConfigsRepository implements IConfigsRepository {
         const collection = this.mongoClient.db('rap').collection<Configs>('configs');
 
         const result = await collection.findOne({ type: ConfigType.GENERAL });
+        this.logger.info('Configs Fetched');
 
         if (!result) {
             throw new Error('CONFIGURATIONS IT IS NOT DEFINED ON DATABASE');

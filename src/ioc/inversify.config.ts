@@ -56,12 +56,16 @@ import { IReqRegistersRepository } from '../application/contracts/IReqRegistersR
 import { ReqRegistersRepository } from '../infrastructure/repositories/reqRegistersRepository';
 import { IImageService } from '../application/contracts/IImageService';
 import { ImageService } from '../infrastructure/services/imageService';
+import { Logger } from 'winston';
+import { logger } from '../logger';
 
 const container = new Container();
 
 container.bind<OpenAI>(TYPES.OpenAIClient).toConstantValue(openaiClient);
 container.bind<MongoClient>(TYPES.MongoClient).toConstantValue(mongoClient);
 container.bind<Client>(TYPES.WwebClient).toConstantValue(wwebClient);
+
+container.bind<Logger>(TYPES.Logger).toConstantValue(logger);
 
 container.bind(TYPES.MessageObserver).to(MessageObserver);
 

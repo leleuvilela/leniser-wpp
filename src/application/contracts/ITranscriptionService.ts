@@ -1,3 +1,3 @@
 export interface ITranscriptionService {
-    generateTranscription: (audioBuffer: Buffer, translate?: boolean) => Promise<string>;
+    generateTranscription: (audioBuffer: Buffer) => Promise<string>;
 }
