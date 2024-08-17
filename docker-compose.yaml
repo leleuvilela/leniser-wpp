@@ -12,7 +12,7 @@ services:
       IMGFLIP_USERNAME: ""
       IMGFLIP_PASSWORD: ""
     volumes:
-      - ./.wwebjs_auth:/app/.wwebjs_auth
+      - ./data/.wwebjs_auth:/app/.wwebjs_auth
     networks:
       - leniser-wpp
     depends_on:

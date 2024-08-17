@@ -2,3 +2,4 @@
 .env
 /dist
 /.wwebjs_auth
+data
