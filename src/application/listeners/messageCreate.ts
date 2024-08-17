@@ -10,6 +10,7 @@ import { MemberPermission, Member } from '../dtos/members';
 import { IHandler } from '../contracts/IHandler';
 import { IMessage } from '../dtos/message';
 import { toDateOnlyString, toDateTimeString } from '../../utils/dateExtensions';
+import { Logger } from 'winston';
 
 interface MessageDocument {
     _data: {
@@ -32,6 +33,7 @@ interface MessageDocument {
 export class MessageCreateListener implements IListener {
     messageObserver: MessageObserver;
     wwebClient: WwebClient;
+    logger: Logger;
     messageRepository: IMessageRepository;
     membersRepository: IMembersRepository;
     deuitaHandler: IHandler;
@@ -56,6 +58,7 @@ export class MessageCreateListener implements IListener {
 
     constructor(
         @inject(TYPES.WwebClient) wwebClient: Client,
+        @inject(TYPES.Logger) logger: Logger,
         @inject(TYPES.MessageRepository) messageRepository: IMessageRepository,
         @inject(TYPES.MembersRepository) numberPermissionsRepository: IMembersRepository,
         @inject(TYPES.DeuitaHandler) deuitaHandler: IHandler,
@@ -80,6 +83,7 @@ export class MessageCreateListener implements IListener {
     ) {
         this.messageObserver = new MessageObserver();
 
+        this.logger = logger;
         this.wwebClient = wwebClient;
         this.botHandler = botHandler;
         this.falaHandler = falaHandler;
@@ -130,6 +134,7 @@ export class MessageCreateListener implements IListener {
 
     public async initialize() {
         this.wwebClient.on(Events.MESSAGE_CREATE, this.handleMessage.bind(this));
+        this.logger.info('MessageCreate initialized');
     }
 
     private async handleMessage(msg: Message) {
@@ -167,7 +172,7 @@ export class MessageCreateListener implements IListener {
         const msgDocument = msg as unknown as MessageDocument;
 
         if (!msgDocument) {
-            console.error('Error to cast message to MessageDocument!', msg);
+            this.logger.error('Error to cast message to MessageDocument!', msg);
             return;
         }
 
@@ -194,8 +199,8 @@ export class MessageCreateListener implements IListener {
             };
 
             await this.messageRepository.addMessage(message);
-        } catch {
-            console.log('MONGO: error to add message to collections in mongo');
+        } catch (error) {
+            this.logger.error('Error to add message to collections in mongo', error);
         }
     }
 
@@ -203,7 +208,7 @@ export class MessageCreateListener implements IListener {
         try {
             await this.messageRepository.addFullMessage(msg);
         } catch (error) {
-            console.log('MONGO: error to add FULL message to collections in mongo');
+            this.logger.error('Error to add FULL message to collections in mongo', error);
         }
     }
 

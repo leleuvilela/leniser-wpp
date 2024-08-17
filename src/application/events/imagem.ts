@@ -9,12 +9,14 @@ import { hasPermissions } from '../../utils/hasPermissions';
 import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
 import { IImageService } from '../contracts/IImageService';
 import { ReqRegisterType } from '../dtos/reqRegister';
+import { Logger } from 'winston';
 
 @injectable()
 export class ImagemHandler implements IHandler {
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
     @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
     @inject(TYPES.ImageService) imageService: IImageService;
+    @inject(TYPES.Logger) logger: Logger;
 
     public command = '!imagem';
 
@@ -65,7 +67,7 @@ export class ImagemHandler implements IHandler {
 
             return msg.reply(new MessageMedia('image/jpeg', image.b64_json));
         } catch (error) {
-            console.log(error);
+            this.logger.error('Error on handle imagem', error);
             return msg.reply(`${botPrefix} Calma lá calabreso, isso aí não pode não.`);
         }
     }

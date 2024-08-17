@@ -5,20 +5,22 @@ import { Events, GroupNotification, type Client as WwebClient } from 'whatsapp-w
 import { Member } from '../dtos/members';
 import { IMembersRepository } from '../contracts/INumberPermissionsRepository';
 import { IConfigsRepository } from '../contracts/IConfigsRepository';
+import { Logger } from 'winston';
 
 @injectable()
 export class GroupJoinListener implements IListener {
     @inject(TYPES.WwebClient) wwebClient: WwebClient;
     @inject(TYPES.MembersRepository) membersRepository: IMembersRepository;
     @inject(TYPES.ConfigsRepository) configsRepository: IConfigsRepository;
+    @inject(TYPES.Logger) logger: Logger;
 
     public async initialize() {
-        console.log('GroupJoin initialized');
         this.wwebClient.on(Events.GROUP_JOIN, this.handleGroupJoin.bind(this));
+        this.logger.info('GroupJoin initialized');
     }
 
     private async handleGroupJoin(notification: GroupNotification) {
-        console.log('GroupJoin', notification.chatId);
+        this.logger.info('GroupJoin', notification.chatId);
 
         try {
             const chat = await notification.getChat();
@@ -40,7 +42,7 @@ export class GroupJoinListener implements IListener {
 
             await this.membersRepository.create(member);
         } catch (error) {
-            console.error('Error on handleGroupJoin', error);
+            this.logger.error('Error on handleGroupJoin', error);
         }
     }
 }

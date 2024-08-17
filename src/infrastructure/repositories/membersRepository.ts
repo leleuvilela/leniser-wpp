@@ -3,6 +3,7 @@ import { TYPES } from '../../ioc/types';
 import { MongoClient } from 'mongodb';
 import { IMembersRepository } from '../../application/contracts/INumberPermissionsRepository';
 import { MemberPermission, Member, MemberConfigs } from '../../application/dtos/members';
+import { Logger } from 'winston';
 
 interface MembersDocument {
     id: string;
@@ -14,6 +15,7 @@ interface MembersDocument {
 @injectable()
 export class MembersRepository implements IMembersRepository {
     @inject(TYPES.MongoClient) mongoClient: MongoClient;
+    @inject(TYPES.Logger) logger: Logger;
 
     private members = new Map<string, Member>();
 
@@ -37,6 +39,7 @@ export class MembersRepository implements IMembersRepository {
             .collection<MembersDocument>('members');
 
         const result = await collection.findOne({ id });
+        this.logger.info('Member Fetched', id);
 
         if (!result) {
             return null;
@@ -60,6 +63,7 @@ export class MembersRepository implements IMembersRepository {
             .collection<MembersDocument>('members');
 
         const results = await collection.find().toArray();
+        this.logger.info('Members Fetched');
 
         results.forEach((result) => {
             this.members.set(result.id, {
@@ -84,6 +88,7 @@ export class MembersRepository implements IMembersRepository {
             permissions: member.permissions,
             configs: member.configs,
         });
+        this.logger.info('Member Created', member.id);
 
         this.members.set(member.id, member);
     }

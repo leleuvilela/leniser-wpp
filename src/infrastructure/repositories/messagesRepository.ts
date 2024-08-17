@@ -6,10 +6,12 @@ import { TYPES } from '../../ioc/types';
 import { IMessage } from '../../application/dtos/message';
 import { Message } from 'whatsapp-web.js';
 import { toDateOnlyString } from '../../utils/dateExtensions';
+import { Logger } from 'winston';
 
 @injectable()
 export class MessageRepository implements IMessageRepository {
     @inject(TYPES.MongoClient) mongoClient: MongoClient;
+    @inject(TYPES.Logger) logger: Logger;
 
     async addFullMessage(msg: Message): Promise<boolean> {
         const result = await this.mongoClient
@@ -65,7 +67,7 @@ export class MessageRepository implements IMessageRepository {
                     }) as MessageCountDto
             );
         } catch (error) {
-            console.error('Error fetching message counts by user:', error);
+            this.logger.error('Error fetching message counts by user:', error);
             return [];
         }
     }
@@ -103,7 +105,7 @@ export class MessageRepository implements IMessageRepository {
                     }) as MessageCountDto
             );
         } catch (error) {
-            console.error('Error fetching message counts by user:', error);
+            this.logger.error('Error fetching message counts by user:', error);
             return [];
         }
     }

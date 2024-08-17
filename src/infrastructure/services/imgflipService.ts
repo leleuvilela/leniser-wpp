@@ -1,26 +1,31 @@
 import 'dotenv/config';
 import axios, { AxiosInstance } from 'axios';
 import { IImgflipService } from '../../application/contracts/IImgflipService';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import {
     Meme,
     ImgflipResponse,
     SearchMemesData,
     AiMemeData,
 } from '../../application/dtos/imgFlipDto';
+import { Logger } from 'winston';
+import { TYPES } from '../../ioc/types';
 
 @injectable()
 export class ImgflipService implements IImgflipService {
     private baseUrl = 'https://api.imgflip.com';
     private client: AxiosInstance;
+    private logger: Logger;
 
-    constructor() {
+    constructor(@inject(TYPES.Logger) logger: Logger) {
         this.client = axios.create({
             baseURL: this.baseUrl,
             headers: {
                 'Content-Type': 'application/json',
             },
         });
+
+        this.logger = logger;
     }
 
     async searchMeme(query: string): Promise<Meme | undefined> {
@@ -40,6 +45,7 @@ export class ImgflipService implements IImgflipService {
                 '/search_memes',
                 body
             );
+            this.logger.info('Memes fetched');
 
             const meme = response.data.data?.memes[0];
 
@@ -49,7 +55,7 @@ export class ImgflipService implements IImgflipService {
 
             return meme;
         } catch (error) {
-            console.error('Erro ao buscar memes:', error);
+            this.logger.error('Erro ao buscar memes:', error);
         }
     }
 
@@ -70,6 +76,7 @@ export class ImgflipService implements IImgflipService {
                 '/ai_meme',
                 body
             );
+            this.logger.info('Memes fetched');
 
             if (!response.data.success) {
                 throw new Error(JSON.stringify(response.data));
@@ -77,7 +84,7 @@ export class ImgflipService implements IImgflipService {
 
             return response.data.data;
         } catch (error) {
-            console.error('Erro ao buscar memes:', error);
+            this.logger.error('Erro ao buscar memes:', error);
         }
     }
 }
