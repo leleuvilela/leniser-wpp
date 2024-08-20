@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3010:3000"
     environment:
       DB_URI: "mongodb://mongo:27017/rap"
       API_GPT: ""
@@ -21,7 +21,7 @@ services:
   mongo:
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     networks:
       - leniser-wpp
     volumes:
