@@ -17,10 +17,10 @@ export class MusicHandler implements IHandler {
     @inject(TYPES.ReqRegistersRepository) reqRegistersRepository: IReqRegistersRepository;
     @inject(TYPES.Logger) logger: Logger;
 
-    public command = '!musica';
+    public commands = ['!musica', '!música'];
 
     canHandle(msg: Message, member: Member): boolean {
-        if (!msg.body.startsWith(this.command)) {
+        if (!this.commands.some((command) => msg.body.startsWith(command))) {
             return false;
         }
 
@@ -29,7 +29,7 @@ export class MusicHandler implements IHandler {
     async handle(msg: Message): Promise<Message> {
         const { defaultMemberConfigs } = await this.configsRepository.getDefaultConfigs();
         try {
-            const prompt = msg.body.replace(this.command, '').trim();
+            const prompt = msg.body.split(' ').slice(1).join(' ');
 
             msg.reply(
                 `${defaultMemberConfigs.botPrefix} Gerando música... (Leva em média 3 minutos)`
@@ -46,6 +46,7 @@ export class MusicHandler implements IHandler {
             const [music] = musics;
 
             if (music.status === 'error') {
+                this.logger.error('Erro ao gerar música:', music.error_message);
                 return msg.reply(
                     `${defaultMemberConfigs.botPrefix} Algo deu errado. Tente novamente com um prompt menos específico.`
                 );

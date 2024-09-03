@@ -35,18 +35,20 @@ export class ImagemHandler implements IHandler {
             : (await this.configsRepository.getDefaultConfigs()).defaultMemberConfigs;
 
         try {
-            const lastReq = await this.reqRegistersRepository.getLastRegisterByMember(
-                msg.from,
-                ReqRegisterType.IMAGE
-            );
+            if (process.env.ENVIRONMENT !== 'local') {
+                const lastReq = await this.reqRegistersRepository.getLastRegisterByMember(
+                    msg.from,
+                    ReqRegisterType.IMAGE
+                );
 
-            if (lastReq && imageCooldownEnabled) {
-                const now = new Date();
-                const diff = now.getTime() - lastReq.timestamp.getTime();
-                const diffInMinutes = Math.floor(diff / 60000);
+                if (lastReq && imageCooldownEnabled) {
+                    const now = new Date();
+                    const diff = now.getTime() - lastReq.timestamp.getTime();
+                    const diffInMinutes = Math.floor(diff / 60000);
 
-                if (diffInMinutes < imageCooldownTime) {
-                    return msg.reply(`${botPrefix} Pera aí, tá em cooldown...`);
+                    if (diffInMinutes < imageCooldownTime) {
+                        return msg.reply(`${botPrefix} Pera aí, tá em cooldown...`);
+                    }
                 }
             }
 
