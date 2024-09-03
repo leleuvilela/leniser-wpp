@@ -46,6 +46,7 @@ export class MusicHandler implements IHandler {
             const [music] = musics;
 
             if (music.status === 'error') {
+                this.logger.error('Erro ao gerar música:', music.error_message);
                 return msg.reply(
                     `${defaultMemberConfigs.botPrefix} Algo deu errado. Tente novamente com um prompt menos específico.`
                 );
