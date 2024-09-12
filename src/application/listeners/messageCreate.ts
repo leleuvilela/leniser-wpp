@@ -37,7 +37,6 @@ export class MessageCreateListener implements IListener {
     messageRepository: IMessageRepository;
     membersRepository: IMembersRepository;
     deuitaHandler: IHandler;
-    gilsoHandler: IHandler;
     falaHandler: IHandler;
     rankingHandler: IHandler;
     mensagensPorDiaHandler: IHandler;
@@ -67,7 +66,6 @@ export class MessageCreateListener implements IListener {
         @inject(TYPES.MensagensPorDiaHandler) mensagensPorDiaHandler: IHandler,
         @inject(TYPES.BotHandler) botHandler: IHandler,
         @inject(TYPES.TranscreverHandler) transcreverHandler: IHandler,
-        @inject(TYPES.GilsoHandler) gilsoHandler: IHandler,
         @inject(TYPES.MenuHandler) menuHandler: IHandler,
         @inject(TYPES.AaHandler) aaHandler: IHandler,
         @inject(TYPES.ChecagemHandler) checagemHandler: IHandler,
@@ -93,7 +91,6 @@ export class MessageCreateListener implements IListener {
         this.membersRepository = numberPermissionsRepository;
         this.transcreverHandler = transcreverHandler;
         this.deuitaHandler = deuitaHandler;
-        this.gilsoHandler = gilsoHandler;
         this.menuHandler = menuHandler;
         this.aaHandler = aaHandler;
         this.checagemHandler = checagemHandler;
@@ -125,7 +122,6 @@ export class MessageCreateListener implements IListener {
         this.messageObserver.addHandler(this.imagemHandler);
         this.messageObserver.addHandler(this.mp3Handler);
         this.messageObserver.addHandler(this.deuitaHandler);
-        this.messageObserver.addHandler(this.gilsoHandler);
         this.messageObserver.addHandler(this.aiMemeHandler);
         this.messageObserver.addHandler(this.memeHandler);
         this.messageObserver.addHandler(this.musicHandler);
