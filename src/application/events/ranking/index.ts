@@ -119,7 +119,7 @@ export class RankingHandler implements IHandler {
 
         const memberKeys = Object.keys(members.members);
 
-        const memberKey = memberKeys.find((key) => id.startsWith(key));
+        const memberKey = memberKeys.find((key) => id?.startsWith(key));
 
         if (!memberKey) return id;
 
