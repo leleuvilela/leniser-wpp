@@ -1,7 +1,6 @@
 import { type Message } from 'whatsapp-web.js';
 import { IHandler } from '../contracts/IHandler';
 import { injectable } from 'inversify';
-import { Member } from '../dtos/members';
 
 @injectable()
 export class MessageObserver {
@@ -15,10 +14,10 @@ export class MessageObserver {
         this.handlers.push(listener);
     }
 
-    public notify(msg: Message, member: Member | null) {
+    public notify(msg: Message) {
         this.handlers.forEach((handler) => {
-            if (handler.canHandle(msg, member)) {
-                handler.handle(msg, member);
+            if (handler.canHandle(msg)) {
+                handler.handle(msg);
             }
         });
     }

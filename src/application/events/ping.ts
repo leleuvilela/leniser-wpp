@@ -15,8 +15,6 @@ export class PingHandler implements IHandler {
     }
 
     async handle(msg: Message): Promise<Message> {
-        const { defaultMemberConfigs } = await this.configsRepository.getDefaultConfigs();
-
-        return msg.reply(`${defaultMemberConfigs.botPrefix} pong!`);
+        return msg.reply(`🤖 pong!`);
     }
 }

@@ -21,7 +21,9 @@ export class ConfigsRepository implements IConfigsRepository {
     }
 
     public async fetchDefaultConfigs() {
-        const collection = this.mongoClient.db('rap').collection<Configs>('configs');
+        const collection = this.mongoClient
+            .db(process.env.DB_COLLECTION)
+            .collection<Configs>('configs');
 
         const result = await collection.findOne({ type: ConfigType.GENERAL });
         this.logger.info('Configs Fetched');

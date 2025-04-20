@@ -25,8 +25,6 @@ class Application implements IApplication {
         this.logger.info('Starting wweb listeners');
         this.authenticationListener.initialize();
         this.messageCreateListener.initialize();
-        this.messageRevokeListener.initialize();
-        this.groupJoinListener.initialize();
 
         this.logger.info('Initializing wwapweb client');
         this.wweb.initialize();
