@@ -19,15 +19,14 @@ export class ResponseService implements IResponseService {
     ): Promise<string> {
         try {
             const req: ChatCompletionCreateParamsNonStreaming = {
-                model: 'gpt-4o',
+                model: 'gpt-5',
                 messages: [
                     {
                         role: 'system',
                         content: systemRoleMessage,
                     },
                 ],
-                temperature: 0.5,
-                max_tokens: 264,
+                max_completion_tokens: 464,
                 top_p: 1,
             };
 
