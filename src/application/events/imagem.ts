@@ -54,7 +54,7 @@ export class ImagemHandler implements IHandler {
 
             const imageRes = await this.imageService.generateImage(text);
 
-            const [image] = imageRes.data;
+            const [image] = imageRes.data || [];
 
             if (!image || !image.b64_json) {
                 return msg.reply(`${botPrefix} Algo errado não está certo.`);
