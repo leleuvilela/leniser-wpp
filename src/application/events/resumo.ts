@@ -5,11 +5,14 @@ import { IConfigsRepository } from '../contracts/IConfigsRepository';
 import { IHandler } from '../contracts/IHandler';
 import { hasPermissions } from '../../utils/hasPermissions';
 import { Member, MemberPermission } from '../dtos/members';
-import { ChatCompletionContentPart } from 'openai/resources';
 import { IResponseService } from '../contracts/IResponseService';
 import { IGroupMembersRepository } from '../contracts/IGroupMembersRepository';
 import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
 import { ReqRegisterType } from '../dtos/reqRegister';
+import {
+    ResponseInput,
+    ResponseInputContent,
+} from 'openai/resources/responses/responses';
 
 @injectable()
 export class ResumoHandler implements IHandler {
@@ -71,26 +74,34 @@ export class ResumoHandler implements IHandler {
     private async generateChatCompletionContentPart(
         msgs: Message[],
         memberId: string
-    ): Promise<ChatCompletionContentPart[]> {
-        const contents: ChatCompletionContentPart[] = [];
+    ): Promise<ResponseInput> {
         const { members } = (await this.groupMembersRepository.getMembers(memberId)) ?? {
             members: {},
         };
+
+        const content: ResponseInputContent[] = [];
 
         for (const msg of msgs) {
             if (msg.type === 'chat') {
                 const author = members[msg.author ?? ''] ?? msg.author;
                 const text = `${author}: ${msg.body}`;
 
-                const content: ChatCompletionContentPart = {
-                    type: 'text',
+                content.push({
+                    type: 'input_text',
                     text,
-                };
-
-                contents.push(content);
+                });
             }
         }
 
-        return contents;
+        if (content.length === 0) {
+            return [];
+        }
+
+        return [
+            {
+                role: 'user',
+                content: content,
+            },
+        ];
     }
 }

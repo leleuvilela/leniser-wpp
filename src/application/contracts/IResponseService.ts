@@ -1,8 +1,8 @@
-import { ChatCompletionContentPart } from 'openai/resources';
+import { ResponseInput } from 'openai/resources/responses/responses';
 
 export interface IResponseService {
     generateResponse: (
         systemRoleMessage: string,
-        prompts: ChatCompletionContentPart[]
+        prompts: string | ResponseInput
     ) => Promise<string>;
 }

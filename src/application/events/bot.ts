@@ -1,4 +1,3 @@
-import { type ChatCompletionContentPart } from 'openai/resources';
 import { MessageTypes, type Message } from 'whatsapp-web.js';
 import { IHandler } from '../contracts/IHandler';
 import { IResponseService } from '../contracts/IResponseService';
@@ -10,6 +9,10 @@ import { ITranscriptionService } from '../contracts/ITranscriptionService';
 import { hasPermissions } from '../../utils/hasPermissions';
 import { IReqRegistersRepository } from '../contracts/IReqRegistersRepository';
 import { ReqRegisterType } from '../dtos/reqRegister';
+import {
+    ResponseInput,
+    ResponseInputContent,
+} from 'openai/resources/responses/responses';
 
 @injectable()
 export class BotHandler implements IHandler {
@@ -66,14 +69,14 @@ export class BotHandler implements IHandler {
         );
     }
 
-    private async getHistory(msg: Message): Promise<ChatCompletionContentPart[]> {
-        const contents: ChatCompletionContentPart[] = [];
+    private async getHistory(msg: Message): Promise<ResponseInput> {
+        const messages: ResponseInput = [];
 
         const quoted = await msg.getQuotedMessage();
 
         if (quoted) {
             const history = await this.getHistory(quoted);
-            contents.push(...history);
+            messages.push(...history);
         }
 
         const image = msg.type === MessageTypes.IMAGE ? await msg.downloadMedia() : null;
@@ -83,19 +86,20 @@ export class BotHandler implements IHandler {
                 ? await msg.downloadMedia()
                 : null;
 
+        const content: ResponseInputContent[] = [];
+
         if (text) {
-            contents.push({
-                type: 'text',
+            content.push({
+                type: 'input_text',
                 text: text,
             });
         }
 
         if (image) {
-            contents.push({
-                type: 'image_url',
-                image_url: {
-                    url: `data:image/jpeg;base64,${image.data}`,
-                },
+            content.push({
+                type: 'input_image',
+                image_url: `data:image/jpeg;base64,${image.data}`,
+                detail: 'auto',
             });
         }
 
@@ -103,13 +107,20 @@ export class BotHandler implements IHandler {
             const audioBuffer = Buffer.from(audio.data, 'base64');
             const transcription =
                 await this.transcriptionService.generateTranscription(audioBuffer);
-            contents.push({
-                type: 'text',
+            content.push({
+                type: 'input_text',
                 text: `Isto é a transcrição de um áudio: ${transcription}`,
             });
         }
 
-        return contents;
+        if (content.length > 0) {
+            messages.push({
+                role: 'user',
+                content: content,
+            });
+        }
+
+        return messages;
     }
 
     private cleanMessage(msg: string): string {
