@@ -1,9 +1,6 @@
 import { OpenAI } from 'openai';
 import { IResponseService } from '../../application/contracts/IResponseService';
-import {
-    type ChatCompletionCreateParamsNonStreaming,
-    type ChatCompletionContentPart,
-} from 'openai/resources';
+import { type ChatCompletionContentPart } from 'openai/resources';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { Logger } from 'winston';
@@ -18,28 +15,26 @@ export class ResponseService implements IResponseService {
         prompts: ChatCompletionContentPart[]
     ): Promise<string> {
         try {
-            const req: ChatCompletionCreateParamsNonStreaming = {
+            const response = await this.openAIClient.chat.completions.create({
                 model: 'gpt-5',
                 messages: [
                     {
                         role: 'system',
                         content: systemRoleMessage,
                     },
+                    {
+                        role: 'user',
+                        content: prompts,
+                    },
                 ],
                 max_completion_tokens: 464,
                 top_p: 1,
-            };
-
-            req.messages.push({
-                role: 'user',
-                content: prompts,
             });
 
-            const completion = await this.openAIClient.chat.completions.create(req);
             this.logger.info('Response generated');
 
             return (
-                completion.choices[0].message.content?.trim() ??
+                response.choices[0]?.message?.content?.trim() ??
                 'ih carai, deu erro aqui, foi mal.'
             );
         } catch (error) {
