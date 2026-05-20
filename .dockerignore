@@ -1,0 +1,16 @@
+.git/
+node_modules/
+src/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+*.db
+*.db-shm
+*.db-wal
+tmp/
+.specify/
+specs/
+.opencode/
+.github/

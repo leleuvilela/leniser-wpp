@@ -1,36 +1,21 @@
 services:
-  app:
+  bot:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "127.0.0.1:3010:3000"
+      - "127.0.0.1:8080:8080"
+    env_file: .env
+    volumes:
+      - bot_data:/data
     environment:
-      DB_URI: "mongodb://mongo:27017/rap"
-      API_GPT: ""
-      ENVIRONMENT: "local"
-      IMGFLIP_USERNAME: ""
-      IMGFLIP_PASSWORD: ""
-    volumes:
-      - ./data/.wwebjs_auth:/app/.wwebjs_auth
+      BOT_DB_PATH: /data/bot.db
+    restart: unless-stopped
     networks:
       - leniser-wpp
-    depends_on:
-      - mongo
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - "127.0.0.1:27017:27017"
-    networks:
-      - leniser-wpp
-    volumes:
-      - mongo_data:/data/db
-      - ./src/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
 
 volumes:
-  app_data:
-  mongo_data:
+  bot_data:
 
 networks:
   leniser-wpp:

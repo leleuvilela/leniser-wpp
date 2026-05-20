@@ -1,5 +1,25 @@
+# Node.js (legacy)
 /node_modules
-.env
 /dist
 /.wwebjs_auth
 data
+
+# Go
+*.exe
+*.test
+*.out
+vendor/
+
+# Environment
+.env
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
